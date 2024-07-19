@@ -26,6 +26,10 @@ android {
             )
         }
     }
+    buildFeatures {
+        // 뷰 바인딩 활성화
+        viewBinding = true
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -45,4 +49,13 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation ("com.google.android.material:material:1.1.0")
+
+
+    // Glide
+    implementation ("com.github.bumptech.glide:glide:4.12.0")
+
+
+    //splash
+    implementation("androidx.core:core-splashscreen:1.0.0")
 }
