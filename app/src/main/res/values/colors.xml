@@ -2,4 +2,46 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+
+<!--    Color Gray Scale-->
+    <color name="gray_00">#FFFFFF</color>
+    <color name="gray_05">#F5F5F5</color>
+    <color name="gray_10">#E6E6E6</color>
+    <color name="gray_20">#D6D6D6</color>
+    <color name="gray_30">#C9C9C9</color>
+    <color name="gray_40">#B0B0B0</color>
+    <color name="gray_50">#969696</color>
+    <color name="gray_60">#7D7D7D</color>
+    <color name="gray_70">#636363</color>
+    <color name="gray_80">#4A4A4A</color>
+    <color name="gray_90">#303030</color>
+    <color name="gray_100">#0F0F0F</color>
+
+<!--    Color Primary-->
+    <color name="red_00">#FFF6F5</color>
+    <color name="red_10">#F84A32</color> <!--red_50하고 같음-->
+    <color name="red_20">#FDCBC4</color>
+    <color name="red_30">#FB9F93</color>
+    <color name="red_40">#FA7461</color>
+    <color name="red_50">#F84A32</color>
+    <color name="red_60">#ED2408</color>
+    <color name="red_70">#DD1A00</color>
+    <color name="red_80">#C82812</color>
+    <color name="red_90">#B22410</color>
+    <color name="red_100">#9A1F0E</color>
+
+<!--    Color Sub-->
+    <color name="blue_10">#F5F8FF</color>
+    <color name="blue_20">#C2D7FF</color>
+    <color name="blue_30">#90B6FF</color>
+    <color name="blue_40">#4282FF</color>
+    <color name="blue_50">#1400FF</color>
+
+    <color name="green_10">#E8FDDB</color>
+    <color name="green_20">#A7F592</color>
+    <color name="green_30">#83EC75</color>
+    <color name="green_40">#4FE04A</color>
+    <color name="green_50">#36C03D</color>
+    <color name="green_60">#2B9730</color>
 </resources>
