@@ -86,10 +86,10 @@ class MainFragment : Fragment() {
         // 포지션에 따라 해당 프래그먼트를 생성하여 반환
         override fun createFragment(position: Int): Fragment {
             return when (position) {
-                0 -> HomeFragment()
-                1 -> FacilitiesFragment()
+                0 -> HomeFragment()  // TODO : 이름 변경
+                1 -> FacilitiesFragment()   //TODO : 이름 변경
                 2 -> AccidentFragment()
-                else -> MyFragment()
+                else -> MyFragment() //TODO : 이름 변경
             }
         }
     }
