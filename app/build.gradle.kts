@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("org.jetbrains.kotlin.kapt")
 }
 
 android {
@@ -49,13 +50,25 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation ("com.google.android.material:material:1.1.0")
+    implementation(libs.material.v110)
+    implementation(libs.androidx.recyclerview)
+    implementation(libs.kotlinx.coroutines.play.services)
+    implementation(libs.play.services.location)
+    implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.kotlinx.serialization.json)
 
+    val room_version = "2.6.1"
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    annotationProcessor(libs.androidx.room.compiler)
+    kapt("androidx.room:room-compiler:$room_version")
+
+    implementation(libs.prettytime)
 
     // Glide
-    implementation ("com.github.bumptech.glide:glide:4.12.0")
+    implementation(libs.glide)
 
-
-    //splash
-    implementation("androidx.core:core-splashscreen:1.0.0")
+    // splash
+    implementation(libs.androidx.core.splashscreen)
 }

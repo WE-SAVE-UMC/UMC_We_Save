@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_home"
+        android:icon="@drawable/ic_home_24"
+        android:title="홈"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_facilities"
+        android:icon="@drawable/ic_map_24"
+        android:title="근처시설"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_accident"
+        android:icon="@drawable/ic_urgent_24"
+        android:title="사건사고"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_my"
+        android:icon="@drawable/ic_user_24"
+        android:title="MY"
+        app:showAsAction="always" />
+</menu>
