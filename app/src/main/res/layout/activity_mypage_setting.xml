@@ -18,7 +18,7 @@
             android:id="@+id/setting_back_iv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/icon_chevron"
+            android:src="@drawable/ic_chevron"
             android:layout_gravity="center_vertical"/>
 
         <TextView
