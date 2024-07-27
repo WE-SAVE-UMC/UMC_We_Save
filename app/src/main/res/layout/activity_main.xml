@@ -8,17 +8,11 @@
     tools:context=".ui.MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:liftOnScroll="false"
-        android:background="@android:color/transparent">
-
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:logo="@drawable/img_logo_horizontal"
-            app:menu="@menu/main" />
+        android:background="@android:color/transparent"
+        app:liftOnScroll="false">
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -27,5 +21,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_anchor="@+id/appBarLayout"
+        app:layout_anchorGravity="center"
+        app:logo="@drawable/img_logo_horizontal"
+        app:menu="@menu/main" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
