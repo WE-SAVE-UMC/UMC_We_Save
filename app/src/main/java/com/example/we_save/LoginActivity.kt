@@ -39,7 +39,7 @@ class LoginActivity : AppCompatActivity() {
             loginbutton.setBackgroundColor(ContextCompat.getColor(this, Color.GRAY)) // 버튼 색깔을 변경한단.
         }
         createAccount.setOnClickListener {
-            //val intent = Intent(this,CreateAccountActivity::class.java)
+            val intent = Intent(this,CreateAccountActivity::class.java)
             startActivity(intent)
         }
 

@@ -29,6 +29,18 @@
         android:theme="@style/Theme.We_Save"
         tools:targetApi="31">
         <activity
+            android:name=".CreateAccountNicknameActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CreateAccountPasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CreateAccountCertificationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CreateAccountActivity"
+            android:exported="false" />
+        <activity
             android:name=".LoginActivity"
             android:exported="false" />
 
