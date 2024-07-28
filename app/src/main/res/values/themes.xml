@@ -33,4 +33,15 @@
         <item name="dialogCornerRadius">16dp</item>
         <item name="android:backgroundTint">@color/white</item>
     </style>
+
+
+    <style name="CustomTabText" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="CustomRedButton">
+        <item name="android:backgroundTint">@drawable/style_red_button</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
 </resources>

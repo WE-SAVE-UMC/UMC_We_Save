@@ -2,7 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <TextView
         android:id="@+id/mypage_post_tv"
@@ -31,11 +32,14 @@
         app:layout_constraintEnd_toEndOf="parent"/>
 
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/mypage_post_content_vp"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/mypage_post_content_rv"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="12dp"
+        tools:listitem="@layout/item_post_writing"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:spanCount="3"
         app:layout_constraintTop_toBottomOf="@id/mypage_post_select_tv"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
