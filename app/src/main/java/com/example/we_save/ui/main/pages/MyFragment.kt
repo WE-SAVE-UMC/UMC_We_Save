@@ -2,10 +2,13 @@ package com.example.we_save.ui.main.pages
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentContainerView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.we_save.R
 import com.example.we_save.databinding.FragmentMyBinding
@@ -14,11 +17,14 @@ import com.example.we_save.ui.my.MyPostFragment
 import com.example.we_save.ui.my.MySettingActivity
 import com.example.we_save.ui.my.PostWritingRVAdapter
 import com.example.we_save.ui.my.ProfileEditActivity
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.tabs.TabLayout
 
 class MyFragment : Fragment() {
 
     lateinit var binding: FragmentMyBinding
+
+    private var appBarLayout: AppBarLayout? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -72,9 +78,28 @@ class MyFragment : Fragment() {
             }
 
         })
-
-
-
         return binding.root
     }
+
+    override fun onResume() {
+        super.onResume()
+
+        // AppBarLayout 숨기기
+        appBarLayout = activity?.findViewById<AppBarLayout>(R.id.mainAppBarLayout)
+        appBarLayout?.let {
+            (it.parent as? ViewGroup)?.removeView(it)
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        // AppBarLayout 다시 추가하기
+        appBarLayout?.let { appBar ->
+            if (appBar.parent == null) {
+                (activity?.findViewById<ViewGroup>(R.id.mainLayout)?.addView(appBar))
+            }
+        }
+    }
+
 }
