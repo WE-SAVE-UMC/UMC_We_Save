@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             // Badge 추가하는 방법 (삭제는 BadgeUtils.detachBadgeDrawable() 호출)
-            BadgeUtils.attachBadgeDrawable(badgeDrawable, toolbar, R.id.action_notification)
+            BadgeUtils.attachBadgeDrawable(badgeDrawable, toolbar1, R.id.action_notification)
         }
     }
 

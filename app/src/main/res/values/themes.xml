@@ -46,4 +46,18 @@
     </style>
 
 
+
+    <style name="CustomTabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabBackground">@drawable/tab_background_selector</item>
+        <item name="tabIndicatorHeight">0dp</item>
+        <item name="tabSelectedTextColor">@color/white</item>
+        <item name="tabTextColor">@color/gray_40</item>
+    </style>
+
+    <!-- ProgressBar 스타일 정의 -->
+    <style name="CustomProgressBar" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/progressbar_progress</item>
+        <item name="android:minHeight">16dp</item>
+        <item name="android:maxHeight">16dp</item>
+    </style>
 </resources>
