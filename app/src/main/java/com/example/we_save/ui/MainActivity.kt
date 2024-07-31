@@ -11,6 +11,7 @@ import androidx.fragment.app.commit
 import com.example.we_save.R
 import com.example.we_save.databinding.ActivityMainBinding
 import com.example.we_save.ui.main.MainFragment
+import com.example.we_save.ui.my.Block
 import com.example.we_save.ui.my.Writing
 import com.example.we_save.ui.my.WritingDatabase
 import com.google.android.material.appbar.AppBarLayout
@@ -31,6 +32,9 @@ class MainActivity : AppCompatActivity() {
         inputDummyWritings()
         Log.d("확인","확인됨")
 
+        // Block 더미 데이터 생성
+        inputDummyBlocks()
+
         supportFragmentManager.commit {
             replace(R.id.fragment_container, MainFragment(), "root")
         }
@@ -46,7 +50,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    // 예시용 더미 데이터
+    // 작성된 글 더미 데이터
     private fun inputDummyWritings() {
         val writingDB = WritingDatabase.getInstance(this)!!
         val writings = writingDB.writingDao().getWritings()
@@ -87,6 +91,34 @@ class MainActivity : AppCompatActivity() {
 
         val _writings = writingDB.writingDao().getWritings()
         Log.d("writing Data", _writings.toString())
+
+    }
+
+    // 차단 더미 데이터
+    private fun inputDummyBlocks() {
+        val writingDB = WritingDatabase.getInstance(this)!!
+        val blocks = writingDB.blockDao().getBlocks()
+
+        if (blocks.isNotEmpty()) return
+
+        writingDB.blockDao().insert(
+            Block(
+                R.drawable.ic_profile,
+                "닉네임 예시",
+                true
+            )
+        )
+
+        writingDB.blockDao().insert(
+            Block(
+                R.drawable.ic_profile,
+                "닉네임 예시2",
+                false
+            )
+        )
+
+        val _blocks = writingDB.blockDao().getBlocks()
+        Log.d("block Data", _blocks.toString())
 
     }
 

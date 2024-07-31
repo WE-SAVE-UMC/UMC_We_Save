@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingStart="20dp"
+    android:paddingTop="20dp"
+    android:paddingEnd="20dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/notice_calamity_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="재난 알림"
+        android:textSize="16sp"
+        android:textColor="@color/gray_90"
+        android:textStyle="bold"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/notice_near_me"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
+
+        <TextView
+            android:id="@+id/notice_near_me_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="내 근처, 신뢰도 높은 재난"
+            android:textSize="14sp"
+            android:textColor="@color/gray_90"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+        
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/notice_near_me_sw"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:background="@null"
+            android:thumb="@drawable/selector_thumb"
+            app:track="@drawable/selector_switch"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/notice_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
+
+        <TextView
+            android:id="@+id/notice_area_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="관심지역, 신뢰도 높은 재난"
+            android:textSize="14sp"
+            android:textColor="@color/gray_90"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/notice_area_sw"
+            android:layout_width="40dp"
+            android:layout_height="24dp"
+            android:checked="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/notice_post_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="게시글 알림"
+        android:textSize="16sp"
+        android:textColor="@color/gray_90"
+        android:textStyle="bold"
+        android:layout_marginTop="72dp"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/notice_check"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
+
+        <TextView
+            android:id="@+id/notice_check_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="확인했어요"
+            android:textSize="14sp"
+            android:textColor="@color/gray_90"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/notice_check_sw"
+            android:layout_width="40dp"
+            android:layout_height="24dp"
+            android:checked="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/notice_lie"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
+
+        <TextView
+            android:id="@+id/notice_lie_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="허위에요"
+            android:textSize="14sp"
+            android:textColor="@color/gray_90"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/notice_lie_sw"
+            android:layout_width="40dp"
+            android:layout_height="24dp"
+            android:checked="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/notice_comment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
+
+        <TextView
+            android:id="@+id/notice_comment_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="댓글 알림 받기"
+            android:textSize="14sp"
+            android:textColor="@color/gray_90"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/notice_comment_sw"
+            android:layout_width="40dp"
+            android:layout_height="24dp"
+            android:checked="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/notice_reply"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
+
+        <TextView
+            android:id="@+id/notice_reply_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="답글 알림 받기"
+            android:textSize="14sp"
+            android:textColor="@color/gray_90"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/notice_reply_sw"
+            android:layout_width="40dp"
+            android:layout_height="24dp"
+            android:checked="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</LinearLayout>

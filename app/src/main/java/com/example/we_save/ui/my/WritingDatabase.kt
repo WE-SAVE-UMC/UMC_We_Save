@@ -5,10 +5,12 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [Writing::class], version = 1)
+@Database(entities = [Writing::class, Block::class], version = 1)
 abstract class WritingDatabase: RoomDatabase(){
 
     abstract fun writingDao(): WritingDao
+
+    abstract fun blockDao(): BlockDao
 
     companion object {
         private var instance: WritingDatabase? = null

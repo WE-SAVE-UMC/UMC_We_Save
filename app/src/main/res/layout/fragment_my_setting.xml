@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/my_setting_block"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp">
+
+        <ImageView
+            android:id="@+id/my_setting_block_iv"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/icon_circle_off"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:id="@+id/my_setting_block_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="차단관리"
+            android:textSize="16sp"
+            android:textColor="@color/gray_90"
+            android:layout_marginStart="8dp"
+            app:layout_constraintStart_toEndOf="@id/my_setting_block_iv"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/my_setting_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp">
+
+        <ImageView
+            android:id="@+id/my_setting_area_iv"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/location"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:id="@+id/my_setting_area_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="관심지역 설정"
+            android:textSize="16sp"
+            android:textColor="@color/gray_90"
+            android:layout_marginStart="8dp"
+            app:layout_constraintStart_toEndOf="@id/my_setting_area_iv"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/my_setting_notice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp">
+
+        <ImageView
+            android:id="@+id/my_setting_notice_iv"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/icon_bell"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:id="@+id/my_setting_notice_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="알림 설정"
+            android:textSize="16sp"
+            android:textColor="@color/gray_90"
+            android:layout_marginStart="8dp"
+            app:layout_constraintStart_toEndOf="@id/my_setting_notice_iv"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/my_setting_user"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp">
+
+        <ImageView
+            android:id="@+id/my_setting_user_iv"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/icon_user"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:id="@+id/my_setting_user_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="계정 설정"
+            android:textSize="16sp"
+            android:textColor="@color/gray_90"
+            android:layout_marginStart="8dp"
+            app:layout_constraintStart_toEndOf="@id/my_setting_user_iv"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+</LinearLayout>

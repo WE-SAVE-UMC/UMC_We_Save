@@ -40,9 +40,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.my.MySettingActivity"/>
-        <activity android:name=".ui.my.ProfileEditActivity"/>
-        <activity android:name=".ui.my.SettingBlockActivity"/>
+        <activity android:name=".ui.my.HeaderActivity"/>
 
         <service
             android:name="com.google.android.gms.metadata.ModuleDependencies"
