@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SearchActivity">
+
+    <include
+        android:id="@+id/search_toolbar1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        layout="@layout/custom_white_onebell_toolbar" />
+
+
+    <ImageView
+        android:id="@+id/arrow_iv"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="24dp"
+        android:src="@drawable/left_arrow"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/search_toolbar1"/>
+    <EditText
+        android:id="@+id/search_edittext_tv"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        app:layout_constraintTop_toTopOf="@+id/arrow_iv"
+        android:paddingEnd="44dp"
+        android:paddingStart="16dp"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintBottom_toBottomOf="@+id/arrow_iv"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="44dp"
+        android:background="@drawable/search_edittext"
+        />
+    <ImageButton
+        android:id="@+id/search_button_iv"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/search_icon"
+        android:background="@color/white"
+        app:layout_constraintTop_toTopOf="@+id/search_edittext_tv"
+        app:layout_constraintBottom_toBottomOf="@id/search_edittext_tv"
+        app:layout_constraintEnd_toEndOf="@id/search_edittext_tv"
+        android:layout_marginEnd="10dp"
+        />
+
+    <TextView
+        android:id="@+id/keyowrd_button"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:background="@drawable/search_edittext"
+        android:text="관련 키워드"
+        android:textSize="12sp"
+        android:textColor="#F84A32"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="3dp"
+        android:paddingBottom="4dp"
+        app:layout_constraintTop_toBottomOf="@+id/search_edittext_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="14dp"
+        tools:ignore="RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/keyowrd_button2"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:background="@drawable/search_edittext"
+        android:text="염좌"
+        android:textSize="12sp"
+        android:textColor="#F84A32"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="3dp"
+        android:paddingBottom="4dp"
+        app:layout_constraintTop_toBottomOf="@+id/search_edittext_tv"
+        app:layout_constraintStart_toEndOf="@id/keyowrd_button"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="14dp"
+        tools:ignore="RtlSymmetry" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:background="@drawable/search_edittext"
+        android:text="인대"
+        android:textSize="12sp"
+        android:textColor="#F84A32"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="3dp"
+        android:paddingBottom="4dp"
+        app:layout_constraintTop_toBottomOf="@+id/search_edittext_tv"
+        app:layout_constraintStart_toEndOf="@id/keyowrd_button2"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="14dp"
+        tools:ignore="RtlSymmetry" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragment_contatiner_view"
+        android:layout_width="match_parent"
+        android:layout_height="332dp"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="211dp"
+        android:layout_marginStart="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
