@@ -1,4 +1,4 @@
-package com.example.we_save
+package com.example.we_save.ui.main
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.we_save.Item
+import com.example.we_save.R
 import com.example.we_save.databinding.FragmentMainDistanceBinding
 
 class MainDistanceFragment  : Fragment() {
@@ -24,9 +26,9 @@ class MainDistanceFragment  : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         itemdatas = arrayListOf(
-            Item(R.drawable.earthquake_iv, "지진"),
-            Item(R.drawable.fire_iv, "화재"),
-            Item(R.drawable.fire_empty_iv, "화재")
+            Item(R.drawable.earthquake_iv, "지진","1.5km"),
+            Item(R.drawable.fire_iv, "화재","1.0km"),
+            Item(R.drawable.fire_empty_iv, "화재","0.9km")
         )
 
         val MainRVadapter = MainRecyclerAdapter(itemdatas)

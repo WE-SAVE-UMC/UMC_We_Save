@@ -1,14 +1,14 @@
-package com.example.we_save
+package com.example.we_save.ui.createAccount
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.core.content.ContextCompat
+import com.example.we_save.R
 import com.example.we_save.databinding.ActivityCreateAccountPassworBinding
 
 class CreateAccountPasswordActivity : AppCompatActivity() {
@@ -23,12 +23,15 @@ class CreateAccountPasswordActivity : AppCompatActivity() {
         val password : EditText = binding.enterPasswordNumber
         val repassword : EditText = binding.reenterPasswordNumber
 
+        window.statusBarColor = ContextCompat.getColor(this, R.color.white)
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+
         passwordbutton.setOnClickListener {
             val passwordtext = password.text.toString()
             val repasswordtext = repassword.text.toString()
             //조건문
             if(passwordtext==repasswordtext){
-                val intent = Intent(this,CreateAccountNicknameActivity::class.java)
+                val intent = Intent(this, CreateAccountNicknameActivity::class.java)
                 startActivity(intent)
             }
             else{

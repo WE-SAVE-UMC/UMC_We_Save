@@ -1,8 +1,9 @@
-package com.example.we_save
+package com.example.we_save.ui.main
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.we_save.Item
 import com.example.we_save.databinding.ItemMainRvBinding
 
 class MainRecyclerAdapter (private val items: ArrayList<Item>) : RecyclerView.Adapter<MainRecyclerAdapter.ItemViewHolder>() {
@@ -11,6 +12,7 @@ class MainRecyclerAdapter (private val items: ArrayList<Item>) : RecyclerView.Ad
         fun bind(item: Item) {
             binding.imageView.setImageResource(item.ImageRes)
             binding.textView.text = item.text
+            binding.distanceTv.text = item.distamce
         }
     }
 

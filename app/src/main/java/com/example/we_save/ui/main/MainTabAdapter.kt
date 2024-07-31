@@ -1,4 +1,4 @@
-package com.example.we_save
+package com.example.we_save.ui.main
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity

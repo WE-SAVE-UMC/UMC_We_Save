@@ -1,12 +1,15 @@
-package com.example.we_save
+package com.example.we_save.ui.createAccount
 
 import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import com.example.we_save.R
 import com.example.we_save.databinding.ActivityCreateAccountCertificationBinding
 
 class CreateAccountCertificationActivity : AppCompatActivity() {
@@ -20,12 +23,13 @@ class CreateAccountCertificationActivity : AppCompatActivity() {
         val loginbutton : Button = binding.certificationButtonTv
         val errormessage : TextView = binding.certificationErrorMessageTv
         val certificationnum : EditText = binding.enterCertificationNumber
-
+        window.statusBarColor = ContextCompat.getColor(this, R.color.white)
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         loginbutton.setOnClickListener {
             val text = certificationnum.text
             //조건문
             //일치한다면
-            val intent = Intent(this,CreateAccountPasswordActivity::class.java)
+            val intent = Intent(this, CreateAccountPasswordActivity::class.java)
             startActivity(intent)
             /*//일치하지 않는다면
             errormessage.visibility = TextView.VISIBLE

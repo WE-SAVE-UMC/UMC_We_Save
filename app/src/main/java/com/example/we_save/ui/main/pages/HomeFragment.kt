@@ -1,21 +1,23 @@
 package com.example.we_save.ui.main.pages
 
-import android.graphics.Color
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
-import com.example.we_save.MainTabAdapter
+import com.example.we_save.ui.alarm.AdvertiseMentActivity
+import com.example.we_save.ui.alarm.AlarmActivity
+import com.example.we_save.ui.main.MainTabAdapter
 import com.example.we_save.R
+import com.example.we_save.SearchActivity
 import com.example.we_save.databinding.FragmentHomeBinding
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.tabs.TabLayout
@@ -38,7 +40,35 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        activity?.window?.statusBarColor = ContextCompat.getColor(requireContext(), R.color.black)
+        val decorView = activity?.window?.decorView
+        decorView?.systemUiVisibility = decorView?.systemUiVisibility?.and(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()) ?: 0
         hideToolbar()
+        binding.quizBackground.setOnClickListener {
+            val intent = Intent(requireContext(), AdvertiseMentActivity::class.java)
+            startActivity(intent)
+        }
+        val alarmImageView = view.findViewById<ImageView>(R.id.main_alarm_iv)
+        val whitealarmImageView = view.findViewById<ImageView>(R.id.white_alarm_iv)
+
+
+        // 클릭 리스너 설정
+        alarmImageView.setOnClickListener {
+            // 다른 액티비티로 이동
+            val intent = Intent(requireContext(), AlarmActivity::class.java)
+            startActivity(intent)
+        }
+        whitealarmImageView.setOnClickListener {
+            // 다른 액티비티로 이동
+            val intent = Intent(requireContext(), AlarmActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.searchIv.setOnClickListener {
+            val intent = Intent(requireContext(), SearchActivity::class.java)
+            startActivity(intent)
+        }
+
         val darkToolbar = binding.maintoolbar
         val whiteToolbar = binding.maintoolbar1
         val nestedScrollView = view.findViewById<NestedScrollView>(R.id.main_nestscrollview)

@@ -6,13 +6,14 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
+import android.view.View
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.core.content.ContextCompat
 import com.example.we_save.databinding.ActivityPermissionRequestBinding
+import com.example.we_save.ui.createAccount.LoginActivity
+import com.example.we_save.ui.main.CustomLineHeightSpan
 
 class PermissionRequestActivity : AppCompatActivity() {
     lateinit var binding : ActivityPermissionRequestBinding
@@ -20,6 +21,8 @@ class PermissionRequestActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityPermissionRequestBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.white)
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         val textView = binding.agreementTv
 
         val text = "앱 실행을 위해서 설정 - 애플리케이션 관리자 - WE SAVE - 권한에서 권한을 허용해주시기 바랍니다.\n필수 권한을 허용하지 않으면 WE SAVE 를 이용하실 수 없습니다.\n휴대폰 SMS 본인 인증시 인증번호 6자리가 채워질 수 있습니다."
@@ -71,7 +74,11 @@ class PermissionRequestActivity : AppCompatActivity() {
         if (requestCode == REQUEST_CODE_MULTIPLE_PERMISSIONS) {
             if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
                 // 모든 권한이 허용된 경우
-                startMainActivity()
+                if (isUserLoggedIn()) {
+                    startMainActivity()
+                } else {
+                    startActivity(Intent(this, LoginActivity::class.java))
+                }
             } else {
                 // 권한이 하나라도 거부된 경우
                 Toast.makeText(this, "모든 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
@@ -83,6 +90,12 @@ class PermissionRequestActivity : AppCompatActivity() {
     private fun startMainActivity() {
         startActivity(Intent(this, MainActivity::class.java))
         finish()
+    }
+    // 서버로 부터 사용자의 로그인 유뮤 확인
+    private fun isUserLoggedIn(): Boolean {
+        //val sharedPreferences = getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE)
+        //return sharedPreferences.getBoolean("isLoggedIn", false)
+        return false
     }
 
     companion object {

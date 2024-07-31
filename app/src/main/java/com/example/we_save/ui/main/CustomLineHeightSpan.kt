@@ -1,4 +1,4 @@
-package com.example.we_save
+package com.example.we_save.ui.main
 
 import android.graphics.Paint
 import android.text.style.LineHeightSpan
