@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.createAccount.CreateAccountCertificationActivity">
+
+    <ProgressBar
+        android:id="@+id/phone_enter_progressbar"
+        style="@style/CustomProgressBar"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_marginTop="196dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:progress="50"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/certification_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="인증번호 입력"
+        android:layout_marginTop="32dp"
+        android:layout_marginStart="20dp"
+        android:textSize="24dp"
+        android:textColor="#4A4A4A"
+        app:layout_constraintTop_toBottomOf="@id/phone_enter_progressbar"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/certification_subtext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="본인 인증을 위해 도착한 인증번호를 입력해주세요."
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="8dp"
+        android:textSize="16dp"
+        app:layout_constraintTop_toBottomOf="@id/certification_title"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/enter_certification_number"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="104dp"
+        android:importantForAutofill="no"
+        android:paddingStart="16dp"
+        android:hint="인증 번호를 입력해주세요"
+        android:textSize="14sp"
+        android:background="@drawable/edittext_background"
+        tools:ignore="RtlSymmetry"
+        app:layout_constraintTop_toBottomOf="@id/certification_subtext"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5" />
+
+    <TextView
+        android:id="@+id/timer_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="03:00"
+        android:textSize="12sp"
+        android:paddingEnd="16dp"
+        android:textColor="#F84A32"
+        app:layout_constraintEnd_toEndOf="@id/enter_certification_number"
+        app:layout_constraintTop_toTopOf="@id/enter_certification_number"
+        app:layout_constraintBottom_toBottomOf="@id/enter_certification_number"
+        app:layout_constraintVertical_bias="0.5" />
+
+    <TextView
+        android:id="@+id/certification_error_message_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="16dp"
+        android:layout_marginStart="24dp"
+        android:textSize="12sp"
+        android:visibility="gone"
+        android:text="인증번호를 다시 확인해주세요."
+        app:layout_constraintTop_toBottomOf="@id/enter_certification_number"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5" />
+
+    <LinearLayout
+        android:id="@+id/request_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="56dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/certification_error_message_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="16dp"
+            android:textSize="12sp"
+            android:textColor="#7D7D7D"
+            android:text="인증번호가 도착하지 않았나요?" />
+
+        <TextView
+            android:layout_marginStart="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="16dp"
+            android:textSize="12sp"
+            android:textColor="#4A4A4A"
+            android:text="인증번호 재요청" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/certification_button_tv"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/red_button"
+        android:backgroundTint="#F84A32"
+        android:layout_marginStart="20dp"
+        android:textColor="@color/white"
+        android:layout_marginTop="24dp"
+        android:text="확인"
+        android:textSize="16sp"
+        android:layout_marginEnd="20dp"
+        android:paddingBottom="12dp"
+        android:paddingStart="108dp"
+        android:paddingEnd="108dp"
+        app:layout_constraintTop_toBottomOf="@id/request_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -71,4 +71,8 @@ dependencies {
 
     // splash
     implementation(libs.androidx.core.splashscreen)
+
+    //map
+    implementation("com.naver.maps:map-sdk:3.19.0")
+
 }
