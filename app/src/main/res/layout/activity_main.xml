@@ -14,6 +14,15 @@
         android:background="@android:color/transparent"
         app:liftOnScroll="false">
 
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_anchor="@+id/appBarLayout"
+            app:layout_anchorGravity="center"
+            app:logo="@drawable/img_logo_horizontal"
+            app:menu="@menu/main" />
+
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.fragment.app.FragmentContainerView
@@ -22,13 +31,6 @@
         android:layout_height="match_parent"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_anchor="@+id/appBarLayout"
-        app:layout_anchorGravity="center"
-        app:logo="@drawable/img_logo_horizontal"
-        app:menu="@menu/main" />
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

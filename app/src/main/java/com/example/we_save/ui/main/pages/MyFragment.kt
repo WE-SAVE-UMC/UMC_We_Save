@@ -81,25 +81,25 @@ class MyFragment : Fragment() {
         return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        // AppBarLayout 숨기기
-        appBarLayout = activity?.findViewById<AppBarLayout>(R.id.mainAppBarLayout)
-        appBarLayout?.let {
-            (it.parent as? ViewGroup)?.removeView(it)
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-
-        // AppBarLayout 다시 추가하기
-        appBarLayout?.let { appBar ->
-            if (appBar.parent == null) {
-                (activity?.findViewById<ViewGroup>(R.id.mainLayout)?.addView(appBar))
-            }
-        }
-    }
+//    override fun onResume() {
+//        super.onResume()
+//
+//        // AppBarLayout 숨기기
+//        appBarLayout = activity?.findViewById<AppBarLayout>(R.id.appBarLayout)
+//        appBarLayout?.let {
+//            (it.parent as? ViewGroup)?.removeView(it)
+//        }
+//    }
+//
+//    override fun onPause() {
+//        super.onPause()
+//
+//        // AppBarLayout 다시 추가하기
+//        appBarLayout?.let { appBar ->
+//            if (appBar.parent == null) {
+//                (activity?.findViewById<ViewGroup>(R.id.mainLayout)?.addView(appBar))
+//            }
+//        }
+//    }
 
 }

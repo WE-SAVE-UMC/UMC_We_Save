@@ -20,4 +20,5 @@ interface WritingDao {
 
     @Query("SELECT * FROM WritingTable")
     fun getWritings(): List<Writing>
+
 }

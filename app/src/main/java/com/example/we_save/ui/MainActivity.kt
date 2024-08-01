@@ -61,7 +61,8 @@ class MainActivity : AppCompatActivity() {
             Writing(
                 "성신여대 화재",
                 "삼선동2가 389",
-                R.drawable.img_fire
+                R.drawable.img_fire,
+                false
             )
         )
 
@@ -69,7 +70,8 @@ class MainActivity : AppCompatActivity() {
             Writing(
                 "제목 예시2",
                 "삼선동2가 389",
-                R.drawable.img_fire
+                R.drawable.img_fire,
+                false
             )
         )
 
@@ -77,7 +79,8 @@ class MainActivity : AppCompatActivity() {
             Writing(
                 "제목 예시3",
                 "삼선동2가 389",
-                R.drawable.img_fire
+                R.drawable.img_fire,
+                true
             )
         )
 
@@ -85,7 +88,8 @@ class MainActivity : AppCompatActivity() {
             Writing(
                 "제목 예시4",
                 "삼선동2가 389",
-                R.drawable.img_fire
+                R.drawable.img_fire,
+                true
             )
         )
 

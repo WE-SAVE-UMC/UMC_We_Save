@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.we_save.databinding.ActivityPermissionRequestBinding
+import com.example.we_save.ui.MainActivity
 import com.example.we_save.ui.createAccount.LoginActivity
 import com.example.we_save.ui.main.CustomLineHeightSpan
 
