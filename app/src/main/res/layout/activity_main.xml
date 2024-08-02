@@ -23,7 +23,7 @@
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
 
     <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar1"
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_anchor="@+id/appBarLayout"
