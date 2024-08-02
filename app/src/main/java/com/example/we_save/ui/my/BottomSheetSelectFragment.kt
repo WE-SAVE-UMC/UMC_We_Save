@@ -35,6 +35,7 @@ class BottomSheetSelectFragment: BottomSheetDialogFragment() {
     override fun onStart() {
         super.onStart()
         // BottomSheet의 배경을 완전히 투명하게 설정
+        //dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         // 터치 이벤트 전달 설정

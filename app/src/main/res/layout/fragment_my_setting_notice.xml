@@ -33,15 +33,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
-        
-        <androidx.appcompat.widget.SwitchCompat
+
+        <Switch
             android:id="@+id/notice_near_me_sw"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:checked="true"
-            android:background="@null"
+            android:checked="false"
             android:thumb="@drawable/selector_thumb"
-            app:track="@drawable/selector_switch"
+            android:track="@drawable/selector_switch"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
@@ -65,11 +64,13 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
-        <androidx.appcompat.widget.SwitchCompat
+        <Switch
             android:id="@+id/notice_area_sw"
-            android:layout_width="40dp"
-            android:layout_height="24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:checked="false"
+            android:thumb="@drawable/selector_thumb"
+            android:track="@drawable/selector_switch"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
@@ -103,11 +104,13 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
-        <androidx.appcompat.widget.SwitchCompat
+        <Switch
             android:id="@+id/notice_check_sw"
-            android:layout_width="40dp"
-            android:layout_height="24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:checked="false"
+            android:thumb="@drawable/selector_thumb"
+            android:track="@drawable/selector_switch"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
@@ -130,11 +133,13 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
-        <androidx.appcompat.widget.SwitchCompat
+        <Switch
             android:id="@+id/notice_lie_sw"
-            android:layout_width="40dp"
-            android:layout_height="24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:checked="false"
+            android:thumb="@drawable/selector_thumb"
+            android:track="@drawable/selector_switch"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
@@ -158,11 +163,13 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
-        <androidx.appcompat.widget.SwitchCompat
+        <Switch
             android:id="@+id/notice_comment_sw"
-            android:layout_width="40dp"
-            android:layout_height="24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:checked="false"
+            android:thumb="@drawable/selector_thumb"
+            android:track="@drawable/selector_switch"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
@@ -186,11 +193,13 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
-        <androidx.appcompat.widget.SwitchCompat
+        <Switch
             android:id="@+id/notice_reply_sw"
-            android:layout_width="40dp"
-            android:layout_height="24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:checked="false"
+            android:thumb="@drawable/selector_thumb"
+            android:track="@drawable/selector_switch"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
