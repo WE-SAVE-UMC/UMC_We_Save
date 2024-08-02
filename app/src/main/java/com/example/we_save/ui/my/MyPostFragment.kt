@@ -38,22 +38,27 @@ class MyPostFragment : Fragment() {
 
         // 선택을 누르면 체크 박스 활성화
         binding.myPostSelectTv.setOnClickListener {
+            binding.myPostSelectAllIv.setImageResource(R.drawable.ic_checkbox_off)
             // 선택 -> 완료
             if(!select){
                 binding.myPostSelectTv.text = "완료"
                 binding.myPostSelect.visibility = View.VISIBLE
+
+                val bottomSheetSelect = BottomSheetSelectFragment()
+                bottomSheetSelect.show(parentFragmentManager, bottomSheetSelect.tag)
 
             }
             // 완료 -> 선택
             else{
                 binding.myPostSelectTv.text = "선택"
                 binding.myPostSelect.visibility = View.GONE
-                binding.myPostSelectAllIv.setImageResource(R.drawable.ic_checkbox_off)
-                // selected의 값을 모두 false로 바꿈
-                postWritingRVAdapter.clearSelected()
+
+
             }
             select = !select
 
+            // selected의 값을 모두 false로 바꿈
+            postWritingRVAdapter.clearSelected()
             postWritingRVAdapter.updateSelectVisibility()
         }
 
@@ -78,19 +83,28 @@ class MyPostFragment : Fragment() {
 
         }
 
+        binding.myPostSelectCountTv.text = postWritingRVAdapter.getSelectedCount().toString()
+
 
 
 
         postWritingRVAdapter.setMyItemClickListener(object: PostWritingRVAdapter.MyItemClickListener{
             override fun onItemClick(writing: Writing) {
+                // 항목 클릭 시 처리 로직
 
             }
 
             override fun onSelectClick(writing: Writing) {
+                // 선택 클릭 시 처리 로직
+            }
+
+            override fun onSelectCountChange(count: Int) {
+                binding.myPostSelectCountTv.text = postWritingRVAdapter.getSelectedCount().toString()
             }
         })
 
 
         return binding.root
     }
+
 }

@@ -60,4 +60,31 @@
         <item name="android:minHeight">16dp</item>
         <item name="android:maxHeight">16dp</item>
     </style>
+
+    <!-- bottom sheet dialog 배경 투명하게 -->
+    <style name="TransparentBottomSheetDialog" parent="Theme.Design.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/TransparentBottomSheet</item>
+    </style>
+
+    <style name="TransparentBottomSheet" parent="Widget.Design.BottomSheet.Modal">
+        <!-- 배경을 완전히 투명하게 설정 -->
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <!-- edit text의 hint와 입력된 text의 글자 스타일 다르게 -->
+    <style name="EditTextTextAppearance">
+        <!-- 텍스트 색상 -->
+        <item name="android:textColor">@color/gray_90</item>
+        <!-- 텍스트 스타일 -->
+        <item name="android:textStyle">bold</item>
+        <!-- 힌트 색상 -->
+        <item name="android:textColorHint">@color/gray_70</item>
+        <!-- 힌트 텍스트 스타일 -->
+        <item name="android:textAppearance">@style/EditTextHintTextAppearance</item>
+    </style>
+
+    <style name="EditTextHintTextAppearance">
+        <!-- 힌트 텍스트 스타일 -->
+        <item name="android:textColor">@color/gray_70</item>
+    </style>
 </resources>

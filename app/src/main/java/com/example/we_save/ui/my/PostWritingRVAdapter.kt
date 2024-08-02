@@ -13,6 +13,8 @@ class PostWritingRVAdapter (private val writingList: ArrayList<Writing>): Recycl
     interface MyItemClickListener{
         fun onItemClick(writing: Writing)
         fun onSelectClick(writing: Writing)
+
+        fun onSelectCountChange(count: Int)
     }
 
     private lateinit var mItemClickListener: MyItemClickListener
@@ -33,6 +35,7 @@ class PostWritingRVAdapter (private val writingList: ArrayList<Writing>): Recycl
             writing.selectedVisible =  !writing.selectedVisible
         }
         notifyDataSetChanged() // 모든 항목 업데이트를 위해 호출
+        mItemClickListener.onSelectCountChange(getSelectedCount()) // 선택된 항목 수 갱신
     }
 
     // 선택된 모든 항목의 selected값을 false로 지정
@@ -42,6 +45,7 @@ class PostWritingRVAdapter (private val writingList: ArrayList<Writing>): Recycl
             writing.selected = false
         }
         notifyDataSetChanged() // 모든 항목 업데이트를 위해 호출
+        mItemClickListener.onSelectCountChange(getSelectedCount()) // 선택된 항목 수 갱신
     }
 
     // 전체 선택
@@ -51,6 +55,12 @@ class PostWritingRVAdapter (private val writingList: ArrayList<Writing>): Recycl
             writing.selected = true
         }
         notifyDataSetChanged() // 모든 항목 업데이트를 위해 호출
+        mItemClickListener.onSelectCountChange(getSelectedCount()) // 선택된 항목 수 갱신
+    }
+
+    // selected가 true인 항목 개수를 반환
+    fun getSelectedCount(): Int {
+        return writingList.count { it.selected }
     }
 
 //    fun removeItem(position: Int){
@@ -73,7 +83,12 @@ class PostWritingRVAdapter (private val writingList: ArrayList<Writing>): Recycl
 
             // selected의 값을 바꿈
             writingList[position].selected = !writingList[position].selected
-            notifyItemChanged(position)}
+            notifyItemChanged(position)
+            // 개수를 바꿈
+            mItemClickListener.onSelectCountChange(getSelectedCount())
+        }
+
+
     }
 
     override fun getItemCount(): Int = writingList.size

@@ -3,7 +3,6 @@ package com.example.we_save.ui
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
-import android.view.ViewGroup
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -14,7 +13,6 @@ import com.example.we_save.ui.main.MainFragment
 import com.example.we_save.ui.my.Block
 import com.example.we_save.ui.my.Writing
 import com.example.we_save.ui.my.WritingDatabase
-import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.badge.BadgeUtils
 import com.google.android.material.badge.ExperimentalBadgeUtils
@@ -39,6 +37,7 @@ class MainActivity : AppCompatActivity() {
             replace(R.id.fragment_container, MainFragment(), "root")
         }
 
+
         with(binding) {
             val badgeDrawable = BadgeDrawable.create(this@MainActivity).apply {
                 backgroundColor = ContextCompat.getColor(this@MainActivity, R.color.red_10)
@@ -48,6 +47,8 @@ class MainActivity : AppCompatActivity() {
             BadgeUtils.attachBadgeDrawable(badgeDrawable, toolbar1, R.id.action_notification)
         }
     }
+
+
 
 
     // 작성된 글 더미 데이터
