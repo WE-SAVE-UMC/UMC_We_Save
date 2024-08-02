@@ -1,11 +1,50 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
     <style name="Base.Theme.We_Save" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/white</item>
-        <item name="colorPrimaryVariant">#3F51B5</item>
-        <item name="colorSecondary">@color/white</item>
+        <item name="colorPrimary">@color/red_10</item>
+        <item name="colorOnPrimary">#ffffff</item>
         <item name="android:windowBackground">@color/white</item>
     </style>
 
     <style name="Theme.We_Save" parent="Base.Theme.We_Save" />
+
+    <style name="Theme.We_Save.Splash">
+        <item name="android:statusBarColor">@color/white</item>
+    </style>
+
+    <style name="App.TextAppearance.TabItem" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="App.TextAppearance.TabItem.Selected">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="App.TextAppearance.Toolbar.Title" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="App.Widget.RoundedBackgroundBottomSheetDialog" parent="@style/ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/RoundedCornerStyle</item>
+    </style>
+
+    <style name="RoundedCornerStyle" parent="Widget.Material3.BottomSheet">
+        <item name="dialogCornerRadius">16dp</item>
+        <item name="android:backgroundTint">@color/white</item>
+    </style>
+
+    <style name="CustomTabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabBackground">@drawable/tab_background_selector</item>
+        <item name="tabIndicatorHeight">0dp</item>
+        <item name="tabSelectedTextColor">@color/white</item>
+        <item name="tabTextColor">@color/gray_40</item>
+    </style>
+
+    <!-- ProgressBar 스타일 정의 -->
+    <style name="CustomProgressBar" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/progressbar_progress</item>
+        <item name="android:minHeight">16dp</item>
+        <item name="android:maxHeight">16dp</item>
+    </style>
 </resources>
