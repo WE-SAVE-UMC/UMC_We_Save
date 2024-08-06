@@ -7,8 +7,17 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:liftOnScroll="false"
-        android:background="@android:color/transparent">
+        android:background="@android:color/transparent"
+        app:liftOnScroll="false">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/logo_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_anchor="@+id/appBarLayout"
+            app:layout_anchorGravity="center"
+            app:logo="@drawable/img_logo_horizontal"
+            app:menu="@menu/main" />
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
@@ -153,6 +162,30 @@
                     android:paddingHorizontal="24dp"
                     android:paddingVertical="20dp"
                     android:text="교통사고"
+                    android:textAppearance="?attr/textAppearanceBodyLarge"
+                    android:textColor="@color/gray_90" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/etc_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardBackgroundColor="@color/gray_05"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="0dp"
+                app:cardMaxElevation="0dp"
+                app:strokeWidth="0dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_etc_24"
+                    android:drawablePadding="16dp"
+                    android:paddingHorizontal="24dp"
+                    android:paddingVertical="20dp"
+                    android:text="기타"
                     android:textAppearance="?attr/textAppearanceBodyLarge"
                     android:textColor="@color/gray_90" />
 

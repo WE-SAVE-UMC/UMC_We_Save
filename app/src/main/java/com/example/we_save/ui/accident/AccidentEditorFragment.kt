@@ -189,14 +189,7 @@ class AccidentEditorFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.type.collectLatest {
                 binding.typeTextView.isSelected = it != null
-                binding.typeTextView.text = when (it) {
-                    AccidentType.FIRE -> "화재"
-                    AccidentType.EARTHQUAKE -> "지진"
-                    AccidentType.HEAVY_RAIN -> "폭우"
-                    AccidentType.HEAVY_SNOW -> "폭설"
-                    AccidentType.TRAFFIC -> "교통사고"
-                    null -> "선택"
-                }
+                binding.typeTextView.text = it?.title ?: "선택"
             }
         }
 
