@@ -18,8 +18,6 @@ class MyFragment : Fragment() {
 
     lateinit var binding: FragmentMyBinding
 
-    private var appBarLayout: AppBarLayout? = null
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -39,7 +37,6 @@ class MyFragment : Fragment() {
 
         // 프로필 수정 버튼 전환
         binding.myProfileEditBtn.setOnClickListener {
-            //startActivity(Intent(activity, ProfileEditFragment::class.java))
             intent.putExtra("nextPage", "ProfileEditFragment")
             startActivity(intent)
         }
@@ -65,7 +62,6 @@ class MyFragment : Fragment() {
                         childFragmentManager.beginTransaction()
                             .replace(R.id.my_container_fl, MyCommentFragment())
                             .commit()
-
                     }
                 }
             }
@@ -81,25 +77,5 @@ class MyFragment : Fragment() {
         return binding.root
     }
 
-//    override fun onResume() {
-//        super.onResume()
-//
-//        // AppBarLayout 숨기기
-//        appBarLayout = activity?.findViewById<AppBarLayout>(R.id.appBarLayout)
-//        appBarLayout?.let {
-//            (it.parent as? ViewGroup)?.removeView(it)
-//        }
-//    }
-//
-//    override fun onPause() {
-//        super.onPause()
-//
-//        // AppBarLayout 다시 추가하기
-//        appBarLayout?.let { appBar ->
-//            if (appBar.parent == null) {
-//                (activity?.findViewById<ViewGroup>(R.id.mainLayout)?.addView(appBar))
-//            }
-//        }
-//    }
 
 }
