@@ -4,6 +4,7 @@
         <item name="colorPrimary">@color/red_10</item>
         <item name="colorOnPrimary">#ffffff</item>
         <item name="android:windowBackground">@color/white</item>
+        <item name="android:fontFamily">@font/pretandard</item>
     </style>
 
     <style name="Theme.We_Save" parent="Base.Theme.We_Save" />
@@ -32,6 +33,16 @@
     <style name="RoundedCornerStyle" parent="Widget.Material3.BottomSheet">
         <item name="dialogCornerRadius">16dp</item>
         <item name="android:backgroundTint">@color/white</item>
+    </style>
+
+    <style name="App.Widget.TransparentBackgroundBottomSheetDialog" parent="@style/ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="bottomSheetStyle">@style/TransparentStyle</item>
+    </style>
+
+    <style name="TransparentStyle" parent="Widget.Material3.BottomSheet">
+        <item name="android:backgroundTint">@android:color/transparent</item>
+        <item name="android:elevation">0dp</item>
     </style>
 
     <style name="CustomTabLayout" parent="Widget.Design.TabLayout">

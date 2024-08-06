@@ -36,6 +36,23 @@
             android:textSize="10sp"
             tools:text="0" />
 
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/warning_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_alert_triangle_12"
+            android:drawablePadding="4dp"
+            android:gravity="center"
+            android:text="사고 위치에서만 참여 가능합니다"
+            android:textAppearance="?attr/textAppearanceCaption"
+            android:textColor="@color/gray_60"
+            android:textSize="10sp" />
+
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
