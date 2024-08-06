@@ -6,8 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import com.example.we_save.domain.model.AccidentType
 import com.example.we_save.databinding.FragmentAccidentTypeBinding
+import com.example.we_save.domain.model.AccidentType
 
 class AccidentTypeFragment : Fragment() {
     private var _binding: FragmentAccidentTypeBinding? = null
@@ -35,6 +35,7 @@ class AccidentTypeFragment : Fragment() {
             heavyRainButton.setOnClickListener { finish(AccidentType.HEAVY_RAIN) }
             heavySnowButton.setOnClickListener { finish(AccidentType.HEAVY_SNOW) }
             trafficButton.setOnClickListener { finish(AccidentType.TRAFFIC) }
+            etcButton.setOnClickListener { finish(AccidentType.ETC) }
         }
     }
 

@@ -13,8 +13,6 @@ class AccidentDetailsViewModel(application: Application) : AndroidViewModel(appl
     private val repository = AccidentRepositoryImpl.getInstance(application)
     private var accident: Accident? = null
 
-    val imagePickerSheetVisibility = MutableStateFlow(false)
-
     private val _replyImages = MutableStateFlow<List<String>>(listOf())
     val replyImage: StateFlow<List<String>> = _replyImages
 

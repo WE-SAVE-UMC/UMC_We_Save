@@ -12,6 +12,15 @@
         app:liftOnScroll="false">
 
         <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/logo_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_anchor="@+id/appBarLayout"
+            app:layout_anchorGravity="center"
+            app:logo="@drawable/img_logo_horizontal"
+            app:menu="@menu/main" />
+
+        <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -110,53 +119,6 @@
                         android:src="@drawable/ic_send_24" />
 
                 </LinearLayout>
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/image_picker_sheet"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:visibility="gone"
-            app:cardBackgroundColor="@color/white"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="0dp"
-            app:cardMaxElevation="0dp"
-            app:layout_constraintBottom_toTopOf="@id/reply_container"
-            app:strokeColor="@color/gray_20">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/album_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackground"
-                    android:gravity="center"
-                    android:paddingVertical="16dp"
-                    android:text="앨범"
-                    android:textColor="@color/gray_80" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/gray_20" />
-
-                <TextView
-                    android:id="@+id/camera_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackground"
-                    android:gravity="center"
-                    android:paddingVertical="16dp"
-                    android:text="카메라"
-                    android:textColor="@color/gray_80" />
 
             </LinearLayout>
 

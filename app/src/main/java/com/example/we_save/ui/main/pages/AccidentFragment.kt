@@ -14,6 +14,7 @@ import com.example.we_save.R
 import com.example.we_save.common.extensions.setAppAnimation
 import com.example.we_save.databinding.FragmentAccidentBinding
 import com.example.we_save.ui.accident.AccidentEditorFragment
+import com.example.we_save.ui.main.pages.accident.DomesticFragment
 import com.example.we_save.ui.main.pages.accident.NearMeFragment
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
@@ -88,7 +89,7 @@ class AccidentFragment : Fragment() {
         override fun createFragment(position: Int): Fragment {
             return when (position) {
                 0 -> NearMeFragment()
-                else -> NearMeFragment()
+                else -> DomesticFragment()
             }
         }
     }

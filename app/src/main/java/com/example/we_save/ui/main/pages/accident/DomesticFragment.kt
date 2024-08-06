@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.TextView.OnEditorActionListener
-import androidx.core.content.ContextCompat
 import androidx.core.view.get
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
@@ -25,7 +24,7 @@ import com.example.we_save.R
 import com.example.we_save.common.extensions.hideKeyboard
 import com.example.we_save.common.extensions.setAppAnimation
 import com.example.we_save.data.model.Accident
-import com.example.we_save.databinding.FragmentNearMeBinding
+import com.example.we_save.databinding.FragmentDomesticBinding
 import com.example.we_save.databinding.ItemAccidentBinding
 import com.example.we_save.databinding.ItemNoticeBinding
 import com.example.we_save.ui.MainViewModel
@@ -39,8 +38,8 @@ import org.ocpsoft.prettytime.PrettyTime
 import java.util.Date
 
 
-class NearMeFragment : Fragment() {
-    private var _binding: FragmentNearMeBinding? = null
+class DomesticFragment : Fragment() {
+    private var _binding: FragmentDomesticBinding? = null
     private val binding get() = _binding!!
 
     private val activityViewModel by activityViewModels<MainViewModel>()
@@ -54,7 +53,7 @@ class NearMeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentNearMeBinding.inflate(inflater, container, false)
+        _binding = FragmentDomesticBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -76,21 +75,6 @@ class NearMeFragment : Fragment() {
 
                 false
             })
-
-            currentLocationButton.setOnClickListener {
-                if (currentLocationButton.colorFilter != null) return@setOnClickListener
-
-                currentLocationButton.setColorFilter(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.red_10
-                    )
-                )
-
-                activityViewModel.updateLocation {
-                    currentLocationButton.colorFilter = null
-                }
-            }
 
             situationEndFilter.setOnClickListener {
                 viewModel.excludeSituationEnd.value = !viewModel.excludeSituationEnd.value
@@ -128,7 +112,7 @@ class NearMeFragment : Fragment() {
                             setAppAnimation()
                             replace(
                                 R.id.fragment_container,
-                                AccidentDetailsFragment.getInstance(it, ParentFragment.NEAR),
+                                AccidentDetailsFragment.getInstance(it, ParentFragment.DOMESTIC),
                                 "accident_details"
                             )
                             addToBackStack(null)
@@ -283,6 +267,7 @@ class NearMeFragment : Fragment() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AccidentItemViewHolder {
             val inflater = LayoutInflater.from(parent.context)
             val binding = ItemAccidentBinding.inflate(inflater, parent, false)
+            binding.distanceTextView.isVisible = false
             return AccidentItemViewHolder(binding)
         }
 
@@ -302,8 +287,6 @@ class NearMeFragment : Fragment() {
                 falsehoodCountTextView.text = "0"
                 imageCountTextView.text = "${item.images.count()}"
 
-                // TODO: 국내, 사건사고의 경우 거리 표시 안함
-                distanceTextView.text = "0km"
                 addressTextView.text = item.address
                 situationEndIndicator.isInvisible = !item.isEndSituation
 
