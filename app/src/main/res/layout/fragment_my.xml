@@ -78,7 +78,7 @@
         app:tabTextColor="@color/gray_40"
         app:tabIndicatorColor="@color/red_50"
         app:tabRippleColor="#00ff0000"
-        app:tabTextAppearance="@style/CustomTabText"
+        app:tabTextAppearance="@style/TabTextUnselected"
         android:background="@color/gray_05"
         app:tabBackground="@drawable/tab_selector"
         app:layout_constraintTop_toBottomOf="@id/my_profile_iv">

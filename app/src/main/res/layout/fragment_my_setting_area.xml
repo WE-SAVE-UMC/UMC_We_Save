@@ -46,7 +46,7 @@
             android:textSize="16sp"
             android:layout_marginStart="16dp"
             android:background="@android:color/transparent"
-            android:textAppearance="@style/EditTextTextAppearance"/>
+            android:textAppearance="@style/HintTextStyle"/>
 
         <ImageView
             android:id="@+id/my_setting_area_search_iv"

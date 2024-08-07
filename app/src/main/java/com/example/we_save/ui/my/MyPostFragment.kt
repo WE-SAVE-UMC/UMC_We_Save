@@ -9,12 +9,14 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.we_save.R
 import com.example.we_save.databinding.FragmentMyPostBinding
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 class MyPostFragment : Fragment() {
 
     lateinit var binding: FragmentMyPostBinding
 
     private var writingDatas = ArrayList<Writing>()
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,16 +38,20 @@ class MyPostFragment : Fragment() {
 
         var select = false // 선택
 
+        // BottomSheetBehavior 설정
+        val behavior = BottomSheetBehavior.from(binding.myPostBottomSheet)
+        behavior.state = BottomSheetBehavior.STATE_HIDDEN
+
         // 선택을 누르면 체크 박스 활성화
         binding.myPostSelectTv.setOnClickListener {
             binding.myPostSelectAllIv.setImageResource(R.drawable.ic_checkbox_off)
+
             // 선택 -> 완료
             if(!select){
                 binding.myPostSelectTv.text = "완료"
                 binding.myPostSelect.visibility = View.VISIBLE
 
-                val bottomSheetSelect = BottomSheetSelectFragment()
-                bottomSheetSelect.show(parentFragmentManager, bottomSheetSelect.tag)
+                behavior.state = BottomSheetBehavior.STATE_EXPANDED
 
             }
             // 완료 -> 선택
@@ -53,6 +59,8 @@ class MyPostFragment : Fragment() {
                 binding.myPostSelectTv.text = "선택"
                 binding.myPostSelect.visibility = View.GONE
 
+                // 바텀 시트를 닫음
+                behavior.state = BottomSheetBehavior.STATE_HIDDEN
 
             }
             select = !select
