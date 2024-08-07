@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.we_save"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -72,7 +72,7 @@ dependencies {
     // splash
     implementation(libs.androidx.core.splashscreen)
 
-    //map
+    // map
     implementation("com.naver.maps:map-sdk:3.19.0")
 
     implementation ("com.squareup.okhttp3:okhttp:4.9.3")

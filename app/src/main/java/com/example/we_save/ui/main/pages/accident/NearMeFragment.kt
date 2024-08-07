@@ -30,6 +30,7 @@ import com.example.we_save.databinding.ItemAccidentBinding
 import com.example.we_save.databinding.ItemNoticeBinding
 import com.example.we_save.ui.MainViewModel
 import com.example.we_save.ui.accident.AccidentDetailsFragment
+import com.example.we_save.ui.accident.ParentFragment
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
@@ -127,7 +128,7 @@ class NearMeFragment : Fragment() {
                             setAppAnimation()
                             replace(
                                 R.id.fragment_container,
-                                AccidentDetailsFragment.getInstance(it),
+                                AccidentDetailsFragment.getInstance(it, ParentFragment.NEAR),
                                 "accident_details"
                             )
                             addToBackStack(null)
@@ -300,7 +301,10 @@ class NearMeFragment : Fragment() {
                 checkCountTextView.text = "0"
                 falsehoodCountTextView.text = "0"
                 imageCountTextView.text = "${item.images.count()}"
-                distanceTextView.text = "0km ${item.address}"
+
+                // TODO: 국내, 사건사고의 경우 거리 표시 안함
+                distanceTextView.text = "0km"
+                addressTextView.text = item.address
                 situationEndIndicator.isInvisible = !item.isEndSituation
 
                 (imageView.parent.parent as View).isVisible = item.images.isNotEmpty()
@@ -309,9 +313,6 @@ class NearMeFragment : Fragment() {
                         .load(item.images.first())
                         .into(imageView)
                 }
-
-                moreImageTextView.text =
-                    if (item.images.count() > 1) "+${item.images.count() - 1}" else ""
             }
         }
 

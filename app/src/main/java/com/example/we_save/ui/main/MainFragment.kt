@@ -32,6 +32,7 @@ class MainFragment : Fragment() {
         return binding.root
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -74,6 +75,12 @@ class MainFragment : Fragment() {
             viewPager.isUserInputEnabled = false
             // ViewPager2의 어댑터를 설정
             viewPager.adapter = ViewPagerAdapter(childFragmentManager, lifecycle)
+
+            // 인텐트로 전달된 인자를 받아서 ViewPager2의 현재 아이템 설정
+            val selectedPage = arguments?.getInt("selectedPage") ?: 0
+            viewPager.currentItem = selectedPage
+
+
         }
     }
 

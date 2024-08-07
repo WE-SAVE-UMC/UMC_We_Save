@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,7 +14,6 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -22,8 +22,11 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -46,10 +49,11 @@ import com.example.we_save.databinding.ItemCommentImageBinding
 import com.example.we_save.databinding.ItemRepliedImageBinding
 import com.example.we_save.databinding.ItemReplyingImageBinding
 import com.example.we_save.domain.model.AccidentType
+import com.example.we_save.ui.MainViewModel
+import com.example.we_save.ui.accident.bottomsheet.ImagePickerBottomSheet
 import com.example.we_save.ui.accident.bottomsheet.MyAccidentBottomSheet
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.ocpsoft.prettytime.PrettyTime
 import java.io.File
@@ -61,29 +65,32 @@ import kotlin.math.min
 
 const val DATA_KEY_EVENT = "EVENT"
 const val REQUEST_KEY_BOTTOM_SHEET_EVENT = "REQUEST_KEY_BOTTOM_SHEET_EVENT"
+const val VALID_RADIUS_METER = 1500
 
 enum class AccidentBottomSheetEvent {
-    SITUATION_END, EDIT, REMOVE, REPORT, SHARE, BLOCK
+    SITUATION_END, EDIT, REMOVE, REPORT, SHARE, BLOCK, ALBUM, CAMERA
+}
+
+enum class ParentFragment {
+    NEAR, DOMESTIC
 }
 
 class AccidentDetailsFragment : Fragment() {
     companion object {
-        fun getInstance(accident: Accident) = AccidentDetailsFragment().apply {
-            arguments = bundleOf("accident" to accident)
-        }
+        fun getInstance(accident: Accident, parent: ParentFragment) =
+            AccidentDetailsFragment().apply {
+                arguments = bundleOf("accident" to accident, "from" to parent.name)
+            }
     }
 
     private lateinit var accident: Accident
+    private lateinit var from: ParentFragment
 
     private var _binding: FragmentAccidentDetailsBinding? = null
     private val binding get() = _binding!!
 
+    private val activityViewModel by activityViewModels<MainViewModel>()
     private val viewModel by viewModels<AccidentDetailsViewModel>()
-    private val backPressedCallback = object : OnBackPressedCallback(false) {
-        override fun handleOnBackPressed() {
-            viewModel.imagePickerSheetVisibility.value = false
-        }
-    }
 
     private val requestPermission =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {
@@ -117,13 +124,16 @@ class AccidentDetailsFragment : Fragment() {
 
         if (arguments != null) {
             accident = requireArguments().getParcelable("accident")!!
+            from = ParentFragment.valueOf(requireArguments().getString("from")!!)
         } else if (savedInstanceState != null) {
             accident = savedInstanceState.getParcelable("accident")!!
+            from = ParentFragment.valueOf(savedInstanceState.getString("from")!!)
         }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putParcelable("accident", accident)
+        outState.putString("from", from.name)
         super.onSaveInstanceState(outState)
     }
 
@@ -139,11 +149,6 @@ class AccidentDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        requireActivity().onBackPressedDispatcher.addCallback(
-            viewLifecycleOwner,
-            backPressedCallback
-        )
-
         childFragmentManager.setFragmentResultListener(
             REQUEST_KEY_BOTTOM_SHEET_EVENT,
             viewLifecycleOwner
@@ -153,6 +158,39 @@ class AccidentDetailsFragment : Fragment() {
 
             val event = AccidentBottomSheetEvent.entries[ordinal]
             onReceiveBottomSheetEvent(event)
+        }
+
+        if (from == ParentFragment.DOMESTIC) {
+            activityViewModel.location.value?.let {
+                val results = FloatArray(1)
+                Location.distanceBetween(
+                    it.latitude,
+                    it.longitude,
+                    accident.lat,
+                    accident.lng,
+                    results
+                )
+                results.getOrNull(0)?.let { distance ->
+                    footerAdapter.distance = distance.toDouble()
+
+                    if (distance > VALID_RADIUS_METER) {
+                        with(binding) {
+                            replyContainer.setCardBackgroundColor(
+                                ContextCompat.getColor(
+                                    requireContext(),
+                                    R.color.gray_05
+                                )
+                            )
+                            replyField.isEnabled = false
+                            replyEditText.hint = "현 위치에서는 작성이 불가합니다."
+                            addButton.isEnabled = false
+                            sendButton.isEnabled = false
+                        }
+                    }
+                }
+            }
+        } else {
+            footerAdapter.distance = 0.0
         }
 
         with(binding) {
@@ -181,32 +219,25 @@ class AccidentDetailsFragment : Fragment() {
             addButton.setOnClickListener {
                 hideKeyboard(replyEditText)
 
-                viewModel.imagePickerSheetVisibility.value = true
-            }
+                val results = IntArray(2)
+                replyContainer.getLocationOnScreen(results)
+                val padding = resources.displayMetrics.heightPixels - results[1]
 
-            albumButton.setOnClickListener {
-                hideKeyboard(replyEditText)
-
-                pickMultipleMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-
-                viewModel.imagePickerSheetVisibility.value = false
-            }
-
-            cameraButton.setOnClickListener {
-                hideKeyboard(replyEditText)
-
-                if (ContextCompat.checkSelfPermission(
-                        requireContext(),
-                        Manifest.permission.CAMERA
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    requestPermission.launch(Manifest.permission.CAMERA)
-                    return@setOnClickListener
+                val bottomSheet = ImagePickerBottomSheet().apply {
+                    arguments = bundleOf("padding" to padding)
                 }
+                bottomSheet.lifecycle.addObserver(LifecycleEventObserver { _, event ->
+                    when (event) {
+                        Lifecycle.Event.ON_RESUME -> binding.addButton.setImageResource(R.drawable.ic_filled_circle_plus_24)
+                        Lifecycle.Event.ON_PAUSE -> (viewModel.replyImage.value.isNotEmpty()).let {
+                            binding.addButton.setImageResource(if (it) R.drawable.ic_filled_circle_plus_24 else R.drawable.ic_circle_plus_24)
+                        }
 
-                takePicture()
+                        else -> return@LifecycleEventObserver
+                    }
+                })
 
-                viewModel.imagePickerSheetVisibility.value = false
+                bottomSheet.show(childFragmentManager, "image_picker")
             }
 
             sendButton.setOnClickListener {
@@ -238,13 +269,6 @@ class AccidentDetailsFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            viewModel.imagePickerSheetVisibility.collectLatest {
-                binding.imagePickerSheet.isVisible = it
-                backPressedCallback.isEnabled = it
-            }
-        }
-
-        lifecycleScope.launch {
             viewModel.replyImage.collectLatest {
                 binding.replyImageRecyclerView.isVisible = it.isNotEmpty()
 
@@ -253,17 +277,14 @@ class AccidentDetailsFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            viewModel.imagePickerSheetVisibility.combine(viewModel.replyImage) { visible, urls ->
-                visible || urls.isNotEmpty()
-            }.collectLatest {
-                binding.addButton.setImageResource(if (it) R.drawable.ic_filled_circle_plus_24 else R.drawable.ic_circle_plus_24)
+            viewModel.replyImage.collectLatest {
+                binding.addButton.setImageResource(if (it.isNotEmpty()) R.drawable.ic_filled_circle_plus_24 else R.drawable.ic_circle_plus_24)
             }
         }
 
         lifecycleScope.launch {
             viewModel.getAccidentWithComments(accident).collectLatest {
                 if (it == null) {
-                    backPressedCallback.isEnabled = false
                     requireActivity().onBackPressedDispatcher.onBackPressed()
                     return@collectLatest
                 }
@@ -338,6 +359,22 @@ class AccidentDetailsFragment : Fragment() {
             AccidentBottomSheetEvent.REPORT -> TODO()
             AccidentBottomSheetEvent.SHARE -> TODO()
             AccidentBottomSheetEvent.BLOCK -> TODO()
+            AccidentBottomSheetEvent.ALBUM -> {
+                pickMultipleMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            }
+
+            AccidentBottomSheetEvent.CAMERA -> {
+                if (ContextCompat.checkSelfPermission(
+                        requireContext(),
+                        Manifest.permission.CAMERA
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    requestPermission.launch(Manifest.permission.CAMERA)
+                    return
+                }
+
+                takePicture()
+            }
         }
     }
 
@@ -510,6 +547,7 @@ class AccidentDetailsFragment : Fragment() {
                     AccidentType.HEAVY_RAIN -> R.drawable.ic_droplet_16
                     AccidentType.HEAVY_SNOW -> R.drawable.ic_snowflake_16
                     AccidentType.TRAFFIC -> R.drawable.ic_car_16
+                    AccidentType.ETC -> R.drawable.ic_etc_16
                 }
 
                 typeTextView.text = item.type.title
@@ -570,6 +608,14 @@ class AccidentDetailsFragment : Fragment() {
             }
         }
 
+        // Meter
+        var distance: Double? = null
+            set(value) {
+                if (field == value) return
+                field = value
+                notifyDataSetChanged()
+            }
+
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FooterItemViewHolder {
             val inflater = LayoutInflater.from(parent.context)
             val binding = ItemAccidentDetailsFooterBinding.inflate(inflater, parent, false)
@@ -584,6 +630,8 @@ class AccidentDetailsFragment : Fragment() {
                 imageCountTextView.text = "${item.comments.sumOf { it.images.count() }}"
                 recyclerView.adapter = RepliedImageAdapter(item.comments.flatMap { it.images })
                 noResultTextView.isVisible = item.comments.isEmpty()
+
+                warningIndicator.isVisible = (distance ?: Double.MAX_VALUE) > VALID_RADIUS_METER
             }
         }
 

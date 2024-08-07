@@ -4,6 +4,7 @@
         <item name="colorPrimary">@color/red_10</item>
         <item name="colorOnPrimary">#ffffff</item>
         <item name="android:windowBackground">@color/white</item>
+        <item name="android:fontFamily">@font/pretandard</item>
     </style>
 
     <style name="Theme.We_Save" parent="Base.Theme.We_Save" />
@@ -34,6 +35,16 @@
         <item name="android:backgroundTint">@color/white</item>
     </style>
 
+    <style name="App.Widget.TransparentBackgroundBottomSheetDialog" parent="@style/ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="bottomSheetStyle">@style/TransparentStyle</item>
+    </style>
+
+    <style name="TransparentStyle" parent="Widget.Material3.BottomSheet">
+        <item name="android:backgroundTint">@android:color/transparent</item>
+        <item name="android:elevation">0dp</item>
+    </style>
+
     <style name="CustomTabLayout" parent="Widget.Design.TabLayout">
         <item name="tabBackground">@drawable/tab_background_selector</item>
         <item name="tabIndicatorHeight">0dp</item>
@@ -46,5 +57,33 @@
         <item name="android:progressDrawable">@drawable/progressbar_progress</item>
         <item name="android:minHeight">16dp</item>
         <item name="android:maxHeight">16dp</item>
+    </style>
+
+    <!-- 선택되지 않은 탭의 텍스트 스타일 -->
+    <style name="TabTextUnselected" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/gray_40</item>
+        <item name="android:fontFamily">@font/pretendard_bold</item>
+    </style>
+
+    <!-- 선택된 탭의 텍스트 스타일 -->
+    <style name="TabTextSelected" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/gray_80</item>
+        <item name="android:fontFamily">@font/pretendard_bold</item>
+    </style>
+
+    <!-- 힌트 텍스트 스타일 -->
+    <style name="HintTextStyle">
+        <item name="android:textColor">@color/gray_70</item> <!-- 회색 -->
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">@font/pretendard_medium</item>
+    </style>
+
+    <!-- 입력된 텍스트 스타일 -->
+    <style name="InputTextStyle">
+        <item name="android:textColor">@color/gray_90</item> <!-- 검정색 -->
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">@font/pretendard_bold</item>
     </style>
 </resources>

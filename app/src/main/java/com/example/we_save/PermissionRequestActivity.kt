@@ -1,19 +1,22 @@
 package com.example.we_save
 
-import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
 import android.view.View
+import android.Manifest
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.example.we_save.databinding.ActivityPermissionRequestBinding
+import com.example.we_save.ui.MainActivity
 import com.example.we_save.ui.createAccount.LoginActivity
-import com.example.we_save.ui.main.CustomLineHeightSpan
 
 class PermissionRequestActivity : AppCompatActivity() {
     lateinit var binding : ActivityPermissionRequestBinding

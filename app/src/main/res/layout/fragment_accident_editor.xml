@@ -12,6 +12,15 @@
         app:liftOnScroll="false">
 
         <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/logo_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_anchor="@+id/appBarLayout"
+            app:layout_anchorGravity="center"
+            app:logo="@drawable/img_logo_horizontal"
+            app:menu="@menu/main" />
+
+        <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -98,7 +107,6 @@
                         android:layout_height="wrap_content"
                         android:enabled="false"
                         android:hint="위치"
-                        android:singleLine="true"
                         android:textColor="@color/gray_90" />
 
                 </com.google.android.material.textfield.TextInputLayout>
