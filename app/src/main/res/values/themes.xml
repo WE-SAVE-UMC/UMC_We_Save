@@ -58,4 +58,32 @@
         <item name="android:minHeight">16dp</item>
         <item name="android:maxHeight">16dp</item>
     </style>
+
+    <!-- 선택되지 않은 탭의 텍스트 스타일 -->
+    <style name="TabTextUnselected" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/gray_40</item>
+        <item name="android:fontFamily">@font/pretendard_bold</item>
+    </style>
+
+    <!-- 선택된 탭의 텍스트 스타일 -->
+    <style name="TabTextSelected" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/gray_80</item>
+        <item name="android:fontFamily">@font/pretendard_bold</item>
+    </style>
+
+    <!-- 힌트 텍스트 스타일 -->
+    <style name="HintTextStyle">
+        <item name="android:textColor">@color/gray_70</item> <!-- 회색 -->
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">@font/pretendard_medium</item>
+    </style>
+
+    <!-- 입력된 텍스트 스타일 -->
+    <style name="InputTextStyle">
+        <item name="android:textColor">@color/gray_90</item> <!-- 검정색 -->
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">@font/pretendard_bold</item>
+    </style>
 </resources>

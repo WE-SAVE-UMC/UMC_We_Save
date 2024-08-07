@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/item_post_writing_img_cardView"
+        android:layout_width="96dp"
+        android:layout_height="120dp"
+        app:cardCornerRadius="8dp"
+        android:elevation="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/item_post_writing_img_iv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/img_fire"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/item_post_writing_finished_tv"
+        android:layout_width="37dp"
+        android:layout_height="24dp"
+        android:text="종료"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:gravity="center"
+        android:elevation="2dp"
+        android:visibility="gone"
+        android:background="@drawable/shape_gray60"
+        app:layout_constraintStart_toStartOf="@id/item_post_writing_img_cardView"
+        app:layout_constraintEnd_toEndOf="@id/item_post_writing_img_cardView"
+        app:layout_constraintTop_toTopOf="@id/item_post_writing_img_cardView"
+        app:layout_constraintBottom_toBottomOf="@id/item_post_writing_img_cardView"/>
+
+
+    <ImageView
+        android:id="@+id/item_post_writing_select_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="2dp"
+        android:src="@drawable/ic_checkbox_off"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="4dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@id/item_post_writing_img_cardView"
+        app:layout_constraintTop_toTopOf="@id/item_post_writing_img_cardView"/>
+
+    <TextView
+        android:id="@+id/item_post_writing_title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="성신여대 화재"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="@id/item_post_writing_img_cardView"
+        app:layout_constraintTop_toBottomOf="@id/item_post_writing_img_cardView"/>
+
+    <TextView
+        android:id="@+id/item_post_writing_location_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="삼선동2가 389"
+        android:textSize="10sp"
+        android:textColor="@color/gray_40"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="@id/item_post_writing_title_tv"
+        app:layout_constraintTop_toBottomOf="@id/item_post_writing_title_tv"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
