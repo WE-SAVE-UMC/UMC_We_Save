@@ -1,7 +1,16 @@
 package com.example.we_save.ui.main.pages
+
+import org.w3c.dom.Element
 import okhttp3.Request
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.drawable.Drawable
+import android.location.Location
+import android.net.Uri
 import android.os.Bundle
 import android.text.Html
 import android.text.Editable
@@ -11,43 +20,66 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.we_save.NaverDirectionService
 import com.example.we_save.NaverSearchService
 import com.example.we_save.Place
 import com.example.we_save.R
 import com.example.we_save.SearchResultsAdapter
 import com.example.we_save.databinding.FragmentFacilitiesBinding
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.naver.maps.geometry.LatLng
+import com.naver.maps.geometry.LatLngBounds
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.LocationTrackingMode
 import com.naver.maps.map.MapFragment
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
+import com.naver.maps.map.overlay.InfoWindow
+import com.naver.maps.map.overlay.Marker
+import com.naver.maps.map.overlay.Overlay
+import com.naver.maps.map.overlay.OverlayImage
+import com.naver.maps.map.overlay.PathOverlay
 import com.naver.maps.map.util.FusedLocationSource
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
+import okhttp3.Response
 import org.json.JSONObject
+import org.json.XML
+import org.w3c.dom.NodeList
+import org.xml.sax.InputSource
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
+import java.io.StringReader
+import java.net.URLEncoder
+import java.util.Locale
+import java.util.concurrent.TimeUnit
+import javax.xml.parsers.DocumentBuilderFactory
+
+
 
 class FacilitiesFragment : Fragment(), OnMapReadyCallback {
     private var _binding: FragmentFacilitiesBinding? = null
     private val binding get() = _binding!!
     private lateinit var locationSource: FusedLocationSource
     private lateinit var naverMap: NaverMap
-    private lateinit var startSearchAdapter: SearchResultsAdapter
-    private lateinit var endSearchAdapter: SearchResultsAdapter
 
     private val permissions = arrayOf(
         Manifest.permission.READ_PHONE_STATE,
         Manifest.permission.ACCESS_FINE_LOCATION
     )
+
+    private val markers = mutableListOf<Marker>()
 
     private val requestPermissions =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
@@ -77,37 +109,23 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
             }
         mapFragment.getMapAsync(this)
 
-        setupSearch()
-
-        binding.startSearchResultsRecyclerView.layoutManager = LinearLayoutManager(context)
-        startSearchAdapter = SearchResultsAdapter { place ->
-            setEditText(binding.startLocationEditText, place.title)
-            binding.startSearchResultsRecyclerView.visibility = View.GONE
+        binding.pharmacyLocation.setOnClickListener {
+            fetchPharmacyDataWithinRadius()
         }
-        binding.startSearchResultsRecyclerView.adapter = startSearchAdapter
 
-        binding.endSearchResultsRecyclerView.layoutManager = LinearLayoutManager(context)
-        endSearchAdapter = SearchResultsAdapter { place ->
-            setEditText(binding.endLocationEditText, place.title)
-            binding.endSearchResultsRecyclerView.visibility = View.GONE
+        binding.emergencyLocation.setOnClickListener {
+            fetchEmergencyRoomData()
         }
-        binding.endSearchResultsRecyclerView.adapter = endSearchAdapter
 
-        binding.findDirectionsButton.setOnClickListener {
-            val startLocation = binding.startLocationEditText.text.toString()
-            val endLocation = binding.endLocationEditText.text.toString()
-            if (startLocation.isNotBlank() && endLocation.isNotBlank()) {
-                searchPlacesAndFindDirections(startLocation, endLocation)
-            } else {
-                Toast.makeText(context, "출발지와 도착지를 입력해주세요", Toast.LENGTH_SHORT).show()
-            }
+        binding.myLocation.setOnClickListener {
+            locationSource.lastLocation?.let { location ->
+                val cameraUpdate = CameraUpdate.scrollTo(LatLng(location.latitude, location.longitude))
+                naverMap.moveCamera(cameraUpdate)
+            } ?: Toast.makeText(context, "현재 위치를 가져올 수 없습니다.", Toast.LENGTH_SHORT).show()
         }
 
         return view
     }
-
-    private var startLocationTextWatcher: TextWatcher? = null
-    private var endLocationTextWatcher: TextWatcher? = null
 
     override fun onMapReady(naverMap: NaverMap) {
         this.naverMap = naverMap
@@ -133,148 +151,196 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    private fun setupSearch() {
-        startLocationTextWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (!s.isNullOrEmpty()) {
-                    searchPlaces(s.toString(), isStartLocation = true)
-                }
-            }
-
-            override fun afterTextChanged(s: Editable?) {}
-        }
-
-        endLocationTextWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (!s.isNullOrEmpty()) {
-                    searchPlaces(s.toString(), isStartLocation = false)
-                }
-            }
-
-            override fun afterTextChanged(s: Editable?) {}
-        }
-
-        binding.startLocationEditText.addTextChangedListener(startLocationTextWatcher)
-        binding.endLocationEditText.addTextChangedListener(endLocationTextWatcher)
-    }
-
-    private fun setEditText(editText: EditText, text: String) {
-        editText.removeTextChangedListener(if (editText == binding.startLocationEditText) startLocationTextWatcher else endLocationTextWatcher)
-        editText.setText(text)
-        editText.setSelection(text.length)
-        editText.addTextChangedListener(if (editText == binding.startLocationEditText) startLocationTextWatcher else endLocationTextWatcher)
-    }
-
-    private fun searchPlaces(query: String, isStartLocation: Boolean) {
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://openapi.naver.com/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-        val naverPlaceSearchService = retrofit.create(NaverSearchService::class.java)
+    private fun fetchPharmacyDataWithinRadius() {
+        val center = naverMap.cameraPosition.target
+        val radius = 5000 // 반경 5km 예시
 
         lifecycleScope.launch {
-            try {
-                val clientId = "vdqKo5kQa1fN6o27fotj"
-                val clientSecret = "OKGGoXgUCx"
-                val response = naverPlaceSearchService.searchPlaces(query, 5, 1, "random", clientId, clientSecret)
-                displayPlaces(response.items, isStartLocation)
-            } catch (e: Exception) {
-                Log.e("FacilitiesFragment", "Error searching places", e)
+            val totalPageCount = getTotalPageCount("pharmacy")
+            for (pageNo in 1..totalPageCount) {
+                val url = "http://apis.data.go.kr/B552657/ErmctInsttInfoInqireService/getParmacyListInfoInqire?serviceKey=ZDE04T%2F8%2BdNZgK9LHd1i9FSVAESIpl7S%2F1NtsdCayF1ZGt9EiUq6G1K2iEhCAb%2Fto2jbI4UJxFz2vhVXHI%2FrBA%3D%3D&numOfRows=100&pageNo=$pageNo&QT=1&ORD=NAME"
+                val response = fetchData(url)
+                response?.let { parsePharmacyDataWithinRadius(it, center, radius) }
             }
         }
     }
 
-    private fun displayPlaces(places: List<Place>, isStartLocation: Boolean) {
-        val formattedPlaces = places.map {
-            it.copy(title = Html.fromHtml(it.title, Html.FROM_HTML_MODE_LEGACY).toString()) // HTML 태그 제거
+    private fun fetchEmergencyRoomData() {
+        lifecycleScope.launch {
+            val totalPageCount = getTotalPageCount("emergency")
+            for (pageNo in 1..totalPageCount) {
+                val url = "https://apis.data.go.kr/B551182/hospInfoServicev2/getHospBasisList?ServiceKey=ZDE04T%2F8%2BdNZgK9LHd1i9FSVAESIpl7S%2F1NtsdCayF1ZGt9EiUq6G1K2iEhCAb%2Fto2jbI4UJxFz2vhVXHI%2FrBA%3D%3D&pageNo=$pageNo&numOfRows=100"
+                val response = fetchData(url)
+                Log.d("FacilitiesFragment", "Emergency Data Response: $response")
+                response?.let { parseEmergencyRoomData(it) }
+            }
         }
+    }
 
-        if (isStartLocation) {
-            startSearchAdapter.submitList(formattedPlaces)
-            binding.startSearchResultsRecyclerView.visibility = View.VISIBLE
+    private suspend fun getTotalPageCount(type: String): Int {
+        val url = if (type == "pharmacy") {
+            "http://apis.data.go.kr/B552657/ErmctInsttInfoInqireService/getParmacyListInfoInqire?serviceKey=ZDE04T%2F8%2BdNZgK9LHd1i9FSVAESIpl7S%2F1NtsdCayF1ZGt9EiUq6G1K2iEhCAb%2Fto2jbI4UJxFz2vhVXHI%2FrBA%3D%3D&numOfRows=1&pageNo=1&QT=1&ORD=NAME"
         } else {
-            endSearchAdapter.submitList(formattedPlaces)
-            binding.endSearchResultsRecyclerView.visibility = View.VISIBLE
+            "https://apis.data.go.kr/B551182/hospInfoServicev2/getHospBasisList?ServiceKey=ZDE04T%2F8%2BdNZgK9LHd1i9FSVAESIpl7S%2F1NtsdCayF1ZGt9EiUq6G1K2iEhCAb%2Fto2jbI4UJxFz2vhVXHI%2FrBA%3D%3D&pageNo=1&numOfRows=1"
+        }
+        val response = fetchData(url)
+        Log.d("FacilitiesFragment", "Total Page Count Response ($type): $response")
+        return response?.let {
+            parseTotalCount(it)
+        } ?: 0
+    }
+
+    private fun parseTotalCount(response: String): Int {
+        return try {
+            val factory = DocumentBuilderFactory.newInstance()
+            val builder = factory.newDocumentBuilder()
+            val xmlDoc = builder.parse(InputSource(StringReader(response)))
+            val totalCountNode = xmlDoc.getElementsByTagName("totalCount").item(0)
+            totalCountNode.textContent.toInt()
+        } catch (e: Exception) {
+            Log.e("FacilitiesFragment", "Error parsing total count", e)
+            0
         }
     }
 
-    private fun searchPlacesAndFindDirections(startQuery: String, endQuery: String) {
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://openapi.naver.com/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-        val naverPlaceSearchService = retrofit.create(NaverSearchService::class.java)
-
-        lifecycleScope.launch {
+    private suspend fun fetchData(url: String): String? {
+        return withContext(Dispatchers.IO) {
             try {
-                val clientId = "vdqKo5kQa1fN6o27fotj"
-                val clientSecret = "OKGGoXgUCx"
-                val startResponse = naverPlaceSearchService.searchPlaces(startQuery, 5, 1, "random", clientId, clientSecret)
-                val endResponse = naverPlaceSearchService.searchPlaces(endQuery, 5, 1, "random", clientId, clientSecret)
-
-                if (startResponse.items.isNotEmpty() && endResponse.items.isNotEmpty()) {
-                    val startPlace = startResponse.items[0]
-                    val endPlace = endResponse.items[0]
-
-                    val startLatLng = LatLng(startPlace.mapy.toDoubleOrNull() ?: 0.0, startPlace.mapx.toDoubleOrNull() ?: 0.0)
-                    val endLatLng = LatLng(endPlace.mapy.toDoubleOrNull() ?: 0.0, endPlace.mapx.toDoubleOrNull() ?: 0.0)
-
-                    findDirections(startLatLng, endLatLng)
-                } else {
-                    Toast.makeText(context, "출발지 또는 도착지를 찾을 수 없습니다", Toast.LENGTH_SHORT).show()
-                }
+                val client = OkHttpClient()
+                val request = Request.Builder().url(url).build()
+                val response: Response = client.newCall(request).execute()
+                val responseBody = response.body?.string()
+                Log.d("FacilitiesFragment", "API Response: $responseBody")
+                responseBody
             } catch (e: Exception) {
-                Log.e("FacilitiesFragment", "Error searching places for directions", e)
+                Log.e("FacilitiesFragment", "Error fetching data from server", e)
+                null
             }
         }
     }
 
-    private fun findDirections(startLocation: LatLng, endLocation: LatLng) {
-        val apiKey = "OKGGoXgUCx"
-        val clientId = "vdqKo5kQa1fN6o27fotj"
-        val startLocationString = "${startLocation.longitude},${startLocation.latitude}"
-        val endLocationString = "${endLocation.longitude},${endLocation.latitude}"
-        val url = "https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving?start=$startLocationString&goal=$endLocationString"
+    private fun parsePharmacyDataWithinRadius(response: String, center: LatLng, radius: Int) {
+        try {
+            val factory = DocumentBuilderFactory.newInstance()
+            val builder = factory.newDocumentBuilder()
+            val xmlDoc = builder.parse(InputSource(StringReader(response)))
+            val items: NodeList = xmlDoc.getElementsByTagName("item")
 
-        val client = OkHttpClient()
-        val request = Request.Builder()
-            .url(url)
-            .addHeader("X-NCP-APIGW-API-KEY-ID", clientId)
-            .addHeader("X-NCP-APIGW-API-KEY", apiKey)
-            .build()
+            for (i in 0 until items.length) {
+                val item = items.item(i) as Element
+                val lat = item.getElementsByTagName("wgs84Lat").item(0).textContent.toDouble()
+                val lng = item.getElementsByTagName("wgs84Lon").item(0).textContent.toDouble()
+                val name = item.getElementsByTagName("dutyName").item(0).textContent
+                val address = item.getElementsByTagName("dutyAddr").item(0).textContent
 
-        client.newCall(request).enqueue(object : okhttp3.Callback {
-            override fun onFailure(call: okhttp3.Call, e: IOException) {
-                e.printStackTrace()
-            }
-
-            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
-                response.body?.string()?.let { responseData ->
-                    val jsonObject = JSONObject(responseData)
-                    val route = jsonObject.getJSONObject("route").getJSONArray("traoptimal")
-                    val path = route.getJSONObject(0).getJSONArray("path")
-
-                    requireActivity().runOnUiThread {
-                        val pathOverlay = com.naver.maps.map.overlay.PathOverlay()
-                        val coords = mutableListOf<LatLng>()
-
-                        for (i in 0 until path.length()) {
-                            val point = path.getJSONArray(i)
-                            val lat = point.getDouble(1)
-                            val lng = point.getDouble(0)
-                            coords.add(LatLng(lat, lng))
-                        }
-
-                        pathOverlay.coords = coords
-                        pathOverlay.map = naverMap
-                    }
+                val distance = FloatArray(1)
+                Location.distanceBetween(center.latitude, center.longitude, lat, lng, distance)
+                if (distance[0] <= radius) {
+                    Log.d("FacilitiesFragment", "Adding Pharmacy Marker: $name at ($lat, $lng)")
+                    addMarker(lat, lng, name, address, "pharmacy")
                 }
             }
-        })
+        } catch (e: Exception) {
+            Log.e("FacilitiesFragment", "Error parsing pharmacy data within radius", e)
+        }
+    }
+
+    private fun parseEmergencyRoomData(response: String) {
+        try {
+            val factory = DocumentBuilderFactory.newInstance()
+            val builder = factory.newDocumentBuilder()
+            val xmlDoc = builder.parse(InputSource(StringReader(response)))
+            val items: NodeList = xmlDoc.getElementsByTagName("item")
+
+            for (i in 0 until items.length) {
+                val item = items.item(i) as Element
+                val latNode = item.getElementsByTagName("YPos").item(0)
+                val lngNode = item.getElementsByTagName("XPos").item(0)
+                val nameNode = item.getElementsByTagName("yadmNm").item(0)
+                val addressNode = item.getElementsByTagName("addr").item(0)
+
+                if (latNode != null && lngNode != null && nameNode != null && addressNode != null) {
+                    val lat = latNode.textContent.toDouble()
+                    val lng = lngNode.textContent.toDouble()
+                    val name = nameNode.textContent
+                    val address = addressNode.textContent
+                    Log.d("FacilitiesFragment", "Adding Emergency Room Marker: $name at ($lat, $lng)")
+                    addMarker(lat, lng, name, address, "emergency")
+                } else {
+                    if (latNode == null) Log.e("FacilitiesFragment", "Missing latitude for emergency room item at index $i")
+                    if (lngNode == null) Log.e("FacilitiesFragment", "Missing longitude for emergency room item at index $i")
+                    if (nameNode == null) Log.e("FacilitiesFragment", "Missing name for emergency room item at index $i")
+                    if (addressNode == null) Log.e("FacilitiesFragment", "Missing address for emergency room item at index $i")
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("FacilitiesFragment", "Error parsing emergency room data", e)
+        }
+    }
+
+    private fun drawableToBitmap(drawable: Drawable): Bitmap {
+        val bitmap = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
+        return bitmap
+    }
+
+    private fun addMarker(lat: Double, lng: Double, title: String, address: String, type: String) {
+        val marker = Marker()
+        marker.position = LatLng(lat, lng)
+        marker.map = naverMap
+        marker.captionText = title
+
+        val drawable = if (type == "pharmacy") {
+            ContextCompat.getDrawable(requireContext(), R.drawable.pharmacy_marker)
+        } else {
+            ContextCompat.getDrawable(requireContext(), R.drawable.emergency_marker)
+        }
+
+        if (drawable != null) {
+            val bitmap = drawableToBitmap(drawable)
+            val overlayImage = OverlayImage.fromBitmap(bitmap)
+            marker.icon = overlayImage
+        }
+
+        markers.add(marker)
+
+        marker.setOnClickListener {
+            showBottomSheetDialog(title, address, lat, lng)
+            true
+        }
+    }
+
+    private fun showBottomSheetDialog(title: String, address: String, lat: Double, lng: Double) {
+        val bottomSheetView = layoutInflater.inflate(R.layout.facility_bottom_sheet, null)
+        val bottomSheetDialog = BottomSheetDialog(requireContext())
+        bottomSheetDialog.setContentView(bottomSheetView)
+
+        val nameTextView = bottomSheetView.findViewById<TextView>(R.id.pharmacy_name)
+        val distanceTextView = bottomSheetView.findViewById<TextView>(R.id.pharmacy_distance)
+        val addressTextView = bottomSheetView.findViewById<TextView>(R.id.pharmacy_address)
+        val directionsButton = bottomSheetView.findViewById<ImageView>(R.id.directions_button)
+
+        nameTextView.text = title
+        addressTextView.text = address
+
+        val currentLocation = locationSource.lastLocation
+        if (currentLocation != null) {
+            val distance = FloatArray(1)
+            Location.distanceBetween(currentLocation.latitude, currentLocation.longitude, lat, lng, distance)
+            distanceTextView.text = "거리: ${distance[0].toInt()}m"
+        } else {
+            distanceTextView.text = "거리 정보를 가져올 수 없습니다."
+        }
+
+        directionsButton.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("geo:$lat,$lng?q=$lat,$lng($title)"))
+            startActivity(intent)
+            bottomSheetDialog.dismiss()
+        }
+
+        bottomSheetDialog.show()
     }
 
     override fun onDestroyView() {

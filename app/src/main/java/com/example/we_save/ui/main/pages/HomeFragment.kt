@@ -1,6 +1,7 @@
 package com.example.we_save.ui.main.pages
 
 import android.content.Intent
+import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -25,19 +26,21 @@ import com.example.we_save.ui.main.MainTabAdapter
 import com.example.we_save.R
 import com.example.we_save.SearchActivity
 import com.example.we_save.databinding.FragmentHomeBinding
+import com.example.we_save.ui.main.MainDistanceFragment
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.badge.BadgeUtils
 import com.google.android.material.badge.ExperimentalBadgeUtils
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    private lateinit var tabLayout: TabLayout
-    private lateinit var viewPager: ViewPager2
+    private var selectedButton: MaterialCardView? = null
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -45,7 +48,24 @@ class HomeFragment : Fragment() {
     ): View {
         (activity as? AppCompatActivity)?.supportActionBar?.hide()
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        return binding.root
+        val view = binding.root
+
+        val bottomNavigationView = activity?.findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
+
+        view.viewTreeObserver.addOnGlobalLayoutListener {
+            val rect = Rect()
+            view.getWindowVisibleDisplayFrame(rect)
+            val screenHeight = view.rootView.height
+            val keypadHeight = screenHeight - rect.bottom
+
+            if (keypadHeight > screenHeight * 0.15) {
+                bottomNavigationView?.visibility = View.GONE
+            } else {
+                bottomNavigationView?.visibility = View.VISIBLE
+            }
+        }
+
+        return view
     }
 
 
@@ -122,54 +142,50 @@ class HomeFragment : Fragment() {
                 whiteToolbar.toolbar2.visibility = View.GONE
             }
         })
-
-
-        tabLayout = binding.nearAccidentTablayout
-        viewPager = binding.nearAccidentViewPager
-
-        val tabAdapter = MainTabAdapter(requireActivity())
-        viewPager.adapter = tabAdapter
-
-        // TabLayout과 ViewPager2를 연결
-        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-            tab.text = arrayOf("거리순", "최신순", "확인순")[position]
-        }.attach()
-
-        for (i in 0 until tabLayout.tabCount) {
-            val tab = (tabLayout.getChildAt(0) as ViewGroup).getChildAt(i)
-            val layoutParams = tab.layoutParams as ViewGroup.MarginLayoutParams
-            layoutParams.setMargins(2, 0, 2, 0)
-            tab.requestLayout()
+      // tab과 유사한 기능을 구현
+        binding.distanceFilterButton.setOnClickListener {
+            selectButton(it as MaterialCardView, R.id.distance_filter_tv)
+            replaceFragment(MainDistanceFragment())
         }
 
-        tabLayout.getTabAt(0)?.select()
-        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                val tabView = tab.view
-                tabView.background = ContextCompat.getDrawable(requireContext(), R.drawable.main_tab_selected_background)
-                val tabText = findTextViewInTab(tabView)
-                tabText?.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-            }
+        binding.recentFilterButton1.setOnClickListener {
+            selectButton(it as MaterialCardView, R.id.recent_filter_tv)
+            replaceFragment(MainDistanceFragment())
+        }
 
-            override fun onTabUnselected(tab: TabLayout.Tab) {
-                val tabView = tab.view
-                tabView.background = ContextCompat.getDrawable(requireContext(), R.drawable.main_tab_unselected_background)
-                val tabText = findTextViewInTab(tabView)
-                tabText?.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray_40))
-            }
+        binding.okFilterButton1.setOnClickListener {
+            selectButton(it as MaterialCardView, R.id.ok_filter_tv)
+            replaceFragment(MainDistanceFragment())
+        }
 
-            override fun onTabReselected(tab: TabLayout.Tab?) {
 
-            }
-
-        })
-        updateTabStyle(tabLayout.getTabAt(0), true)
     }
     override fun onDestroyView() {
         super.onDestroyView()
         val toolbar = activity?.findViewById<Toolbar>(R.id.toolbar)
         toolbar?.visibility = View.VISIBLE
         showToolbar()
+    }
+    private fun selectButton(button: MaterialCardView, textViewId: Int) {
+        selectedButton?.apply {
+            setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.toggle_filter_background))
+            findViewById<TextView>(R.id.distance_filter_tv)?.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray_40))
+            findViewById<TextView>(R.id.recent_filter_tv)?.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray_40))
+            findViewById<TextView>(R.id.ok_filter_tv)?.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray_40))
+        }
+
+        button.apply {
+            setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.red_50))
+            findViewById<TextView>(textViewId).setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+        }
+
+        selectedButton = button
+    }
+
+    private fun replaceFragment(fragment: Fragment) {
+        childFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container_view, fragment)
+            .commit()
     }
 
     private fun findTextViewInTab(tabView: ViewGroup): TextView? {

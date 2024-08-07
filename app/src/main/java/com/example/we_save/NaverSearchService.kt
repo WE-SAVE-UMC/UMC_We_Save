@@ -16,3 +16,12 @@ interface NaverSearchService {
         @Header("X-Naver-Client-Secret") clientSecret: String
     ): PlaceSearchResponse
 }
+data class PlaceSearchResponse(
+    val items: List<Place>
+)
+
+data class Place(
+    val title: String,
+    val mapx: String,
+    val mapy: String
+)
