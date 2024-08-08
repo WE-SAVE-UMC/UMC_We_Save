@@ -25,11 +25,15 @@ class CreateAccountCertificationActivity : AppCompatActivity() {
         val certificationnum : EditText = binding.enterCertificationNumber
         window.statusBarColor = ContextCompat.getColor(this, R.color.white)
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+
+        val phoneNum = intent.getStringExtra("phoneNum") ?: ""
+
         loginbutton.setOnClickListener {
             val text = certificationnum.text
             //조건문
             //일치한다면
             val intent = Intent(this, CreateAccountPasswordActivity::class.java)
+            intent.putExtra("phoneNum", phoneNum)
             startActivity(intent)
             /*//일치하지 않는다면
             errormessage.visibility = TextView.VISIBLE

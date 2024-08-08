@@ -12,6 +12,8 @@ import androidx.core.content.ContextCompat
 import com.example.we_save.databinding.ActivitySplashBinding
 import com.example.we_save.ui.MainActivity
 import com.example.we_save.ui.createAccount.LoginActivity
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {
@@ -21,6 +23,19 @@ class SplashActivity : AppCompatActivity() {
         Manifest.permission.READ_PHONE_STATE,
         Manifest.permission.ACCESS_FINE_LOCATION,
     )
+    //레트로핏 설정
+    object RetrofitInstance {
+        private val retrofit by lazy {
+            Retrofit.Builder()
+                .baseUrl("http://114.108.153.82:8080/")  // baseUrl 형식 확인
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+        }
+
+        val api: UserService by lazy {
+            retrofit.create(UserService::class.java)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
