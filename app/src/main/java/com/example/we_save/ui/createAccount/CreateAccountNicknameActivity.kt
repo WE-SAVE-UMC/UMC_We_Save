@@ -11,6 +11,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.example.we_save.NicknameResponse
 import com.example.we_save.R
 import com.example.we_save.SplashActivity
 import com.example.we_save.User
@@ -44,11 +45,29 @@ class CreateAccountNicknameActivity : AppCompatActivity() {
             if (nicknameText.isNotEmpty()) {
                 val userRequest = User(phoneNum, password, nicknameText)
                 Log.d("CreateAccountNicknameActivity", "Creating user with: $userRequest")
-                createUser(userRequest)
+                checkNicknameValidity(nicknameText, phoneNum, password)
             } else {
                 Toast.makeText(this, "닉네임을 입력해주세요.", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+    private fun checkNicknameValidity(nickname: String, phoneNum: String, password: String) {// 닉네임 유효성 체크
+        val call = SplashActivity.RetrofitInstance.validapi.checkNickname(nickname)
+        call.enqueue(object : Callback<NicknameResponse> {
+            override fun onResponse(call: Call<NicknameResponse>, response: Response<NicknameResponse>) {
+                if (response.isSuccessful && response.body()?.result?.isValid == true) {
+                    Toast.makeText(this@CreateAccountNicknameActivity, "유효한 닉네임입니다.", Toast.LENGTH_SHORT).show()
+                    val userRequest = User(phoneNum, password, nickname)
+                    createUser(userRequest)
+                } else {
+                    Toast.makeText(this@CreateAccountNicknameActivity, "이미 사용 중인 닉네임입니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<NicknameResponse>, t: Throwable) {
+                Toast.makeText(this@CreateAccountNicknameActivity, "네트워크 오류: ${t.message}", Toast.LENGTH_LONG).show()
+            }
+        })
     }
 
     private fun createUser(userRequest: User) {

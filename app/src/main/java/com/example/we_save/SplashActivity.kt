@@ -35,6 +35,12 @@ class SplashActivity : AppCompatActivity() {
         val api: UserService by lazy {
             retrofit.create(UserService::class.java)
         }
+        val smsapi: SmsService by lazy {
+            retrofit.create(SmsService::class.java)
+        }
+        val validapi: vaildService by lazy {
+            retrofit.create(vaildService::class.java)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
