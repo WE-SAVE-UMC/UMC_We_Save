@@ -33,6 +33,8 @@ import com.example.we_save.NaverSearchService
 import com.example.we_save.Place
 import com.example.we_save.R
 import com.example.we_save.SearchResultsAdapter
+import com.example.we_save.ShelterRow
+import com.example.we_save.ShelterService
 import com.example.we_save.databinding.FragmentFacilitiesBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.naver.maps.geometry.LatLng
@@ -53,17 +55,27 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Response
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.json.JSONObject
 import org.json.XML
 import org.w3c.dom.NodeList
 import org.xml.sax.InputSource
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.BufferedReader
 import java.io.IOException
+import java.io.InputStream
+import java.io.InputStreamReader
 import java.io.StringReader
 import java.net.URLEncoder
+import java.security.SecureRandom
+import java.security.cert.X509Certificate
 import java.util.Locale
 import java.util.concurrent.TimeUnit
+import javax.net.ssl.HostnameVerifier
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManager
+import javax.net.ssl.X509TrustManager
 import javax.xml.parsers.DocumentBuilderFactory
 
 
@@ -93,6 +105,8 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
+        requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.white)
+        requireActivity().window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
     }
 
     override fun onCreateView(
@@ -114,7 +128,11 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
         }
 
         binding.emergencyLocation.setOnClickListener {
-            fetchEmergencyRoomData()
+            fetchEmergencyRoomDataWithinRadius() // 반경 필터링된 응급실 데이터 가져오기
+        }
+
+        binding.shelterLocation.setOnClickListener {
+            fetchEmergencyAssemblyAreaData() // 대피소 데이터 가져오기 함수 호출
         }
 
         binding.myLocation.setOnClickListener {
@@ -131,6 +149,7 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
         this.naverMap = naverMap
         if (hasAllPermissions()) {
             setupMap()
+            fetchEmergencyAssemblyAreaData() // 지도 준비 후 대피소 데이터를 가져옴
         } else {
             requestPermissions.launch(permissions)
         }
@@ -151,6 +170,46 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
+    // 새로운 대피소 데이터를 가져오는 함수
+    private fun fetchEmergencyAssemblyAreaData() {
+        lifecycleScope.launch {
+            try {
+                // URL 업데이트
+                val url = "https://apis.data.go.kr/1741000/EmergencyAssemblyArea_Earthquake5/getArea4List2?ServiceKey=ZDE04T%2F8%2BdNZgK9LHd1i9FSVAESIpl7S%2F1NtsdCayF1ZGt9EiUq6G1K2iEhCAb%2Fto2jbI4UJxFz2vhVXHI%2FrBA%3D%3D&pageNo=1&numOfRows=100&type=xml"
+                val response = fetchData(url)
+                response?.let {
+                    parseEmergencyAssemblyAreaData(it)
+                }
+            } catch (e: Exception) {
+                Log.e("FacilitiesFragment", "Error fetching emergency assembly area data", e)
+            }
+        }
+    }
+
+    // XML 데이터를 파싱하여 대피소 마커 추가
+    private fun parseEmergencyAssemblyAreaData(response: String) {
+        try {
+            val factory = DocumentBuilderFactory.newInstance()
+            val builder = factory.newDocumentBuilder()
+            val xmlDoc = builder.parse(InputSource(StringReader(response)))
+            val items: NodeList = xmlDoc.getElementsByTagName("row")
+
+            for (i in 0 until items.length) {
+                val item = items.item(i) as Element
+                val lat = item.getElementsByTagName("ycord").item(0).textContent.toDouble()
+                val lng = item.getElementsByTagName("xcord").item(0).textContent.toDouble()
+                val name = item.getElementsByTagName("vt_acmdfclty_nm").item(0).textContent
+                val address = item.getElementsByTagName("rn_adres").item(0).textContent
+
+                Log.d("FacilitiesFragment", "Adding Assembly Area Marker: $name at ($lat, $lng)")
+                addShelterMarker(lat, lng, name, address)
+            }
+        } catch (e: Exception) {
+            Log.e("FacilitiesFragment", "Error parsing emergency assembly area data", e)
+        }
+    }
+
+    // 약국 데이터를 가져오는 함수
     private fun fetchPharmacyDataWithinRadius() {
         val center = naverMap.cameraPosition.target
         val radius = 5000 // 반경 5km 예시
@@ -165,15 +224,58 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    private fun fetchEmergencyRoomData() {
+    // 반경 내 응급실 데이터를 가져오는 함수
+    private fun fetchEmergencyRoomDataWithinRadius() {
+        val center = naverMap.cameraPosition.target
+        val radius = 5000 // 반경 5km 예시
+
         lifecycleScope.launch {
             val totalPageCount = getTotalPageCount("emergency")
             for (pageNo in 1..totalPageCount) {
                 val url = "https://apis.data.go.kr/B551182/hospInfoServicev2/getHospBasisList?ServiceKey=ZDE04T%2F8%2BdNZgK9LHd1i9FSVAESIpl7S%2F1NtsdCayF1ZGt9EiUq6G1K2iEhCAb%2Fto2jbI4UJxFz2vhVXHI%2FrBA%3D%3D&pageNo=$pageNo&numOfRows=100"
                 val response = fetchData(url)
-                Log.d("FacilitiesFragment", "Emergency Data Response: $response")
-                response?.let { parseEmergencyRoomData(it) }
+                response?.let { parseEmergencyRoomDataWithinRadius(it, center, radius) }
             }
+        }
+    }
+
+    // 반경 내의 응급실 데이터만 파싱
+    private fun parseEmergencyRoomDataWithinRadius(response: String, center: LatLng, radius: Int) {
+        try {
+            val factory = DocumentBuilderFactory.newInstance()
+            val builder = factory.newDocumentBuilder()
+            val xmlDoc = builder.parse(InputSource(StringReader(response)))
+            val items: NodeList = xmlDoc.getElementsByTagName("item")
+
+            for (i in 0 until items.length) {
+                val item = items.item(i) as Element
+                val latNode = item.getElementsByTagName("YPos").item(0)
+                val lngNode = item.getElementsByTagName("XPos").item(0)
+                val nameNode = item.getElementsByTagName("yadmNm").item(0)
+                val addressNode = item.getElementsByTagName("addr").item(0)
+
+                if (latNode != null && lngNode != null && nameNode != null && addressNode != null) {
+                    val lat = latNode.textContent.toDouble()
+                    val lng = lngNode.textContent.toDouble()
+                    val name = nameNode.textContent
+                    val address = addressNode.textContent
+
+                    // 반경 내에 있는지 확인
+                    val distance = FloatArray(1)
+                    Location.distanceBetween(center.latitude, center.longitude, lat, lng, distance)
+                    if (distance[0] <= radius) {
+                        Log.d("FacilitiesFragment", "Adding Emergency Room Marker: $name at ($lat, $lng)")
+                        addMarker(lat, lng, name, address, "emergency")
+                    }
+                } else {
+                    if (latNode == null) Log.e("FacilitiesFragment", "Missing latitude for emergency room item at index $i")
+                    if (lngNode == null) Log.e("FacilitiesFragment", "Missing longitude for emergency room item at index $i")
+                    if (nameNode == null) Log.e("FacilitiesFragment", "Missing name for emergency room item at index $i")
+                    if (addressNode == null) Log.e("FacilitiesFragment", "Missing address for emergency room item at index $i")
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("FacilitiesFragment", "Error parsing emergency room data within radius", e)
         }
     }
 
@@ -210,7 +312,7 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
                 val request = Request.Builder().url(url).build()
                 val response: Response = client.newCall(request).execute()
                 val responseBody = response.body?.string()
-                Log.d("FacilitiesFragment", "API Response: $responseBody")
+                Log.d("FacilitiesFragment", "API Response: $responseBody") // 응답 내용 로그에 출력
                 responseBody
             } catch (e: Exception) {
                 Log.e("FacilitiesFragment", "Error fetching data from server", e)
@@ -245,47 +347,7 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    private fun parseEmergencyRoomData(response: String) {
-        try {
-            val factory = DocumentBuilderFactory.newInstance()
-            val builder = factory.newDocumentBuilder()
-            val xmlDoc = builder.parse(InputSource(StringReader(response)))
-            val items: NodeList = xmlDoc.getElementsByTagName("item")
-
-            for (i in 0 until items.length) {
-                val item = items.item(i) as Element
-                val latNode = item.getElementsByTagName("YPos").item(0)
-                val lngNode = item.getElementsByTagName("XPos").item(0)
-                val nameNode = item.getElementsByTagName("yadmNm").item(0)
-                val addressNode = item.getElementsByTagName("addr").item(0)
-
-                if (latNode != null && lngNode != null && nameNode != null && addressNode != null) {
-                    val lat = latNode.textContent.toDouble()
-                    val lng = lngNode.textContent.toDouble()
-                    val name = nameNode.textContent
-                    val address = addressNode.textContent
-                    Log.d("FacilitiesFragment", "Adding Emergency Room Marker: $name at ($lat, $lng)")
-                    addMarker(lat, lng, name, address, "emergency")
-                } else {
-                    if (latNode == null) Log.e("FacilitiesFragment", "Missing latitude for emergency room item at index $i")
-                    if (lngNode == null) Log.e("FacilitiesFragment", "Missing longitude for emergency room item at index $i")
-                    if (nameNode == null) Log.e("FacilitiesFragment", "Missing name for emergency room item at index $i")
-                    if (addressNode == null) Log.e("FacilitiesFragment", "Missing address for emergency room item at index $i")
-                }
-            }
-        } catch (e: Exception) {
-            Log.e("FacilitiesFragment", "Error parsing emergency room data", e)
-        }
-    }
-
-    private fun drawableToBitmap(drawable: Drawable): Bitmap {
-        val bitmap = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-        drawable.setBounds(0, 0, canvas.width, canvas.height)
-        drawable.draw(canvas)
-        return bitmap
-    }
-
+    // 마커를 추가하는 함수
     private fun addMarker(lat: Double, lng: Double, title: String, address: String, type: String) {
         val marker = Marker()
         marker.position = LatLng(lat, lng)
@@ -294,8 +356,10 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
 
         val drawable = if (type == "pharmacy") {
             ContextCompat.getDrawable(requireContext(), R.drawable.pharmacy_marker)
-        } else {
+        } else if (type == "emergency") {
             ContextCompat.getDrawable(requireContext(), R.drawable.emergency_marker)
+        } else {
+            ContextCompat.getDrawable(requireContext(), R.drawable.shleter_marker)
         }
 
         if (drawable != null) {
@@ -304,12 +368,19 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
             marker.icon = overlayImage
         }
 
+        Log.d("FacilitiesFragment", "Marker added at lat: $lat, lng: $lng with name: $title")
+
         markers.add(marker)
 
         marker.setOnClickListener {
             showBottomSheetDialog(title, address, lat, lng)
             true
         }
+    }
+
+    // 대피소 마커를 추가하는 함수
+    private fun addShelterMarker(lat: Double, lng: Double, name: String, address: String) {
+        addMarker(lat, lng, name, address, "shelter")
     }
 
     private fun showBottomSheetDialog(title: String, address: String, lat: Double, lng: Double) {
@@ -341,6 +412,14 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
         }
 
         bottomSheetDialog.show()
+    }
+
+    private fun drawableToBitmap(drawable: Drawable): Bitmap {
+        val bitmap = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
+        return bitmap
     }
 
     override fun onDestroyView() {

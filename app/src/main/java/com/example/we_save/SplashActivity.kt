@@ -2,6 +2,7 @@ package com.example.we_save
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -23,7 +24,8 @@ class SplashActivity : AppCompatActivity() {
         Manifest.permission.READ_PHONE_STATE,
         Manifest.permission.ACCESS_FINE_LOCATION,
     )
-    //레트로핏 설정
+
+    // 레트로핏 설정
     object RetrofitInstance {
         private val retrofit by lazy {
             Retrofit.Builder()
@@ -60,7 +62,6 @@ class SplashActivity : AppCompatActivity() {
                 startActivity(intent)
                 finish()
             }, 2000)
-
         }
     }
 
@@ -72,9 +73,9 @@ class SplashActivity : AppCompatActivity() {
 
     // 서버로부터 사용자의 로그인 여부 확인
     private fun isUserLoggedIn(): Boolean {
-        //val sharedPreferences = getSharedPreferences("user", Context.MODE_PRIVATE)
-        //return sharedPreferences.getBoolean("login", false)
-        return false
+        val sharedPreferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+        val token = sharedPreferences.getString("jwtToken", null)
+        return !token.isNullOrEmpty()  // 토큰이 존재하면 로그인 상태로 간주
     }
 
     private fun navigateToNextActivity() {

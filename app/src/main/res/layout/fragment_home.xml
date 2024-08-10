@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:id="@+id/root_layout"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/black"
+
     xmlns:android="http://schemas.android.com/apk/res/android">
     <include
         android:id="@+id/maintoolbar"
@@ -22,6 +23,7 @@
     <androidx.core.widget.NestedScrollView
         android:id="@+id/main_nestscrollview"
         app:layout_constraintStart_toStartOf="parent"
+        android:background="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/maintoolbar"
         android:layout_width="match_parent"
@@ -63,10 +65,13 @@
                     android:paddingEnd="8dp"
                     android:paddingBottom="2dp"
                     android:textColor="@color/white"
+                    android:textFontWeight="600"
+                    android:fontFamily="@font/pretandard"
                     android:text="돈암동"
                     android:textSize="9sp"
                     android:lineHeight="12dp"
-                    />
+                    android:gravity="center"
+                android:includeFontPadding="false"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="16dp"
@@ -75,6 +80,7 @@
                     app:layout_constraintStart_toStartOf="@id/main_upper_bar"
                     android:layout_marginStart="98dp"
                     android:textColor="@color/white"
+                    android:fontFamily="@font/pretandard"
                     android:lineHeight="16.2dp"
                     android:textSize="12sp"
                     android:text="사용자가 작성한 알람"
@@ -84,9 +90,11 @@
 
             <TextView
                 android:id="@+id/main_tv"
-                android:layout_width="220dp"
+                android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:text="도움이 필요하신가요?"
+                android:fontFamily="@font/pretandard"
+                android:textFontWeight="700"
                 android:textColor="@color/white"
                 app:layout_constraintTop_toBottomOf="@id/main_upper_bar"
                 android:layout_marginTop="20dp"
@@ -98,6 +106,8 @@
                 android:id="@+id/main_suv_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="20dp"
+                android:textFontWeight="500"
+                android:fontFamily="@font/pretandard"
                 app:layout_constraintTop_toBottomOf="@id/main_tv"
                 app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginStart="20dp"
@@ -134,7 +144,7 @@
             <ImageView
                 android:id="@+id/main_under_background"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginTop="12dp"
                 android:background="@drawable/main_white_background"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -152,6 +162,8 @@
                 android:textSize="20sp"
                 android:textColor="@color/black"
                 android:lineHeight="24dp"
+                android:fontFamily="@font/pretandard"
+                android:textFontWeight="700"
                 app:layout_constraintHorizontal_weight="700"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/main_under_background"
@@ -281,6 +293,8 @@
                     android:id="@+id/korea_accident"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/pretandard"
+                    android:textFontWeight="700"
                     app:layout_constraintTop_toTopOf="@+id/korea_constlay"
                     app:layout_constraintStart_toStartOf="@id/korea_constlay"
                     android:text="국내,사건 사고"
@@ -302,18 +316,243 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/map_view"
-                android:layout_width="wrap_content"
-                android:layout_height="392dp"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/map_card_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
                 app:layout_constraintTop_toBottomOf="@id/korea_constlay"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"
+                app:cardCornerRadius="16dp"
+               app:cardElevation="0dp">
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/map_view"
+                android:layout_width="match_parent"
+                android:layout_height="392dp"
                 android:name="com.naver.maps.map.MapFragment"
-                android:layout_marginTop="16dp"
+                android:background="@drawable/rounded_background" />
+
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/map_alarm_white_background"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="40dp"
+                android:layout_marginEnd="40dp"
+                app:layout_constraintStart_toStartOf="@id/map_card_view"
+                app:layout_constraintEnd_toEndOf="@id/map_card_view"
+                android:background="@drawable/map_alarm_background"
+
+                app:layout_constraintTop_toTopOf="@id/map_card_view">
+
+                <ImageView
+                    app:layout_constraintTop_toTopOf="@id/map_alarm_white_background"
+                    app:layout_constraintBottom_toBottomOf="@id/map_alarm_white_background"
+                    android:foregroundGravity="center"
+                    app:layout_constraintStart_toStartOf="@id/map_alarm_white_background"
+                    android:layout_marginStart="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/red_danger_main_icon"/>
+                <TextView
+                    android:id="@+id/map_alarm_tv"
+                    android:layout_width="wrap_content"
+                    app:layout_constraintTop_toTopOf="@id/map_alarm_white_background"
+                    app:layout_constraintBottom_toBottomOf="@id/map_alarm_white_background"
+                    app:layout_constraintStart_toStartOf="@id/map_alarm_white_background"
+                    android:layout_marginStart="60dp"
+                    android:layout_marginEnd="30dp"
+                    android:textFontWeight="600"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/gray_80"
+                    android:textSize="16sp"
+                    android:lineHeight="24dp"
+                    android:text="00주유소 대규모 화재 발생"/>
+
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <ImageView
+                android:id="@+id/map_star_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/main_map_star_icon"
+                app:layout_constraintEnd_toEndOf="@id/map_card_view"
+                app:layout_constraintTop_toBottomOf="@id/map_alarm_white_background"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="20dp"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/map_star_icon"
+                app:layout_constraintEnd_toEndOf="@id/map_card_view"
+                android:background="@drawable/map_mylocation_icon"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="10dp"/>
+
+
+
+
+            <ImageView
+                android:id="@+id/map_white_background"
+                android:layout_width="match_parent"
+                android:layout_marginStart="40dp"
+                android:layout_marginEnd="40dp"
+                android:layout_marginBottom="20dp"
+                android:layout_height="144dp"
+                app:layout_constraintBottom_toBottomOf="@id/map_card_view"
+                app:layout_constraintStart_toStartOf="@id/map_card_view"
+                app:layout_constraintEnd_toEndOf="@id/map_card_view"
+                android:background="@drawable/white_map_background"/>
+
+            <TextView
+                android:id="@+id/map_accident_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textFontWeight="700"
+                app:layout_constraintTop_toTopOf="@id/map_white_background"
+                app:layout_constraintStart_toStartOf="@id/map_white_background"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:textSize="18sp"
+                android:lineHeight="24dp"
+                android:maxLines="1"
+                android:textColor="@color/gray_80"
+                android:fontFamily="@font/pretandard"
+                android:text="성신여자대학교 화재"/>
+
+            <TextView
+                android:id="@+id/main_map_detail_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="자세히 보기"
+                android:textColor="@color/gray_40"
+                android:textSize="12sp"
+                android:fontFamily="@font/pretandard"
+                android:textFontWeight="500"
+                android:layout_marginEnd="20dp"
+                app:layout_constraintEnd_toEndOf="@id/map_white_background"
+                app:layout_constraintTop_toTopOf="@id/map_accident_tv"
+                app:layout_constraintBottom_toBottomOf="@id/map_accident_tv"
                 />
+            <ImageView
+                android:id="@+id/main_map_image_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/main_map_image_icon"
+                app:layout_constraintTop_toBottomOf="@id/main_map_detail_tv"
+                app:layout_constraintEnd_toEndOf="@id/map_white_background"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="30dp"/>
+
+            <TextView
+                android:id="@+id/sub_map_accident_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="17시 25분 화재 발생"
+                android:textFontWeight="400"
+                android:lineHeight="16dp"
+                app:layout_constraintHorizontal_weight="400"
+                app:layout_constraintTop_toBottomOf="@id/map_accident_tv"
+                android:layout_marginTop="5dp"
+                app:layout_constraintStart_toStartOf="@id/map_accident_tv"
+                android:textColor="@color/red_50"
+                android:textSize="12sp"/>
+            <TextView
+                android:id="@+id/map_ok_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textFontWeight="600"
+                android:text="확인"
+                app:layout_constraintTop_toBottomOf="@id/sub_map_accident_tv"
+                app:layout_constraintStart_toStartOf="@id/sub_map_accident_tv"
+                android:layout_marginTop="20dp"
+                android:textColor="@color/gray_60"
+                android:textSize="12sp"
+                android:fontFamily="@font/pretandard"/>
+            <TextView
+                android:id="@+id/map_ok_number_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="127"
+                android:textSize="12sp"
+                android:textFontWeight="400"
+                android:textColor="@color/gray_60"
+                android:layout_marginStart="5dp"
+                app:layout_constraintBottom_toBottomOf="@id/map_ok_tv"
+                app:layout_constraintStart_toEndOf="@id/map_ok_tv"
+                app:layout_constraintTop_toTopOf="@id/map_ok_tv"/>
+
+            <TextView
+                android:id="@+id/map_album_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/pretandard"
+                android:text="사진"
+                android:textColor="@color/gray_60"
+                android:layout_marginStart="10dp"
+                android:textFontWeight="600"
+                android:textSize="12sp"
+                app:layout_constraintStart_toEndOf="@id/map_ok_number_tv"
+                app:layout_constraintTop_toTopOf="@id/map_ok_number_tv"
+                app:layout_constraintBottom_toBottomOf="@id/map_ok_number_tv"/>
+
+            <TextView
+                android:id="@+id/map_album_number_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@id/map_album_tv"
+                app:layout_constraintTop_toTopOf="@id/map_album_tv"
+                app:layout_constraintBottom_toBottomOf="@id/map_album_tv"
+                android:layout_marginStart="5dp"
+                android:text="57"
+                android:textColor="@color/gray_60"
+                android:textFontWeight="400"
+                android:fontFamily="@font/pretandard"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:id="@+id/map_distance_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/map_album_number_tv"
+                android:layout_marginTop="5dp"
+                app:layout_constraintStart_toStartOf="@id/map_ok_tv"
+                android:textSize="12sp"
+                android:textColor="@color/gray_60"
+                android:textFontWeight="600"
+                android:fontFamily="@font/pretandard"
+                android:text="1.7km"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@id/map_distance_tv"
+                app:layout_constraintTop_toTopOf="@id/map_distance_tv"
+                app:layout_constraintBottom_toBottomOf="@id/map_distance_tv"
+                android:textColor="@color/gray_60"
+                android:layout_marginStart="5dp"
+                android:lineHeight="16dp"
+                android:textSize="12sp"
+                android:textFontWeight="600"
+                android:fontFamily="@font/pretandard"
+                android:text="서울시 성북구"/>
+
+
+
+
+
+
+
+
 
             <ImageView
                 android:id="@+id/quiz_background"
@@ -323,7 +562,7 @@
                 app:layout_constraintEnd_toEndOf="@id/korea_constlay"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
-                app:layout_constraintTop_toBottomOf="@id/map_view"
+                app:layout_constraintTop_toBottomOf="@id/map_card_view"
                 android:background="@drawable/gray_circle_8"
                 android:layout_marginTop="21dp"
                 />
@@ -345,6 +584,8 @@
                 app:layout_constraintStart_toStartOf="@id/quiz_iv"
                 android:text="비상 상황 시 식량으로 적절한 음식은?"
                 android:lineHeight="16dp"
+                android:fontFamily="@font/pretandard"
+                android:textFontWeight="600"
                 android:textSize="14sp"
                 android:textColor="@color/gray_80"/>
             <TextView
@@ -354,8 +595,17 @@
                 app:layout_constraintStart_toStartOf="@id/quiz_qustion"
                 android:layout_marginTop="1dp"
                 android:textSize="12dp"
+                android:fontFamily="@font/pretandard"
+                android:textFontWeight="500"
                 android:textColor="@color/gray_50"
                 android:text="퀴즈를 풀어보세요!"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:background="@color/white"
+                app:layout_constraintTop_toBottomOf="@id/quiz_background"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

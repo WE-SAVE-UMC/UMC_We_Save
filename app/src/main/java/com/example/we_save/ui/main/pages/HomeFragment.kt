@@ -52,6 +52,9 @@ class HomeFragment : Fragment() {
 
         val bottomNavigationView = activity?.findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
 
+        requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.black)
+        requireActivity().window.decorView.systemUiVisibility = 0 //
+
         view.viewTreeObserver.addOnGlobalLayoutListener {
             val rect = Rect()
             view.getWindowVisibleDisplayFrame(rect)
@@ -142,6 +145,11 @@ class HomeFragment : Fragment() {
                 whiteToolbar.toolbar2.visibility = View.GONE
             }
         })
+        // 초기 프래그먼트를 일단 거리순으로 설정
+        if (savedInstanceState == null) {
+            replaceFragment(MainDistanceFragment())
+            selectButton(binding.distanceFilterButton, R.id.distance_filter_tv)
+        }
       // tab과 유사한 기능을 구현
         binding.distanceFilterButton.setOnClickListener {
             selectButton(it as MaterialCardView, R.id.distance_filter_tv)
