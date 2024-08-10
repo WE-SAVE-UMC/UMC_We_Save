@@ -1,6 +1,5 @@
 package com.example.we_save.ui.createAccount
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -11,8 +10,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.example.we_save.LoginRequest
-import com.example.we_save.LoginResponse
+import com.example.we_save.data.apiservice.LoginRequest
+import com.example.we_save.data.apiservice.LoginResponse
 import com.example.we_save.R
 import com.example.we_save.SplashActivity
 import com.example.we_save.databinding.ActivityLoginBinding

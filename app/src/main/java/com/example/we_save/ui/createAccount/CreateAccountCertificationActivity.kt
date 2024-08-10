@@ -10,8 +10,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.example.we_save.CheckSmsRequest
-import com.example.we_save.CheckSmsResponse
+import com.example.we_save.data.apiservice.CheckSmsRequest
+import com.example.we_save.data.apiservice.CheckSmsResponse
 import com.example.we_save.R
 import com.example.we_save.SplashActivity
 import com.example.we_save.databinding.ActivityCreateAccountCertificationBinding

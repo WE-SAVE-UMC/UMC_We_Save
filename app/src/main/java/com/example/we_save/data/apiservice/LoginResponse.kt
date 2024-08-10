@@ -1,4 +1,4 @@
-package com.example.we_save
+package com.example.we_save.data.apiservice
 
 data class LoginResponse(
     val isSuccess: Boolean,

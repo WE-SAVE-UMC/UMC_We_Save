@@ -19,12 +19,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.MenuProvider
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
-import androidx.viewpager2.widget.ViewPager2
 import com.example.we_save.ui.alarm.AdvertiseMentActivity
 import com.example.we_save.ui.alarm.AlarmActivity
-import com.example.we_save.ui.main.MainTabAdapter
 import com.example.we_save.R
-import com.example.we_save.SearchActivity
+import com.example.we_save.ui.search.SearchActivity
 import com.example.we_save.databinding.FragmentHomeBinding
 import com.example.we_save.ui.main.MainDistanceFragment
 import com.google.android.material.appbar.AppBarLayout
@@ -35,7 +33,6 @@ import com.google.android.material.badge.ExperimentalBadgeUtils
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null

@@ -1,5 +1,6 @@
-package com.example.we_save
+package com.example.we_save.data.apiservice
 
+import com.example.we_save.User
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST

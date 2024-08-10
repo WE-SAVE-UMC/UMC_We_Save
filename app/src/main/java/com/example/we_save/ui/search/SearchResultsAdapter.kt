@@ -1,16 +1,16 @@
-package com.example.we_save
+package com.example.we_save.ui.search
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.we_save.databinding.ItemSearchResultBinding
-import com.example.we_save.Place as Place1
+import com.example.we_save.data.apiservice.Place as Place1
 
-class SearchResultsAdapter(private val onClick: (Place1) -> Unit) : ListAdapter<Place1, SearchResultsAdapter.ViewHolder>(PlaceDiffCallback()) {
+class SearchResultsAdapter(private val onClick: (Place1) -> Unit) : ListAdapter<Place1, SearchResultsAdapter.ViewHolder>(
+    PlaceDiffCallback()
+) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemSearchResultBinding.inflate(LayoutInflater.from(parent.context), parent, false)

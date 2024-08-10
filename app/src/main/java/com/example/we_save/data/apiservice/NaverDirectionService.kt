@@ -1,4 +1,4 @@
-package com.example.we_save
+package com.example.we_save.data.apiservice
 
 import retrofit2.http.GET
 import retrofit2.http.Header

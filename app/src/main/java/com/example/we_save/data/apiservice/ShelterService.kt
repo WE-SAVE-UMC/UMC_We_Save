@@ -1,4 +1,4 @@
-package com.example.we_save
+package com.example.we_save.data.apiservice
 
 import com.google.gson.annotations.SerializedName
 import retrofit2.http.GET

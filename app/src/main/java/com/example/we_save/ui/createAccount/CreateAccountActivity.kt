@@ -6,9 +6,9 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.example.we_save.PhoneNumberResponse
+import com.example.we_save.data.apiservice.PhoneNumberResponse
 import com.example.we_save.R
-import com.example.we_save.SmsRequest
+import com.example.we_save.data.apiservice.SmsRequest
 import com.example.we_save.SplashActivity
 import com.example.we_save.databinding.ActivityCreateAccountBinding
 import retrofit2.Call

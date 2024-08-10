@@ -1,7 +1,6 @@
 package com.example.we_save.ui.createAccount
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -11,7 +10,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.example.we_save.NicknameResponse
+import com.example.we_save.data.apiservice.NicknameResponse
 import com.example.we_save.R
 import com.example.we_save.SplashActivity
 import com.example.we_save.User
