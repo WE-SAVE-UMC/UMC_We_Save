@@ -1,13 +1,11 @@
-package com.example.we_save
+package com.example.we_save.ui.search
 
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import com.example.we_save.R
 import com.example.we_save.databinding.ActivitySearchBinding
 
 class SearchActivity : AppCompatActivity() {

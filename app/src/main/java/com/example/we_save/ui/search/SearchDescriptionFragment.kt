@@ -1,10 +1,11 @@
-package com.example.we_save
+package com.example.we_save.ui.search
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.example.we_save.R
 import com.example.we_save.databinding.FragmentSearchDescriptionBinding
 
 class SearchDescriptionFragment : Fragment() {
