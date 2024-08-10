@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.we_save.databinding.FragmentMySettingUserBinding
+import com.example.we_save.ui.createAccount.ResetPasswordActivity
 
 class MySettingUserFragment : Fragment() {
 
@@ -28,6 +29,12 @@ class MySettingUserFragment : Fragment() {
         binding.settingUserWithdrawTv.setOnClickListener {
             intent.putExtra("nextPage", "MySettingUserWithdrawFragment")
             startActivity(intent)
+        }
+
+        // 비밀번호 재설정 -> 비밀번호 재설정 화면
+        val intentEnterPassword = Intent(context, EnterPasswordActivity::class.java)
+        binding.settingUserPasswordIv.setOnClickListener {
+            startActivity(intentEnterPassword)
         }
 
         return binding.root

@@ -167,9 +167,9 @@ class HomeFragment : Fragment() {
     }
     override fun onDestroyView() {
         super.onDestroyView()
-        val toolbar = activity?.findViewById<Toolbar>(R.id.toolbar)
-        toolbar?.visibility = View.VISIBLE
-        showToolbar()
+//        val toolbar = activity?.findViewById<Toolbar>(R.id.toolbar)
+//        toolbar?.visibility = View.VISIBLE
+//        showToolbar()
     }
     private fun selectButton(button: MaterialCardView, textViewId: Int) {
         selectedButton?.apply {

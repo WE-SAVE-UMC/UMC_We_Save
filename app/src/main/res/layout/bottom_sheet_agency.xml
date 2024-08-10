@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="32dp"
+    android:paddingBottom="32dp">
+
+    <RadioGroup
+        android:id="@+id/agency_radio_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="28dp"
+        android:paddingEnd="28dp">
+
+        <RadioButton
+            android:id="@+id/skt_rb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="SKT"
+            android:textSize="16sp"
+            android:textColor="@color/gray_80"
+            android:fontFamily="@font/pretendard_medium"
+            android:buttonTint="@color/red_50"
+            android:button="@null"
+            android:drawableRight="@drawable/ic_radio_btn_off" />
+
+        <RadioButton
+            android:id="@+id/kt_rb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="KT"
+            android:textSize="16sp"
+            android:textColor="@color/gray_80"
+            android:fontFamily="@font/pretendard_medium"
+            android:buttonTint="@color/red_50"
+            android:button="@null"
+            android:drawableRight="@drawable/ic_radio_btn_off" />
+
+        <RadioButton
+            android:id="@+id/lg_rb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="LG U+"
+            android:textSize="16sp"
+            android:textColor="@color/gray_80"
+            android:fontFamily="@font/pretendard_medium"
+            android:buttonTint="@color/red_50"
+            android:button="@null"
+            android:drawableRight="@drawable/ic_radio_btn_off" />
+
+        <RadioButton
+            android:id="@+id/skt_2_rb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="SKT 알뜰폰"
+            android:textSize="16sp"
+            android:textColor="@color/gray_80"
+            android:fontFamily="@font/pretendard_medium"
+            android:buttonTint="@color/red_50"
+            android:button="@null"
+            android:drawableRight="@drawable/ic_radio_btn_off" />
+
+        <RadioButton
+            android:id="@+id/kt_2_rb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="KT 알뜰폰"
+            android:textSize="16sp"
+            android:textColor="@color/gray_80"
+            android:fontFamily="@font/pretendard_medium"
+            android:buttonTint="@color/red_50"
+            android:button="@null"
+            android:drawableRight="@drawable/ic_radio_btn_off" />
+
+        <RadioButton
+            android:id="@+id/lg_2_rb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="LG U+ 알뜰폰"
+            android:textSize="16sp"
+            android:textColor="@color/gray_80"
+            android:fontFamily="@font/pretendard_medium"
+            android:buttonTint="@color/red_50"
+            android:button="@null"
+            android:drawableRight="@drawable/ic_radio_btn_off" />
+
+    </RadioGroup>
+
+</LinearLayout>
