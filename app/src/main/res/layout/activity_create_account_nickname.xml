@@ -98,7 +98,7 @@
         android:layout_marginTop="44dp"
         android:text="위세이브 시작하기"
         android:textSize="16sp"
-        android:paddingBottom="12dp"
+        android:gravity="center"
         android:paddingStart="108dp"
         android:paddingEnd="108dp"
         app:layout_constraintTop_toBottomOf="@id/nickname_success_message_tv"

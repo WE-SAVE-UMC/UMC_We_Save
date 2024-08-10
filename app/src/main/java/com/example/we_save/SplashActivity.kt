@@ -2,6 +2,7 @@ package com.example.we_save
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -9,9 +10,14 @@ import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.example.we_save.data.apiservice.SmsService
+import com.example.we_save.data.apiservice.UserService
+import com.example.we_save.data.apiservice.vaildService
 import com.example.we_save.databinding.ActivitySplashBinding
 import com.example.we_save.ui.MainActivity
 import com.example.we_save.ui.createAccount.LoginActivity
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {
@@ -21,6 +27,26 @@ class SplashActivity : AppCompatActivity() {
         Manifest.permission.READ_PHONE_STATE,
         Manifest.permission.ACCESS_FINE_LOCATION,
     )
+
+    // 레트로핏 설정
+    object RetrofitInstance {
+        private val retrofit by lazy {
+            Retrofit.Builder()
+                .baseUrl("http://114.108.153.82:8080/")  // baseUrl 형식 확인
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+        }
+
+        val api: UserService by lazy {
+            retrofit.create(UserService::class.java)
+        }
+        val smsapi: SmsService by lazy {
+            retrofit.create(SmsService::class.java)
+        }
+        val validapi: vaildService by lazy {
+            retrofit.create(vaildService::class.java)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +65,6 @@ class SplashActivity : AppCompatActivity() {
                 startActivity(intent)
                 finish()
             }, 2000)
-
         }
     }
 
@@ -51,9 +76,9 @@ class SplashActivity : AppCompatActivity() {
 
     // 서버로부터 사용자의 로그인 여부 확인
     private fun isUserLoggedIn(): Boolean {
-        //val sharedPreferences = getSharedPreferences("user", Context.MODE_PRIVATE)
-        //return sharedPreferences.getBoolean("login", false)
-        return false
+        val sharedPreferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+        val token = sharedPreferences.getString("jwtToken", null)
+        return !token.isNullOrEmpty()  // 토큰이 존재하면 로그인 상태로 간주
     }
 
     private fun navigateToNextActivity() {
