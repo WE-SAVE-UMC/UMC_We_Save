@@ -78,13 +78,14 @@
         android:layout_width="wrap_content"
         android:layout_height="16dp"
         android:layout_marginStart="24dp"
+        android:layout_marginTop="10dp"
         android:textSize="12sp"
-        android:visibility="gone"
+        android:textColor="@color/red_60"
         android:text="인증번호를 다시 확인해주세요."
         app:layout_constraintTop_toBottomOf="@id/enter_certification_number"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5" />
+
 
     <LinearLayout
         android:id="@+id/request_tv"
@@ -124,9 +125,9 @@
         android:text="확인"
         android:textSize="16sp"
         android:layout_marginEnd="20dp"
-        android:paddingBottom="12dp"
         android:paddingStart="108dp"
         android:paddingEnd="108dp"
+        android:gravity="center"
         app:layout_constraintTop_toBottomOf="@id/request_tv"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -1,0 +1,282 @@
+[33mcommit 78a551c3511f85b4fefc0a2d43b1dba2d561e17b[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdesign#81[m[33m)[m
+Merge: 264e2cd 87fb325
+Author: changsu12 <imchangsu123@gmail.com>
+Date:   Thu Aug 8 00:17:04 2024 +0900
+
+    conflict 해결
+
+[33mcommit 264e2cd8c4e14c426298360237b56227eca1826f[m[33m ([m[1;31morigin/design#81[m[33m)[m
+Author: changsu12 <imchangsu123@gmail.com>
+Date:   Thu Aug 8 00:07:08 2024 +0900
+
+    근처시설(대피소 제외)설정 및 홈프래그먼트 ui 작업!!
+
+[33mcommit 87fb325bc9da56cb4341445558f988bde5269987[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m
+Merge: 0abe3b1 28edb1b
+Author: jkjade <109644644+jkjade@users.noreply.github.com>
+Date:   Wed Aug 7 12:09:28 2024 +0900
+
+    Merge pull request #11 from WE-SAVE-UMC/design/#7
+    
+    Design/#7 마이페이지
+
+[33mcommit 28edb1b9b5f446486be8e81a1695624c10175308[m
+Author: jkjade <jkjade@naver.com>
+Date:   Wed Aug 7 11:57:00 2024 +0900
+
+    design/#7 마이페이지 bottom sheet 구현
+
+[33mcommit 175b33c61bb49b3ce653dc1ffacd8209fdc881d1[m
+Merge: 847bac9 0abe3b1
+Author: jkjade <jkjade@naver.com>
+Date:   Tue Aug 6 20:38:47 2024 +0900
+
+    design/#7 폰트 수정
+
+[33mcommit 847bac97e01197406c06fcd9099431133d04e262[m
+Author: jkjade <jkjade@naver.com>
+Date:   Tue Aug 6 20:36:42 2024 +0900
+
+    design/#7 뒤로가기 수정
+
+[33mcommit 9870d1e30b75d8a708824d7456b7800afa4ffa97[m
+Author: changsu12 <imchangsu123@gmail.com>
+Date:   Tue Aug 6 20:02:27 2024 +0900
+
+    근처 시설 지도 넣기+ retrofit 사용
+
+[33mcommit 0abe3b11ddceb751ee8a37e5580f463a07f11c5d[m
+Merge: af764d3 4a2d8ac
+Author: xlebin <88715719+xlebin@users.noreply.github.com>
+Date:   Tue Aug 6 19:21:02 2024 +0900
+
+    Merge pull request #10 from WE-SAVE-UMC/design/#2
+    
+    design/#2 사건사고 UI 수정
+
+[33mcommit 4a2d8ac75fde499a4ce4302b017abf04dc607fc9[m
+Author: xlebin <ssysjy0302@gmail.com>
+Date:   Tue Aug 6 19:13:35 2024 +0900
+
+    design/#2 사건사고 UI 수정
+
+[33mcommit 516a6c7eef5e9992cc5f92330ad73f2a0844cb66[m
+Merge: 46a37f1 af764d3
+Author: jkjade <jkjade@naver.com>
+Date:   Fri Aug 2 17:26:46 2024 +0900
+
+    design/#7 appbar 충돌해결2
+
+[33mcommit af764d3e22195f4ad253ae476e4f726447f57ed5[m
+Merge: 660f051 95a0908
+Author: changsu12 <imchangsu123@gmail.com>
+Date:   Fri Aug 2 17:14:06 2024 +0900
+
+    conflict 수정
+
+[33mcommit 46a37f191f72e31e14777dda1bb94a640fbaf2a5[m
+Merge: b340e8c 95a0908
+Author: jkjade <jkjade@naver.com>
+Date:   Fri Aug 2 16:42:58 2024 +0900
+
+    design/#7 appbar 충돌 해결
+
+[33mcommit c94641651e5bf68da697879be2a566fbc19dd58c[m
+Author: changsu12 <imchangsu123@gmail.com>
+Date:   Fri Aug 2 16:28:10 2024 +0900
+
+    app toolbar 수정
+
+[33mcommit 95a0908063bcaa453732fa3cfd2951f650b9f95b[m
+Merge: e85fcd2 dc2cd1f
+Author: xlebin <88715719+xlebin@users.noreply.github.com>
+Date:   Fri Aug 2 16:24:42 2024 +0900
+
+    Merge pull request #9 from WE-SAVE-UMC/design/#2
+    
+    [Design/#2] 앱바 위치 수정
+
+[33mcommit b340e8c53c5079ada60ee1a1ac7fc2899cffc783[m
+Author: jkjade <jkjade@naver.com>
+Date:   Fri Aug 2 16:23:14 2024 +0900
+
+    design/#7 스위치 커스텀 설정
+
+[33mcommit dc2cd1f6f3759360471b303df9c3dd4150fa458e[m
+Author: xlebin <ssysjy0302@gmail.com>
+Date:   Fri Aug 2 16:23:00 2024 +0900
+
+    design/#2 앱바 위치 activity_main 에서 accidenctFragment로 수정
+
+[33mcommit d15e3c003bb8ccc7a2f48ed5fb3846aa9490bfa0[m
+Author: jkjade <jkjade@naver.com>
+Date:   Fri Aug 2 12:53:36 2024 +0900
+
+    관심 지역 설정 구현
+
+[33mcommit 7edf722b643a64d0b850efe7031d7dd76c3e0f31[m
+Merge: 4acab38 e85fcd2
+Author: xlebin <ssysjy0302@gmail.com>
+Date:   Thu Aug 1 15:53:43 2024 +0900
+
+    Merge branch 'main' into design/#2
+
+[33mcommit 4acab387a0426d7b0b95a546545b1fcc5e89154c[m
+Author: xlebin <ssysjy0302@gmail.com>
+Date:   Thu Aug 1 15:53:00 2024 +0900
+
+    design/#2 중간 커밋
+
+[33mcommit 5d3620ada96da56f844d44a369398286d0bc7fcd[m
+Author: jkjade <jkjade@naver.com>
+Date:   Thu Aug 1 15:48:10 2024 +0900
+
+    design/#7 내가 작성한 글
+
+[33mcommit d7026409f9a4baa46d27bc2b0e466abf5b9192a7[m
+Merge: 1da3c29 e85fcd2
+Author: jkjade <jkjade@naver.com>
+Date:   Wed Jul 31 23:23:44 2024 +0900
+
+    design/#7 충돌 해결
+
+[33mcommit 1da3c298e168ff7ea5f202b1425b55e18026367d[m
+Author: jkjade <jkjade@naver.com>
+Date:   Wed Jul 31 22:36:12 2024 +0900
+
+    design/#7 알림설정, 계정설정
+
+[33mcommit e85fcd2a5c21406f056f19ba9da9ccb35af92210[m
+Merge: 6720a4f bf1ed08
+Author: changsu12 <86879894+changsu12@users.noreply.github.com>
+Date:   Wed Jul 31 22:02:18 2024 +0900
+
+    Merge pull request #8 from WE-SAVE-UMC/design#81
+    
+    Design#81
+
+[33mcommit bf1ed083a7551c63cf17c90a58f9fea6a7b706c8[m
+Author: changsu12 <imchangsu123@gmail.com>
+Date:   Wed Jul 31 21:47:10 2024 +0900
+
+    알람, 검색, 광고 페이지 구현
+
+[33mcommit 26764378ec57eb7570069aaecd629617c5ccad86[m
+Author: jkjade <jkjade@naver.com>
+Date:   Sun Jul 28 19:36:06 2024 +0900
+
+    design/#7 마이페이지에서 헤더 안보이게
+
+[33mcommit e71d11d66887f85dbaf024d0424547ecaa8243ca[m
+Author: jkjade <jkjade@naver.com>
+Date:   Sun Jul 28 16:39:17 2024 +0900
+
+    design/#7 작성한 글 구현
+
+[33mcommit a7e657f6032c5b4d3954cd402b664edb53c9cbaf[m
+Author: changsu12 <imchangsu123@gmail.com>
+Date:   Sat Jul 27 20:47:46 2024 +0900
+
+    회원가입
+
+[33mcommit 441445e1bfeab423f0aecfd39c47582500dbf70c[m
+Author: changsu12 <imchangsu123@gmail.com>
+Date:   Sat Jul 27 20:44:42 2024 +0900
+
+    회원가입 구현
+
+[33mcommit 17625ce10c13f92cdd75c0f1705b2251bdabe5ab[m
+Author: changsu12 <imchangsu123@gmail.com>
+Date:   Sat Jul 27 17:26:44 2024 +0900
+
+    main_fragment 구성 및, 로그인 액티비티 구현
+
+[33mcommit a1bbce0b05cf6b21e3a8772650cdaa5fdaf12659[m
+Author: jkjade <jkjade@naver.com>
+Date:   Fri Jul 26 18:34:10 2024 +0900
+
+    design/#7 drawable 이름 수정
+
+[33mcommit bce512325bfa80869079c5a68013576c98345cd8[m
+Author: jkjade <jkjade@naver.com>
+Date:   Fri Jul 26 18:27:44 2024 +0900
+
+    design/#7 drawable 추가
+
+[33mcommit 0a3cc580c953ae81604bd6de3bfb4548092be792[m
+Author: jkjade <jkjade@naver.com>
+Date:   Fri Jul 26 16:17:39 2024 +0900
+
+    design/#7 test 주석
+
+[33mcommit 4e035fe5d44e634aa83ac8cadbddf145cb863c5b[m
+Author: jkjade <jkjade@naver.com>
+Date:   Fri Jul 26 15:39:22 2024 +0900
+
+    test
+
+[33mcommit 660f051dda33e36bc4b3e1cc9d53f7b8eab9af79[m
+Author: changsu12 <imchangsu123@gmail.com>
+Date:   Fri Jul 26 15:18:12 2024 +0900
+
+    스플래쉬 액티비티 추가
+
+[33mcommit 6720a4fe1559fe7ae225929dcb5c0c56d49086be[m
+Merge: 37e7e76 5b97bfc
+Author: xlebin <88715719+xlebin@users.noreply.github.com>
+Date:   Fri Jul 26 00:06:04 2024 +0900
+
+    Merge pull request #4 from WE-SAVE-UMC/design/#2
+    
+    [Design/#2] MainFragment.kt 주석 추가
+
+[33mcommit 5b97bfc6d6f73f72b691024640eb07e5fb558d64[m[33m ([m[1;31morigin/design/#2[m[33m)[m
+Author: xlebin <ssysjy0302@gmail.com>
+Date:   Fri Jul 26 00:01:38 2024 +0900
+
+    design/#2 주석추가
+
+[33mcommit 66dd604d451b649272d2670617ebab9712392f9b[m
+Author: xlebin <ssysjy0302@gmail.com>
+Date:   Thu Jul 25 23:57:41 2024 +0900
+
+    design/#2 기존 MainFragment.kt 파일에 주석 추가
+
+[33mcommit 37e7e76f6424db3bc7ae6b667bf5cbe0b6166cb2[m
+Merge: d6e6641 54084d2
+Author: xlebin <88715719+xlebin@users.noreply.github.com>
+Date:   Thu Jul 25 23:31:39 2024 +0900
+
+    Merge pull request #3 from WE-SAVE-UMC/design/#2
+    
+    design/#2 사건사고 레이아웃 개발 및 기본 kt 작업
+
+[33mcommit 54084d23b05d69404cdd9d0354276732597ccc9b[m
+Author: xlebin <ssysjy0302@gmail.com>
+Date:   Thu Jul 25 23:15:42 2024 +0900
+
+    design/#2 사건사고 레이아웃 개발 및 기본 kt 작업
+
+[33mcommit d6e6641d30fd56b0f05c10ad40c30a80714c893b[m
+Author: changsu12 <imchangsu123@gmail.com>
+Date:   Fri Jul 19 15:26:51 2024 +0900
+
+    SplashActivity 구현
+
+[33mcommit 45715162351cc8a628cb1f1459c71f7d8c255b69[m
+Author: jkjade <jkjade@naver.com>
+Date:   Fri Jul 19 14:41:55 2024 +0900
+
+    Color Scale
+
+[33mcommit 5a31522e05a1828b9ad4a0e699d1f57d61e7c0ef[m
+Author: jkjade <jkjade@naver.com>
+Date:   Tue Jul 16 12:41:19 2024 +0900
+
+    test
+
+[33mcommit 0e4367a8550da710f20428248080e6cb3c57af7b[m
+Author: jkjade <jkjade@naver.com>
+Date:   Tue Jul 16 12:34:42 2024 +0900
+
+    First Commit

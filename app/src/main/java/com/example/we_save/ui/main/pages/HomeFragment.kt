@@ -1,33 +1,43 @@
 package com.example.we_save.ui.main.pages
 
 import android.content.Intent
+import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toolbar
+import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.MenuProvider
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
-import androidx.viewpager2.widget.ViewPager2
 import com.example.we_save.ui.alarm.AdvertiseMentActivity
 import com.example.we_save.ui.alarm.AlarmActivity
-import com.example.we_save.ui.main.MainTabAdapter
 import com.example.we_save.R
-import com.example.we_save.SearchActivity
+import com.example.we_save.ui.search.SearchActivity
 import com.example.we_save.databinding.FragmentHomeBinding
+import com.example.we_save.ui.main.MainDistanceFragment
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.badge.BadgeDrawable
+import com.google.android.material.badge.BadgeUtils
+import com.google.android.material.badge.ExperimentalBadgeUtils
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    private lateinit var tabLayout: TabLayout
-    private lateinit var viewPager: ViewPager2
+    private var selectedButton: MaterialCardView? = null
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -35,11 +45,55 @@ class HomeFragment : Fragment() {
     ): View {
         (activity as? AppCompatActivity)?.supportActionBar?.hide()
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        return binding.root
+        val view = binding.root
+
+        val bottomNavigationView = activity?.findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
+
+        requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.black)
+        requireActivity().window.decorView.systemUiVisibility = 0 //
+
+        view.viewTreeObserver.addOnGlobalLayoutListener {
+            val rect = Rect()
+            view.getWindowVisibleDisplayFrame(rect)
+            val screenHeight = view.rootView.height
+            val keypadHeight = screenHeight - rect.bottom
+
+            if (keypadHeight > screenHeight * 0.15) {
+                bottomNavigationView?.visibility = View.GONE
+            } else {
+                bottomNavigationView?.visibility = View.VISIBLE
+            }
+        }
+
+        return view
     }
 
+
+    @OptIn(ExperimentalBadgeUtils::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val toolbar = activity?.findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
+        if (toolbar != null) {
+            requireActivity().addMenuProvider(object : MenuProvider {
+                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                    // Menu items have been created, we can now find our item
+                    val menuItem = menu.findItem(R.id.action_notification)
+                    val badgeDrawable = BadgeDrawable.create(requireContext())
+                    BadgeUtils.detachBadgeDrawable(
+                        badgeDrawable,
+                        toolbar,
+                        menuItem.itemId
+                    )
+                }
+
+                override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                    return false
+                }
+            }, viewLifecycleOwner)
+
+            toolbar.visibility = View.GONE
+        }
+
         activity?.window?.statusBarColor = ContextCompat.getColor(requireContext(), R.color.black)
         val decorView = activity?.window?.decorView
         decorView?.systemUiVisibility = decorView?.systemUiVisibility?.and(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()) ?: 0
@@ -88,53 +142,57 @@ class HomeFragment : Fragment() {
                 whiteToolbar.toolbar2.visibility = View.GONE
             }
         })
-
-
-        tabLayout = binding.nearAccidentTablayout
-        viewPager = binding.nearAccidentViewPager
-
-        val tabAdapter = MainTabAdapter(requireActivity())
-        viewPager.adapter = tabAdapter
-
-        // TabLayout과 ViewPager2를 연결
-        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-            tab.text = arrayOf("거리순", "최신순", "확인순")[position]
-        }.attach()
-
-        for (i in 0 until tabLayout.tabCount) {
-            val tab = (tabLayout.getChildAt(0) as ViewGroup).getChildAt(i)
-            val layoutParams = tab.layoutParams as ViewGroup.MarginLayoutParams
-            layoutParams.setMargins(2, 0, 2, 0)
-            tab.requestLayout()
+        // 초기 프래그먼트를 일단 거리순으로 설정
+        if (savedInstanceState == null) {
+            replaceFragment(MainDistanceFragment())
+            selectButton(binding.distanceFilterButton, R.id.distance_filter_tv)
+        }
+      // tab과 유사한 기능을 구현
+        binding.distanceFilterButton.setOnClickListener {
+            selectButton(it as MaterialCardView, R.id.distance_filter_tv)
+            replaceFragment(MainDistanceFragment())
         }
 
-        tabLayout.getTabAt(0)?.select()
-        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                val tabView = tab.view
-                tabView.background = ContextCompat.getDrawable(requireContext(), R.drawable.main_tab_selected_background)
-                val tabText = findTextViewInTab(tabView)
-                tabText?.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-            }
+        binding.recentFilterButton1.setOnClickListener {
+            selectButton(it as MaterialCardView, R.id.recent_filter_tv)
+            replaceFragment(MainDistanceFragment())
+        }
 
-            override fun onTabUnselected(tab: TabLayout.Tab) {
-                val tabView = tab.view
-                tabView.background = ContextCompat.getDrawable(requireContext(), R.drawable.main_tab_unselected_background)
-                val tabText = findTextViewInTab(tabView)
-                tabText?.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray_40))
-            }
+        binding.okFilterButton1.setOnClickListener {
+            selectButton(it as MaterialCardView, R.id.ok_filter_tv)
+            replaceFragment(MainDistanceFragment())
+        }
 
-            override fun onTabReselected(tab: TabLayout.Tab?) {
 
-            }
-
-        })
-        updateTabStyle(tabLayout.getTabAt(0), true)
     }
     override fun onDestroyView() {
         super.onDestroyView()
-        showToolbar()
+//        val toolbar = activity?.findViewById<Toolbar>(R.id.toolbar)
+//        toolbar?.visibility = View.VISIBLE
+//        showToolbar()
     }
+    private fun selectButton(button: MaterialCardView, textViewId: Int) {
+        selectedButton?.apply {
+            setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.toggle_filter_background))
+            findViewById<TextView>(R.id.distance_filter_tv)?.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray_40))
+            findViewById<TextView>(R.id.recent_filter_tv)?.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray_40))
+            findViewById<TextView>(R.id.ok_filter_tv)?.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray_40))
+        }
+
+        button.apply {
+            setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.red_50))
+            findViewById<TextView>(textViewId).setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+        }
+
+        selectedButton = button
+    }
+
+    private fun replaceFragment(fragment: Fragment) {
+        childFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container_view, fragment)
+            .commit()
+    }
+
     private fun findTextViewInTab(tabView: ViewGroup): TextView? {
         for (i in 0 until tabView.childCount) {
             val child = tabView.getChildAt(i)
@@ -166,6 +224,8 @@ class HomeFragment : Fragment() {
     private fun hideToolbar() {
         // Toolbar 숨기기
         safelyUpdateToolbarVisibility(View.GONE)
+        (activity as? AppCompatActivity)?.supportActionBar?.hide()
+        activity?.findViewById<AppBarLayout>(R.id.appBarLayout)?.visibility = View.GONE
     }
 
     private fun showToolbar() {
