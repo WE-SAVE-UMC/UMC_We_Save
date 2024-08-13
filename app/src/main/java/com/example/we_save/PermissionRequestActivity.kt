@@ -28,31 +28,7 @@ class PermissionRequestActivity : AppCompatActivity() {
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         val textView = binding.agreementTv
 
-        val text = "앱 실행을 위해서 설정 - 애플리케이션 관리자 - WE SAVE - 권한에서 권한을 허용해주시기 바랍니다.\n필수 권한을 허용하지 않으면 WE SAVE 를 이용하실 수 없습니다.\n휴대폰 SMS 본인 인증시 인증번호 6자리가 채워질 수 있습니다."
 
-        // SpannableString을 생성합니다.
-        val spannableString = SpannableString(text)
-
-        // 줄 바꿈 부분의 인덱스를 찾습니다.
-        val firstLineBreakIndex = text.indexOf('\n')
-        val secondLineBreakIndex = text.indexOf('\n', firstLineBreakIndex + 1)
-
-        // 첫 번째 줄 바꿈 이후 부분에 줄 간격을 설정합니다.
-        spannableString.setSpan(
-            CustomLineHeightSpan(32), // 32dp의 줄 간격을 설정합니다.
-            firstLineBreakIndex + 1, // 첫 번째 줄 바꿈 이후의 시작 인덱스
-            secondLineBreakIndex, // 두 번째 줄 바꿈까지의 인덱스
-            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-
-        spannableString.setSpan(
-            CustomLineHeightSpan(32), // 32dp의 줄 간격을 설정합니다.
-            secondLineBreakIndex + 1, // 두 번째 줄 바꿈 이후의 시작 인덱스
-            text.length, // 텍스트의 끝까지
-            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-
-        textView.text = spannableString
         binding.agreeSignUpTv.setOnClickListener {
             requestPermissions()
         }

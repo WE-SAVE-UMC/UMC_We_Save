@@ -25,6 +25,8 @@
         app:layout_constraintTop_toTopOf="@id/upper_left_arrow"
         app:layout_constraintBottom_toBottomOf="@id/upper_left_arrow"
         android:textSize="20sp"
+        android:fontFamily="@font/pretandard"
+        android:textFontWeight="700"
         android:lineHeight="24dp"
         android:textColor="@color/gray_80"/>
 

@@ -167,9 +167,7 @@ class HomeFragment : Fragment() {
     }
     override fun onDestroyView() {
         super.onDestroyView()
-        val toolbar = activity?.findViewById<Toolbar>(R.id.toolbar)
-        toolbar?.visibility = View.VISIBLE
-        showToolbar()
+
     }
     private fun selectButton(button: MaterialCardView, textViewId: Int) {
         selectedButton?.apply {
@@ -207,20 +205,7 @@ class HomeFragment : Fragment() {
         }
         return null
     }
-    private fun updateTabStyle(tab: TabLayout.Tab?, isSelected: Boolean) {
-        tab?.let {
-            val tabView = it.view
-            if (isSelected) {
-                tabView.background = ContextCompat.getDrawable(requireContext(), R.drawable.main_tab_selected_background)
-                val tabText = findTextViewInTab(tabView)
-                tabText?.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-            } else {
-                tabView.background = ContextCompat.getDrawable(requireContext(), R.drawable.main_tab_unselected_background)
-                val tabText = findTextViewInTab(tabView)
-                tabText?.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray_40))
-            }
-        }
-    }
+
     private fun hideToolbar() {
         // Toolbar 숨기기
         safelyUpdateToolbarVisibility(View.GONE)

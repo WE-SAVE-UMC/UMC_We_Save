@@ -3,6 +3,9 @@ package com.example.we_save.ui.createAccount
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -37,11 +40,33 @@ class LoginActivity : AppCompatActivity() {
         window.statusBarColor = ContextCompat.getColor(this, R.color.white)
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 
+        // 전화번호 입력 시 하이픈 추가
+        phoneNumber.addTextChangedListener(object : TextWatcher {
+            private var isEditing: Boolean = false
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+                if (isEditing) return
+
+                isEditing = true
+
+                val formatted = formatPhoneNumber(s.toString())
+                phoneNumber.setText(formatted)
+                phoneNumber.setSelection(formatted.length) // 커서를 맨 끝으로 이동
+
+                isEditing = false
+            }
+        })
+
         loginButton.setOnClickListener {
-            val phoneNum = phoneNumber.text.toString()
+            var phoneNum = phoneNumber.text.toString()
             val passwordText = password.text.toString()
 
             if (phoneNum.isNotEmpty() && passwordText.isNotEmpty()) {
+                phoneNum = removeHyphens(phoneNum) // 서버로 넘기기 전에 하이픈 제거
                 val loginRequest = LoginRequest(phoneNum, passwordText)
                 loginUser(loginRequest)
             } else {
@@ -55,6 +80,21 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    private fun formatPhoneNumber(phone: String): String {
+        val digits = phone.replace("-", "")
+        val length = digits.length
+
+        return when {
+            length >= 8 -> "${digits.substring(0, 3)}-${digits.substring(3, 7)}-${digits.substring(7)}"
+            length >= 4 -> "${digits.substring(0, 3)}-${digits.substring(3)}"
+            else -> digits
+        }
+    }
+
+    private fun removeHyphens(phone: String): String {
+        return phone.replace("-", "")
+    }
+
     private fun loginUser(loginRequest: LoginRequest) {
         val call = SplashActivity.RetrofitInstance.api.login(loginRequest)
         call.enqueue(object : Callback<LoginResponse> {
@@ -62,7 +102,8 @@ class LoginActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val loginResponse = response.body()
                     if (loginResponse != null && loginResponse.isSuccess) {
-                        // 토큰을 저장!!
+                        val token = loginResponse.result.token
+                        Log.d("loginActivity", "Token: $token")  // 여기서 토큰 확인하셔도 됩니다
                         val sharedPreferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
                         val editor = sharedPreferences.edit()
                         editor.putString("jwtToken", loginResponse.result.token)
