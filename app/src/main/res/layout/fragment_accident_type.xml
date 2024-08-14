@@ -24,6 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:navigationIcon="@drawable/ic_chevron_24"
+            app:titleTextColor="@color/gray_80"
             app:title="재난 종류"
             app:titleTextAppearance="@style/App.TextAppearance.Toolbar.Title" />
 
