@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools">
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/near_accident_recycler"
-        android:layout_width="match_parent"
+        android:layout_width="320dp"
         android:layout_height="176dp"
         android:orientation="horizontal"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"

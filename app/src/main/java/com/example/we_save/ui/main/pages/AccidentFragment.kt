@@ -1,6 +1,10 @@
 package com.example.we_save.ui.main.pages
 
+import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,6 +35,7 @@ class AccidentFragment : Fragment() {
         _binding = FragmentAccidentBinding.inflate(inflater, container, false)
         return binding.root
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -81,6 +86,14 @@ class AccidentFragment : Fragment() {
             }
         }
     }
+    // 국내 사건 사고, 내근처 사건 사고를 눌렀을 때 이동하기 위한 함수입니다
+    override fun onResume() {
+        super.onResume()
+
+        val sharedPreferences = requireActivity().getSharedPreferences("Move", Context.MODE_PRIVATE)
+        val pageToSet = sharedPreferences.getInt("pageToSet", 0)  // 기본값은 0 (NearMeFragment)
+        setViewPagerPage(pageToSet)
+    }
 
     private class ViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) :
         FragmentStateAdapter(fragmentManager, lifecycle) {
@@ -92,5 +105,10 @@ class AccidentFragment : Fragment() {
                 else -> DomesticFragment()
             }
         }
+    }
+    // viewpager의 페이지 조정 메서드입니다
+    fun setViewPagerPage(page: Int) {
+        Log.d("AccidentFragment", "Setting ViewPager page to $page")
+        binding.viewPager.currentItem = page
     }
 }

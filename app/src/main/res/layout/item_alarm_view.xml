@@ -40,6 +40,8 @@
         app:layout_constraintStart_toEndOf="@id/alarm_oval_background"
         app:layout_constraintTop_toTopOf="@id/alarm_oval_background"
         android:text="내 근처에 신뢰도 높은 사고가 있어요!"
+        android:fontFamily="@font/pretandard"
+        android:textFontWeight="700"
         android:layout_marginStart="10dp"
         android:textColor="@color/gray_80"
         android:textSize="14sp"/>
@@ -52,6 +54,8 @@
         app:layout_constraintStart_toEndOf="@id/alarm_oval_background"
         android:layout_marginStart="10dp"
         android:textSize="14sp"
+        android:textFontWeight="500"
+        android:fontFamily="@font/pretandard"
         android:textColor="@color/gray_60"
         android:text="00동 근처에 이상한 사람이 돌아다닙니다."/>
 

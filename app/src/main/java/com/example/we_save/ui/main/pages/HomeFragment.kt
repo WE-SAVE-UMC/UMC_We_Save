@@ -1,5 +1,6 @@
 package com.example.we_save.ui.main.pages
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
@@ -25,6 +26,7 @@ import com.example.we_save.R
 import com.example.we_save.ui.search.SearchActivity
 import com.example.we_save.databinding.FragmentHomeBinding
 import com.example.we_save.ui.main.MainDistanceFragment
+import com.example.we_save.ui.main.MainFragment
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.badge.BadgeDrawable
@@ -33,8 +35,11 @@ import com.google.android.material.badge.ExperimentalBadgeUtils
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.tabs.TabLayout
+import com.naver.maps.map.MapFragment
+import com.naver.maps.map.NaverMap
+import com.naver.maps.map.OnMapReadyCallback
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), OnMapReadyCallback {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private var selectedButton: MaterialCardView? = null
@@ -65,6 +70,7 @@ class HomeFragment : Fragment() {
             }
         }
 
+
         return view
     }
 
@@ -92,7 +98,19 @@ class HomeFragment : Fragment() {
             }, viewLifecycleOwner)
 
             toolbar.visibility = View.GONE
+
+            // 지도 설정
+            val fm = childFragmentManager
+            val mapFragment = fm.findFragmentById(R.id.map_view) as MapFragment?
+                ?: MapFragment.newInstance().also {
+                    fm.beginTransaction().add(R.id.map_view, it).commit()
+                }
+
+
+            mapFragment.getMapAsync(this)
+
         }
+
 
         activity?.window?.statusBarColor = ContextCompat.getColor(requireContext(), R.color.black)
         val decorView = activity?.window?.decorView
@@ -122,6 +140,29 @@ class HomeFragment : Fragment() {
             val intent = Intent(requireContext(), SearchActivity::class.java)
             startActivity(intent)
         }
+        val mainFragment = parentFragment as? MainFragment
+        binding.koreaConstlay.setOnClickListener {
+
+            val sharedPreferences = requireActivity().getSharedPreferences("Move", Context.MODE_PRIVATE)
+            with(sharedPreferences.edit()) {
+                putInt("pageToSet", 1)  // 1번 페이지로 이동 (DomesticFragment)
+                apply()
+            }
+
+            mainFragment?.setViewPagerPage(2)
+
+        }
+        binding.nearAccidentFrame.setOnClickListener {
+
+            val sharedPreferences = requireActivity().getSharedPreferences("Move", Context.MODE_PRIVATE)
+            with(sharedPreferences.edit()) {
+                putInt("pageToSet", 0)  // 0번 페이지로 이동 (DomesticFragment)
+                apply()
+            }
+
+            mainFragment?.setViewPagerPage(2)
+
+        }
 
         val darkToolbar = binding.maintoolbar
         val whiteToolbar = binding.maintoolbar1
@@ -147,7 +188,7 @@ class HomeFragment : Fragment() {
             replaceFragment(MainDistanceFragment())
             selectButton(binding.distanceFilterButton, R.id.distance_filter_tv)
         }
-      // tab과 유사한 기능을 구현
+
         binding.distanceFilterButton.setOnClickListener {
             selectButton(it as MaterialCardView, R.id.distance_filter_tv)
             replaceFragment(MainDistanceFragment())
@@ -164,28 +205,41 @@ class HomeFragment : Fragment() {
         }
 
 
+
+    }
+    override fun onMapReady(naverMap: NaverMap) {
+        Log.d("MapReady", "onMapReady is called")
+
+        val uiSettings = naverMap.uiSettings
+        uiSettings.isZoomControlEnabled = false
+        uiSettings.isLocationButtonEnabled = true
+
+        Log.d("MapReady", "Zoom controls should be disabled")
     }
     override fun onDestroyView() {
         super.onDestroyView()
-//        val toolbar = activity?.findViewById<Toolbar>(R.id.toolbar)
-//        toolbar?.visibility = View.VISIBLE
-//        showToolbar()
+
     }
     private fun selectButton(button: MaterialCardView, textViewId: Int) {
         selectedButton?.apply {
+            // 선택 해제된 버튼의 배경 및 텍스트 색상 복구
             setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.toggle_filter_background))
             findViewById<TextView>(R.id.distance_filter_tv)?.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray_40))
             findViewById<TextView>(R.id.recent_filter_tv)?.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray_40))
             findViewById<TextView>(R.id.ok_filter_tv)?.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray_40))
+            strokeColor = ContextCompat.getColor(requireContext(), R.color.toggle_filter_stroke) // 기본 테두리 색상
         }
 
         button.apply {
+            // 선택된 버튼의 배경 및 텍스트 색상 설정
             setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.red_50))
             findViewById<TextView>(textViewId).setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+            strokeColor = ContextCompat.getColor(requireContext(), android.R.color.transparent) // 테두리 색상 투명으로 설정
         }
 
         selectedButton = button
     }
+
 
     private fun replaceFragment(fragment: Fragment) {
         childFragmentManager.beginTransaction()

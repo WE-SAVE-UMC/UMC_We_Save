@@ -29,6 +29,7 @@ class MainFragment : Fragment() {
     ): View {
         // FragmentMainBinding을 사용하여 레이아웃을 인플레이트
         _binding = FragmentMainBinding.inflate(inflater, container, false)
+
         return binding.root
     }
 
@@ -99,5 +100,15 @@ class MainFragment : Fragment() {
                 else -> MyFragment() //TODO : 이름 변경
             }
         }
+    }
+    fun setViewPagerPage(page: Int) {  //view pager 에 있는 프래그먼트 간의 이동을 위한 함수
+        binding.viewPager.currentItem = page
+    }
+    fun navigateToAccidentFragmentAndSelectDomestic() {
+        binding.viewPager.currentItem = 2
+
+        // AccidentFragment의 ViewPager를 DomesticFragment로 설정
+        val accidentFragment = childFragmentManager.findFragmentByTag("f1") as? AccidentFragment
+        accidentFragment?.setViewPagerPage(1)
     }
 }
