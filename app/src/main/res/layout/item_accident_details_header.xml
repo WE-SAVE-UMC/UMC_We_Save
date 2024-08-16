@@ -216,7 +216,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
-            app:cardBackgroundColor="@color/red_00"
+            app:cardBackgroundColor="#FEE5E1"
             app:cardCornerRadius="6dp"
             app:cardElevation="0dp"
             app:cardMaxElevation="0dp"
@@ -237,7 +237,7 @@
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="4dp"
                 android:textAppearance="?attr/textAppearanceBodySmall"
-                android:textColor="@color/red_60"
+                android:textColor="#ED2408"
                 tools:text="@tools:sample/lorem" />
 
         </com.google.android.material.card.MaterialCardView>

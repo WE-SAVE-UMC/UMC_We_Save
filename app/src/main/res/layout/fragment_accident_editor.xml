@@ -27,6 +27,7 @@
             app:menu="@menu/accident_editor"
             app:navigationIcon="@drawable/ic_chevron_24"
             app:title="사건 사고 등록"
+            app:titleTextColor="@color/gray_80"
             app:titleTextAppearance="@style/App.TextAppearance.Toolbar.Title" />
 
     </com.google.android.material.appbar.AppBarLayout>
