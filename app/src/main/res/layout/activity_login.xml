@@ -41,6 +41,9 @@
         android:importantForAutofill="no"
         android:paddingStart="16dp"
         android:hint="전화번호를 입력해주세요"
+        android:textFontWeight="500"
+        android:textColor="@color/gray_90"
+        android:fontFamily="@font/pretandard"
         android:textSize="14sp"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
@@ -49,7 +52,9 @@
         app:layout_constraintTop_toBottomOf="@id/login_text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"/>
+        app:layout_constraintHorizontal_bias="0.5"
+        android:inputType="textPersonName"
+        android:imeOptions="actionNext"/>
 
     <EditText
         android:id="@+id/password_edittext"
@@ -59,6 +64,9 @@
         android:paddingStart="16dp"
         android:inputType="textPassword"
         android:hint="비밀번호를 입력해주세요"
+        android:textFontWeight="500"
+        android:textColor="@color/gray_90"
+        android:fontFamily="@font/pretandard"
         android:textSize="14sp"
         android:background="@drawable/edittext_background"
         tools:ignore="RtlSymmetry"
@@ -67,19 +75,22 @@
         app:layout_constraintTop_toBottomOf="@id/phonenumber_edittext"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"/>
+        app:layout_constraintHorizontal_bias="0.5"
+        android:imeOptions="actionNext"/>
 
     <TextView
         android:id="@+id/login_error_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="7dp"
         android:visibility="gone"
         android:text="전화번호 혹은 비밀번호가 올바르지 않습니다."
         android:textSize="12dp"
-        android:textColor="#ED2408"
+        android:textColor="@color/red_60"
+        android:fontFamily="@font/pretandard"
+        android:textFontWeight="400"
         app:layout_constraintTop_toBottomOf="@id/password_edittext"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/password_edittext"
         app:layout_constraintHorizontal_bias="0.5"/>
 
     <TextView
@@ -87,11 +98,11 @@
         android:layout_width="wrap_content"
         android:layout_height="16dp"
         android:text="비밀번호 찾기"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="15dp"
         android:textSize="12sp"
         android:layout_marginEnd="24dp"
         android:textColor="#7D7D7D"
-        app:layout_constraintTop_toBottomOf="@id/login_error_message"
+        app:layout_constraintTop_toBottomOf="@id/password_edittext"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_goneMarginEnd="20dp"/>
 

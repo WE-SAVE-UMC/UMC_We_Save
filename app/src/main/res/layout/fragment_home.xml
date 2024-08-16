@@ -39,7 +39,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:background="@color/black"/>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <ImageView
                 android:id="@+id/main_upper_bar"
                 android:layout_width="match_parent"
                 android:layout_height="32dp"
@@ -50,9 +50,9 @@
                 android:orientation="horizontal"
                 android:layout_marginEnd="20dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="parent"/>
 
-                <ImageView
+            <ImageView
                     android:id="@+id/upper_danger_iv"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
@@ -62,33 +62,40 @@
                     app:layout_constraintBottom_toBottomOf="@id/main_upper_bar"
                     app:layout_constraintStart_toStartOf="@id/main_upper_bar"
                     app:layout_constraintTop_toTopOf="@id/main_upper_bar" />
+            <ImageView
+                android:id="@+id/main_upper_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/upper_bar_alarm_tv"
+                app:layout_constraintTop_toTopOf="@id/main_upper_bar"
+                app:layout_constraintBottom_toBottomOf="@id/main_upper_bar"
+                app:layout_constraintStart_toEndOf="@id/upper_danger_iv"
+                android:layout_marginStart="10dp"/>
 
-                <TextView
+            <TextView
                     android:id="@+id/main_upper_text"
-                    android:layout_width="44dp"
-                    android:layout_height="16dp"
-                    android:layout_marginStart="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="1dp"
-                    android:background="@drawable/upper_bar_alarm_tv"
                     android:fontFamily="@font/pretandard"
-                    android:gravity="center"
                     android:includeFontPadding="false"
                     android:lineHeight="12dp"
-                    android:paddingBottom="1dp"
+                android:layout_marginBottom="2dp"
                     android:text="돈암동"
                     android:textColor="@color/white"
                     android:textFontWeight="600"
                     android:textSize="9sp"
-                    app:layout_constraintBottom_toBottomOf="@id/main_upper_bar"
-                    app:layout_constraintStart_toEndOf="@id/upper_danger_iv"
-                    app:layout_constraintTop_toTopOf="@id/main_upper_bar" />
+                    app:layout_constraintBottom_toBottomOf="@id/main_upper_image"
+                    app:layout_constraintStart_toStartOf="@id/main_upper_image"
+                app:layout_constraintEnd_toEndOf="@id/main_upper_image"
+                    app:layout_constraintTop_toTopOf="@id/main_upper_image" />
 
-                <TextView
+            <TextView
                     android:id="@+id/textView2"
                     android:layout_width="wrap_content"
                     android:layout_height="16dp"
                     android:layout_marginStart="100dp"
-                    android:layout_marginBottom="3dp"
+                    android:layout_marginBottom="4dp"
                     android:fontFamily="@font/pretandard"
                     android:lineHeight="16.2dp"
                     android:text="사용자가 작성한 알람"
@@ -99,7 +106,7 @@
                     app:layout_constraintStart_toStartOf="@id/main_upper_bar"
                     app:layout_constraintTop_toTopOf="@id/main_upper_bar" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             <TextView
                 android:id="@+id/main_tv"
@@ -440,6 +447,7 @@
             <ImageView
                 android:id="@+id/map_white_background"
                 android:layout_width="match_parent"
+                android:visibility="gone"
                 android:layout_marginStart="40dp"
                 android:layout_marginEnd="40dp"
                 android:layout_marginBottom="20dp"

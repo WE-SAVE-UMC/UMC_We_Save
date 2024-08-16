@@ -7,6 +7,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -39,6 +40,32 @@ class LoginActivity : AppCompatActivity() {
 
         window.statusBarColor = ContextCompat.getColor(this, R.color.white)
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+
+        binding.phonenumberEdittext.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_NEXT || actionId == EditorInfo.IME_ACTION_DONE) {
+                binding.passwordEdittext.requestFocus()
+                true
+            } else {
+                false
+            }
+        }
+        binding.passwordEdittext.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_NEXT || actionId == EditorInfo.IME_ACTION_DONE) {
+                var phoneNum = phoneNumber.text.toString()
+                val passwordText = password.text.toString()
+
+                if (phoneNum.isNotEmpty() && passwordText.isNotEmpty()) {
+                    phoneNum = removeHyphens(phoneNum) // 서버로 넘기기 전에 하이픈 제거
+                    val loginRequest = LoginRequest(phoneNum, passwordText)
+                    loginUser(loginRequest)
+                } else {
+                    Toast.makeText(this, "전화번호와 비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show()
+                }
+                true
+            } else {
+                false
+            }
+        }
 
         // 전화번호 입력 시 하이픈 추가
         phoneNumber.addTextChangedListener(object : TextWatcher {
