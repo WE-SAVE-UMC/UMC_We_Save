@@ -25,6 +25,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.we_save.R
 import com.example.we_save.databinding.FragmentFacilitiesBinding
+import com.example.we_save.ui.main.MainFragment
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
@@ -93,12 +94,22 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
                 childFragmentManager.beginTransaction().add(R.id.near_facility_map_view, it).commit()
             }
         mapFragment.getMapAsync(this)
+        val mainFragment = parentFragment as? MainFragment
+        binding.leftArrowIv.setOnClickListener {
+            mainFragment?.setViewPagerPage(0)
+        }
 
         binding.pharmacyLocation.setOnClickListener {
             onButtonClicked(it as ImageView,
                 R.drawable.click_pharmacy_icon,
                 R.drawable.pharmacy_icon)
             fetchPharmacyDataWithinRadius()
+        }
+        binding.hospitalLocation.setOnClickListener {
+            onButtonClicked(it as ImageView,
+                R.drawable.click_hospital_icon,
+                R.drawable.hospital_icon)
+            fetchHospitalDataWithinRadius()
         }
 
         binding.emergencyLocation.setOnClickListener {
@@ -281,6 +292,59 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
+    // 병원의 데이터를 가져온다.
+    private fun fetchHospitalDataWithinRadius() {
+        val center = naverMap.cameraPosition.target
+        val radius = 5000 // 반경 5km
+
+        lifecycleScope.launch {
+            val totalPageCount = getTotalPageCount("hospital")
+            for (pageNo in 1..totalPageCount) {
+                val url = "https://safemap.go.kr/openApiService/data/getGenralHospitalData.do?serviceKey=U1OZHA2A-U1OZ-U1OZ-U1OZ-U1OZHA2ABC&numOfRows=100&pageNo=$pageNo&dataType=XML&DutyDiv=C"
+                val response = fetchData(url)
+                response?.let { parseHospitalDataWithinRadius(it, center, radius) }
+            }
+        }
+    }
+    private fun parseHospitalDataWithinRadius(response: String, center: LatLng, radius: Int) {
+        try {
+            val factory = DocumentBuilderFactory.newInstance()
+            val builder = factory.newDocumentBuilder()
+            val xmlDoc = builder.parse(InputSource(StringReader(response)))
+            val items: NodeList = xmlDoc.getElementsByTagName("item")
+
+            for (i in 0 until items.length) {
+                val item = items.item(i) as Element
+                val latNode = item.getElementsByTagName("LAT").item(0)
+                val lngNode = item.getElementsByTagName("LON").item(0)
+                val nameNode = item.getElementsByTagName("DUTYNAME").item(0)
+                val addressNode = item.getElementsByTagName("DUTYADDR").item(0)
+
+                if (latNode != null && lngNode != null && nameNode != null && addressNode != null) {
+                    val lat = latNode.textContent.toDouble()
+                    val lng = lngNode.textContent.toDouble()
+                    val name = nameNode.textContent
+                    val address = addressNode.textContent
+
+                    // 반경 내에 있는지 확인
+                    val distance = FloatArray(1)
+                    Location.distanceBetween(center.latitude, center.longitude, lat, lng, distance)
+                    if (distance[0] <= radius) {
+                        Log.d("FacilitiesFragment", "Adding Hospital Marker: $name at ($lat, $lng)")
+                        addMarker(lat, lng, name, address, null, null, "hospital")
+                    }
+                } else {
+                    if (latNode == null) Log.e("FacilitiesFragment", "Missing latitude for hospital item at index $i")
+                    if (lngNode == null) Log.e("FacilitiesFragment", "Missing longitude for hospital item at index $i")
+                    if (nameNode == null) Log.e("FacilitiesFragment", "Missing name for hospital item at index $i")
+                    if (addressNode == null) Log.e("FacilitiesFragment", "Missing address for hospital item at index $i")
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("FacilitiesFragment", "Error parsing hospital data within radius", e)
+        }
+    }
+
     private suspend fun getTotalPageCount(type: String): Int {
         val url = if (type == "pharmacy") {
             "http://apis.data.go.kr/B552657/ErmctInsttInfoInqireService/getParmacyListInfoInqire?serviceKey=ZDE04T%2F8%2BdNZgK9LHd1i9FSVAESIpl7S%2F1NtsdCayF1ZGt9EiUq6G1K2iEhCAb%2Fto2jbI4UJxFz2vhVXHI%2FrBA%3D%3D&numOfRows=1&pageNo=1&QT=1&ORD=NAME"
@@ -370,6 +434,7 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
             "pharmacy" -> ContextCompat.getDrawable(requireContext(), R.drawable.pharmacy_marker)
             "emergency" -> ContextCompat.getDrawable(requireContext(), R.drawable.emergency_marker)
             "shelter" -> ContextCompat.getDrawable(requireContext(), R.drawable.shleter_marker)
+            "hospital"-> ContextCompat.getDrawable(requireContext(), R.drawable.hospital_marker)
             else -> null
         }
 
@@ -392,8 +457,6 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
     private fun showBottomSheetDialog(title: String, address: String, startTime: String?, endTime: String?, type: String, lat: Double, lng: Double) {
         val bottomSheetView = layoutInflater.inflate(R.layout.facility_bottom_sheet, null)
         val bottomSheetDialog = BottomSheetDialog(requireContext())
-        val bottomSheetInternal = bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
-            bottomSheetInternal?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.white))
 
             bottomSheetDialog.setContentView(bottomSheetView)
         val nameTextView = bottomSheetView.findViewById<TextView>(R.id.pharmacy_name)
@@ -410,7 +473,7 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
         addressTextView.text = formatAddress(address)
 
         // type에 따라 시간 관련 UI를 표시하거나 숨김
-        if (type == "pharmacy") {
+        if (type == "pharmacy" ) {
             startTimeTextView.visibility = View.VISIBLE
             endTimeTextView.visibility = View.VISIBLE
             midIv.visibility = TextView.VISIBLE

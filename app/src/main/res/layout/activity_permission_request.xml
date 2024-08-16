@@ -33,7 +33,7 @@
         android:textSize="18sp"
         app:layout_constraintStart_toEndOf="@id/title_text"
         app:layout_constraintTop_toTopOf="@id/title_text"
-        android:layout_marginStart="8dp"/>
+        />
 
     <TextView
         android:id="@+id/permissions_needed_text"

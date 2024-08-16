@@ -25,29 +25,44 @@ class AdvertiseMentActivity : AppCompatActivity() {
     lateinit var righttwoIv : ImageView
     lateinit var leftanswerTv : TextView
     lateinit var rightanswerTv : TextView
-
+    // 설명글
     private lateinit var descriptionBackground: ImageView
     private lateinit var rightCheckIv: ImageView
     private lateinit var rightTv: TextView
     private lateinit var descriptionTv: TextView
+    // 광고 부분
+    private lateinit var advertisementbackground : ImageView
+    private lateinit var advertisementuppertext : TextView
+    private lateinit var advertisementtext : TextView
+    private lateinit var advertisementurl : TextView
+    private lateinit var advertisementrightarrowiv : ImageView
+    private lateinit var advertisementimageiv : ImageView
+
     private var correctAnswer: String = "견과류" // 서버로 부터 받아야 한다.
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAdvertiseMentBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        leftview = binding.leftView
-        rightview = binding.rightView
-         leftbackground  = binding.leftBackground
-         rightbackground = binding.rightBackground
-         leftoneIv  = binding.leftOneIv
-         righttwoIv  = binding.rightTwoIv
-         leftanswerTv  = binding.leftAnswerTv
-         rightanswerTv  = binding.rightAnswerTv
+        leftview = binding.leftView // 퀴즈 왼쪽 뷰 배경 전체
+        rightview = binding.rightView // 퀴즈 오른쪽 뷰 배경 전체
+         leftbackground  = binding.leftBackground //퀴즈 왼쪽 뷰 배경 이미지
+         rightbackground = binding.rightBackground //퀴즈 오른쪽 뷰 배경 이미지
+         leftoneIv  = binding.leftOneIv // 퀴즈 왼쪽 1 이미지
+         righttwoIv  = binding.rightTwoIv // 퀴즈 오른쪽 2 이미지
+         leftanswerTv  = binding.leftAnswerTv // 퀴즈 왼쪽 답
+         rightanswerTv  = binding.rightAnswerTv // 퀴즈 오른쪽 답
 
-        descriptionBackground = binding.descriptionBackground
+        descriptionBackground = binding.descriptionBackground //설명글 배경
         rightCheckIv = binding.rightCheckIv
-        rightTv = binding.rightTv
-        descriptionTv = binding.descriptionTv
+        rightTv = binding.rightTv  // 맞습니다 or 아닙니다
+        descriptionTv = binding.descriptionTv // 설명글
+
+        advertisementbackground = binding.advertisementBackgroundIv // 광고배경이미지
+        advertisementuppertext = binding.advertisementUpperTextTv // 광고위쪽 텍스트
+        advertisementtext = binding.advertisementTextTv // 광고 텍스트
+        advertisementurl = binding.advertisementUrlTv // 광고 url
+        advertisementrightarrowiv = binding.advertisementRightArrowIv // 광고로 넘어가는 화살표이미지
+        advertisementimageiv = binding.advertisementImageIv // 광고 이미지
 
         window.statusBarColor = ContextCompat.getColor(this, R.color.white)
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
@@ -71,7 +86,7 @@ class AdvertiseMentActivity : AppCompatActivity() {
             startActivity(intent)
         }
         binding.leftArrow.setOnClickListener {
-            val intent = Intent(this, MainFragment::class.java)
+            val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
     }
@@ -99,6 +114,12 @@ class AdvertiseMentActivity : AppCompatActivity() {
             rightCheckIv.visibility = View.VISIBLE
             rightTv.visibility = View.VISIBLE
             descriptionTv.visibility = View.VISIBLE
+            advertisementbackground.visibility = View.VISIBLE
+            advertisementuppertext.visibility = View.VISIBLE
+            advertisementtext.visibility = View.VISIBLE
+            advertisementurl.visibility = View.VISIBLE
+            advertisementrightarrowiv.visibility = View.VISIBLE
+            advertisementimageiv.visibility = View.VISIBLE
             if (selectedAnswer == correctAnswer) {
                 if (isLeft) {
                     leftoneIv.setImageResource(R.drawable.answer_right_check_iv) // 정답일 경우 체크 이미지로 변경

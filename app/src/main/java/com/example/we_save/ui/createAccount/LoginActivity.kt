@@ -75,7 +75,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         createAccount.setOnClickListener {
-            val intent = Intent(this, CreateAccountActivity::class.java)
+            val intent = Intent(this, CreateAccountNameActivity::class.java)
             startActivity(intent)
         }
     }
