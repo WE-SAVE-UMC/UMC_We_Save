@@ -46,17 +46,19 @@
         />
 
     <TextView
+        android:id="@+id/quiz_question_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:lineHeight="24dp"
+        android:layout_marginStart="24dp"
         android:fontFamily="@font/pretandard"
+        android:lineHeight="24dp"
+        android:text="질문?"
         android:textFontWeight="700"
-        app:layout_constraintTop_toTopOf="@id/quiz_background"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@id/quiz_background"
         app:layout_constraintStart_toStartOf="@id/quiz_background"
-        android:layout_marginStart="30dp"
-        android:text="비상 상황 시 식량으로 적절한 음식은?"/>
+        app:layout_constraintTop_toTopOf="@id/quiz_background"
+        app:layout_constraintVertical_bias="0.478" />
 
     <LinearLayout
         android:id="@+id/answer_background"
@@ -90,6 +92,7 @@
                 android:id="@+id/left_one_iv"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
+                android:layout_marginEnd="4dp"
                 android:src="@drawable/quiz_answer_first"
                 app:layout_constraintStart_toStartOf="@id/left_view"
                 app:layout_constraintEnd_toEndOf="@id/left_view"
@@ -100,7 +103,8 @@
                 android:id="@+id/left_answer_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="라면"
+                android:text="왼쪽"
+                android:layout_marginEnd="4dp"
                 android:textSize="16sp"
                 android:fontFamily="@font/pretandard"
                 android:textFontWeight="700"
@@ -143,7 +147,7 @@
                 android:id="@+id/right_answer_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="견과류"
+                android:text="오른쪽"
                 android:fontFamily="@font/pretandard"
                 android:textFontWeight="700"
                 android:textSize="16sp"
@@ -159,6 +163,9 @@
 
     <ImageView
         android:id="@+id/description_background"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:paddingBottom="5dp"
         android:layout_width="match_parent"
         android:layout_height="160dp"
         android:background="@drawable/gray_circle_8"
@@ -213,9 +220,10 @@
         android:id="@+id/advertisement_background_iv"
         android:layout_width="match_parent"
         android:visibility="gone"
-        android:layout_height="84dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
+        android:layout_marginTop="20dp"
         app:layout_constraintTop_toBottomOf="@id/description_background"
         android:background="@drawable/gray_circle"
         android:backgroundTint="@color/gray_05"/>
@@ -234,33 +242,21 @@
         android:textFontWeight="500"
         android:text="관련 상품으로 어떠신가요?"
         />
-    <TextView
-        android:id="@+id/advertisement_text_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="@id/advertisement_background_iv"
-        app:layout_constraintTop_toBottomOf="@id/advertisement_upper_text_tv"
-        android:textColor="@color/gray_80"
-        android:layout_marginStart="20dp"
-        android:textSize="14sp"
-        android:fontFamily="@font/pretandard"
-        android:textFontWeight="600"
-        android:text="맛있는 비상식량 HBAF아몬드"
-        />
+
     <TextView
         android:id="@+id/advertisement_url_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="@id/advertisement_background_iv"
-        app:layout_constraintTop_toBottomOf="@id/advertisement_text_tv"
+        app:layout_constraintBottom_toBottomOf="@id/advertisement_background_iv"
+        android:layout_marginBottom="10dp"
         android:textColor="@color/gray_50"
         android:visibility="gone"
         android:layout_marginStart="20dp"
         android:textSize="12sp"
         android:fontFamily="@font/pretandard"
         android:textFontWeight="600"
-        android:text="보러가기"/>
+        android:text="url"/>
     <ImageView
         android:id="@+id/advertisement_right_arrow_iv"
         android:layout_width="12dp"
@@ -283,7 +279,7 @@
         android:layout_marginEnd="20dp"
         android:layout_marginTop="15dp"
         android:layout_marginStart="5dp"
-        android:background="@drawable/advertisement_iv"
+
         />
 
 

@@ -2,6 +2,7 @@ package com.example.we_save.ui.createAccount
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -12,6 +13,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.we_save.data.apiservice.LoginRequest
@@ -27,6 +29,7 @@ import retrofit2.Response
 class LoginActivity : AppCompatActivity() {
     lateinit var binding: ActivityLoginBinding
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
@@ -122,6 +125,7 @@ class LoginActivity : AppCompatActivity() {
         return phone.replace("-", "")
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun loginUser(loginRequest: LoginRequest) {
         val call = SplashActivity.RetrofitInstance.api.login(loginRequest)
         call.enqueue(object : Callback<LoginResponse> {

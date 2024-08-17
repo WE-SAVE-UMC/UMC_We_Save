@@ -5,10 +5,14 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.we_save.data.apiservice.SmsService
 import com.example.we_save.data.apiservice.UserService
@@ -20,12 +24,16 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 @SuppressLint("CustomSplashScreen")
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 class SplashActivity : AppCompatActivity() {
     lateinit var binding: ActivitySplashBinding
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private val permissions = arrayOf(
         Manifest.permission.READ_PHONE_STATE,
         Manifest.permission.ACCESS_FINE_LOCATION,
+        //Manifest.permission.READ_MEDIA_IMAGES,      // 안드로이드 13 이상에서 사용
+        //Manifest.permission.READ_MEDIA_VIDEO        // 안드로이드 13 이상에서 사용
     )
 
     // 레트로핏 설정
@@ -48,6 +56,7 @@ class SplashActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySplashBinding.inflate(layoutInflater)
@@ -68,6 +77,7 @@ class SplashActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun hasAllPermissions(): Boolean {
         return permissions.all { permission ->
             ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED

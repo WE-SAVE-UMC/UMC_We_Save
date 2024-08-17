@@ -16,6 +16,7 @@ import android.widget.TextView
 import android.widget.Toolbar
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.MenuProvider
 import androidx.core.widget.NestedScrollView
@@ -36,13 +37,16 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.tabs.TabLayout
 import com.naver.maps.map.MapFragment
+import com.naver.maps.map.MapView
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
+import com.naver.maps.map.UiSettings
 
 class HomeFragment : Fragment(), OnMapReadyCallback {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private var selectedButton: MaterialCardView? = null
+    private lateinit var mapView: MapView
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -56,6 +60,9 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.black)
         requireActivity().window.decorView.systemUiVisibility = 0 //
+        mapView = view.findViewById(R.id.map_view)
+        mapView.onCreate(savedInstanceState)
+        mapView.getMapAsync(this)
 
         view.viewTreeObserver.addOnGlobalLayoutListener {
             val rect = Rect()
@@ -71,9 +78,12 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         }
 
 
+
         return view
     }
-
+    override fun onMapReady(naverMap: NaverMap) {
+        naverMap.uiSettings.isZoomControlEnabled = false
+    }
 
     @OptIn(ExperimentalBadgeUtils::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -137,8 +147,14 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         }
 
         binding.searchIv.setOnClickListener {
-            val intent = Intent(requireContext(), SearchActivity::class.java)
-            startActivity(intent)
+            val intent = Intent(context, SearchActivity::class.java)
+
+            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                requireActivity(),
+                binding.upperEdittext, // 전환할 뷰
+                "shared_edittext" // transitionName
+            )
+            startActivity(intent, options.toBundle())
         }
         val mainFragment = parentFragment as? MainFragment
         binding.koreaConstlay.setOnClickListener {
@@ -207,15 +223,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
 
     }
-    override fun onMapReady(naverMap: NaverMap) {
-        Log.d("MapReady", "onMapReady is called")
 
-        val uiSettings = naverMap.uiSettings
-        uiSettings.isZoomControlEnabled = false
-        uiSettings.isLocationButtonEnabled = true
-
-        Log.d("MapReady", "Zoom controls should be disabled")
-    }
     override fun onDestroyView() {
         super.onDestroyView()
 

@@ -3,6 +3,7 @@ package com.example.we_save.ui.search
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.view.ViewTreeObserver
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -26,6 +27,14 @@ class SearchActivity : AppCompatActivity() {
             val intent = Intent(this,MainActivity::class.java)
             startActivity(intent)
         }
+        supportPostponeEnterTransition()
+        binding.searchEdittextTv.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+            override fun onPreDraw(): Boolean {
+                binding.searchEdittextTv.viewTreeObserver.removeOnPreDrawListener(this)
+                supportStartPostponedEnterTransition()
+                return true
+            }
+        })
     }
 
     private fun MoveFragment() {

@@ -148,7 +148,8 @@
                 android:layout_marginStart="20dp"
                 android:textSize="16sp"
                 android:paddingStart="16sp"
-                android:hint="지진 빌생 시 대처 방법"/>
+                android:hint="지진 빌생 시 대처 방법"
+                android:transitionName="shared_edittext"/>
             <ImageButton
                 android:id="@+id/search_iv"
                 android:layout_width="24dp"
@@ -371,7 +372,7 @@
                 app:cardCornerRadius="16dp"
                app:cardElevation="0dp">
 
-            <androidx.fragment.app.FragmentContainerView
+            <com.naver.maps.map.MapView
                 android:id="@+id/map_view"
                 android:layout_width="match_parent"
                 android:layout_height="392dp"

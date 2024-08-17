@@ -36,6 +36,7 @@
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="44dp"
         android:background="@drawable/search_edittext"
+        android:transitionName="shared_edittext"
         />
     <ImageButton
         android:id="@+id/search_button_iv"

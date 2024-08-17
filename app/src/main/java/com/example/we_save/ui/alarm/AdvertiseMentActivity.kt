@@ -4,153 +4,223 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import com.bumptech.glide.Glide
 import com.example.we_save.R
+import com.example.we_save.data.apiservice.GetQuizResponse
+import com.example.we_save.data.apiservice.QuizResponse
+import com.example.we_save.data.apiservice.QuizResponseRequest
+import com.example.we_save.data.apiservice.QuizResult
+import com.example.we_save.data.apiservice.QuizResult1
+import com.example.we_save.data.apiservice.RetrofitClient
 import com.example.we_save.databinding.ActivityAdvertiseMentBinding
 import com.example.we_save.ui.MainActivity
 import com.example.we_save.ui.main.MainFragment
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class AdvertiseMentActivity : AppCompatActivity() {
     lateinit var binding: ActivityAdvertiseMentBinding
-    lateinit var leftview : ConstraintLayout
-    lateinit var rightview : ConstraintLayout
-    lateinit var  leftbackground : ImageView
-    lateinit var rightbackground : ImageView
-    lateinit var leftoneIv : ImageView
-    lateinit var righttwoIv : ImageView
-    lateinit var leftanswerTv : TextView
-    lateinit var rightanswerTv : TextView
-    // 설명글
-    private lateinit var descriptionBackground: ImageView
-    private lateinit var rightCheckIv: ImageView
-    private lateinit var rightTv: TextView
-    private lateinit var descriptionTv: TextView
-    // 광고 부분
-    private lateinit var advertisementbackground : ImageView
-    private lateinit var advertisementuppertext : TextView
-    private lateinit var advertisementtext : TextView
-    private lateinit var advertisementurl : TextView
-    private lateinit var advertisementrightarrowiv : ImageView
-    private lateinit var advertisementimageiv : ImageView
+    private var adResult: QuizResult? = null
+    private var correctAnswer: String = "" // 서버로부터 받아야 함
 
-    private var correctAnswer: String = "견과류" // 서버로 부터 받아야 한다.
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAdvertiseMentBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        leftview = binding.leftView // 퀴즈 왼쪽 뷰 배경 전체
-        rightview = binding.rightView // 퀴즈 오른쪽 뷰 배경 전체
-         leftbackground  = binding.leftBackground //퀴즈 왼쪽 뷰 배경 이미지
-         rightbackground = binding.rightBackground //퀴즈 오른쪽 뷰 배경 이미지
-         leftoneIv  = binding.leftOneIv // 퀴즈 왼쪽 1 이미지
-         righttwoIv  = binding.rightTwoIv // 퀴즈 오른쪽 2 이미지
-         leftanswerTv  = binding.leftAnswerTv // 퀴즈 왼쪽 답
-         rightanswerTv  = binding.rightAnswerTv // 퀴즈 오른쪽 답
 
-        descriptionBackground = binding.descriptionBackground //설명글 배경
-        rightCheckIv = binding.rightCheckIv
-        rightTv = binding.rightTv  // 맞습니다 or 아닙니다
-        descriptionTv = binding.descriptionTv // 설명글
-
-        advertisementbackground = binding.advertisementBackgroundIv // 광고배경이미지
-        advertisementuppertext = binding.advertisementUpperTextTv // 광고위쪽 텍스트
-        advertisementtext = binding.advertisementTextTv // 광고 텍스트
-        advertisementurl = binding.advertisementUrlTv // 광고 url
-        advertisementrightarrowiv = binding.advertisementRightArrowIv // 광고로 넘어가는 화살표이미지
-        advertisementimageiv = binding.advertisementImageIv // 광고 이미지
-
+        // 상태바 색상 설정
         window.statusBarColor = ContextCompat.getColor(this, R.color.white)
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 
         binding.leftArrow.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity((intent))
-        }
-
-        leftview.setOnClickListener {
-            handleClick(leftanswerTv.text.toString(), true)
-        }
-
-        rightview.setOnClickListener {
-            handleClick(rightanswerTv.text.toString(), false)
-        }
-        val alarmImageView = findViewById<ImageView>(R.id.white_alarm_iv)
-        alarmImageView.setOnClickListener {
-            // 다른 액티비티로 이동
-            val intent = Intent(this, AlarmActivity::class.java)
+            val intent = Intent(this,MainActivity::class.java)
             startActivity(intent)
         }
-        binding.leftArrow.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+
+        // UI 초기화
+        initializeViews()
+
+        // 퀴즈 데이터 가져오기 및 UI 업데이트
+        fetchQuizData()
+
+        // 클릭 리스너 설정
+        binding.leftView.setOnClickListener {
+            handleClick(binding.leftAnswerTv.text.toString(), true)
+        }
+
+        binding.rightView.setOnClickListener {
+            handleClick(binding.rightAnswerTv.text.toString(), false)
+        }
+    }
+
+    private fun initializeViews() {
+        // UI 요소 초기화 (binding을 통해 UI와 연결)
+        // 이곳에서 binding 객체를 통해 뷰들을 초기화할 수 있습니다.
+    }
+
+    private fun fetchQuizData() {
+        val advertisementService = RetrofitClient.createService()
+
+        advertisementService.getQuiz().enqueue(object : Callback<GetQuizResponse> {
+            override fun onResponse(call: Call<GetQuizResponse>, response: Response<GetQuizResponse>) {
+                if (response.isSuccessful) {
+                    response.body()?.let { quizResponse ->
+                        if (quizResponse.isSuccess) {
+                            adResult = quizResponse.result
+                            updateUIWithQuizData(adResult!!)
+                        } else {
+                            Toast.makeText(this@AdvertiseMentActivity, "퀴즈 로드에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                } else {
+                    Toast.makeText(this@AdvertiseMentActivity, "서버 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<GetQuizResponse>, t: Throwable) {
+                Toast.makeText(this@AdvertiseMentActivity, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun updateUIWithQuizData(quizResult: QuizResult) {
+        binding.quizQuestionTv.text = quizResult.question
+
+        val options = quizResult.options
+        if (options.isNotEmpty()) {
+            binding.leftAnswerTv.text = options[0].text
+            if (options.size > 1) {
+                binding.rightAnswerTv.text = options[1].text
+            }
+
+            //binding.advertisementTextTv.text = options[0].responseText
+            binding.advertisementUrlTv.text = options[0].redirectUrl
+
+            Glide.with(this)
+                .load("http://114.108.153.82:8080/" + options[0].imageUrl)  // 이미지 URL 설정
+                .into(binding.advertisementImageIv)
+
+            correctAnswer = options.firstOrNull { it.isCorrect }?.text ?: ""
+        } else {
+            Toast.makeText(this, "옵션이 없습니다.", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun handleClick(selectedAnswer: String, isLeft: Boolean) {
-        // 클릭 후 다른 쪽이 터치되지 않도록 설정
-        leftview.isClickable = false
-        rightview.isClickable = false
-
-        if (isLeft) {
-            leftbackground.backgroundTintList = ContextCompat.getColorStateList(this,
-                R.color.red_20
-            )
-            leftoneIv.setImageResource(R.drawable.red_one_answer_iv)
-        } else {
-            rightbackground.backgroundTintList = ContextCompat.getColorStateList(this,
-                R.color.red_20
-            )
-            righttwoIv.setImageResource(R.drawable.red_two_answer_iv)
+        val adResult = adResult
+        if (adResult == null) {
+            Toast.makeText(this, "데이터가 로드되지 않았습니다.", Toast.LENGTH_SHORT).show()
+            return
         }
 
-        // 1초 후에 정답 여부에 따라 이미지 변경
-        Handler(Looper.getMainLooper()).postDelayed({
-            descriptionBackground.visibility = View.VISIBLE
-            rightCheckIv.visibility = View.VISIBLE
-            rightTv.visibility = View.VISIBLE
-            descriptionTv.visibility = View.VISIBLE
-            advertisementbackground.visibility = View.VISIBLE
-            advertisementuppertext.visibility = View.VISIBLE
-            advertisementtext.visibility = View.VISIBLE
-            advertisementurl.visibility = View.VISIBLE
-            advertisementrightarrowiv.visibility = View.VISIBLE
-            advertisementimageiv.visibility = View.VISIBLE
-            if (selectedAnswer == correctAnswer) {
-                if (isLeft) {
-                    leftoneIv.setImageResource(R.drawable.answer_right_check_iv) // 정답일 경우 체크 이미지로 변경
-                } else {
-                    righttwoIv.setImageResource(R.drawable.answer_right_check_iv) // 정답일 경우 체크 이미지로 변경
-                }
-                rightTv.text = "정답이에요!"
-            } else {
-                if (isLeft) {
-                    leftbackground.backgroundTintList = ContextCompat.getColorStateList(this,
-                        R.color.gray_05
-                    )
-                    leftoneIv.setImageResource(R.drawable.left_one_wrong_iv) // 오답일 경우 원래 이미지로 변경
-                    rightbackground.backgroundTintList = ContextCompat.getColorStateList(this,
-                        R.color.red_20
-                    )
-                    righttwoIv.setImageResource(R.drawable.answer_right_check_iv)
+        binding.leftView.isClickable = false
+        binding.rightView.isClickable = false
 
-                } else {
-                    rightbackground.backgroundTintList = ContextCompat.getColorStateList(this,
-                        R.color.gray_05
-                    )
-                    righttwoIv.setImageResource(R.drawable.left_one_wrong_iv) // 오답일 경우 원래 이미지로 변경
-                    leftbackground.backgroundTintList = ContextCompat.getColorStateList(this,
-                        R.color.red_20
-                    )
-                    leftoneIv.setImageResource(R.drawable.answer_right_check_iv)
-                }
-                rightTv.text = "오답이에요!"
-                rightCheckIv.setImageResource(R.drawable.wrong_description_check_iv)
-            }
+        val selectedOption = if (isLeft) adResult.options[0] else adResult.options[1]
+        val selectedOptionId = selectedOption.optionId
+
+        if (isLeft) {
+            binding.leftBackground.backgroundTintList = ContextCompat.getColorStateList(this, R.color.red_20)
+            binding.leftOneIv.setImageResource(R.drawable.red_one_answer_iv)
+        } else {
+            binding.rightBackground.backgroundTintList = ContextCompat.getColorStateList(this, R.color.red_20)
+            binding.rightTwoIv.setImageResource(R.drawable.red_two_answer_iv)
+        }
+
+        // 1초 후 정답 여부에 따른 UI 업데이트 및 서버에 응답 제출
+        Handler(Looper.getMainLooper()).postDelayed({
+            submitQuizResponse(adResult.adId, selectedOptionId)
         }, 1000)
+    }
+
+    private fun submitQuizResponse(adId: Int, selectedOptionId: Int) {
+        val advertisementService = RetrofitClient.createService()
+        val request = QuizResponseRequest(adId = adId, selectedOptionId = selectedOptionId)
+
+        advertisementService.submitQuizResponse(request).enqueue(object : Callback<QuizResponse> {
+            override fun onResponse(call: Call<QuizResponse>, response: Response<QuizResponse>) {
+                if (response.isSuccessful) {
+                    response.body()?.let { data ->
+                        updateUIWithQuizResult(data.result)
+                    }
+                } else {
+                    Toast.makeText(this@AdvertiseMentActivity, "서버에서 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<QuizResponse>, t: Throwable) {
+                Toast.makeText(this@AdvertiseMentActivity, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun updateUIWithQuizResult(result: QuizResult1) {
+        // 정답 여부에 따라 선택된 옵션과 정답 옵션의 배경을 변경
+        if (result.correct) {
+            // 사용자가 정답을 선택한 경우
+            if (correctAnswer == binding.leftAnswerTv.text.toString()) {
+                binding.leftBackground.backgroundTintList = ContextCompat.getColorStateList(this, R.color.red_20)
+                binding.leftOneIv.setImageResource(R.drawable.answer_right_check_iv)
+                binding.rightBackground.backgroundTintList = ContextCompat.getColorStateList(this, R.color.gray_05)
+                binding.rightTwoIv.setImageResource(R.drawable.left_one_wrong_iv)
+            } else {
+                binding.rightBackground.backgroundTintList = ContextCompat.getColorStateList(this, R.color.red_20)
+                binding.rightTwoIv.setImageResource(R.drawable.answer_right_check_iv)
+                binding.leftBackground.backgroundTintList = ContextCompat.getColorStateList(this, R.color.gray_05)
+                binding.leftOneIv.setImageResource(R.drawable.left_one_wrong_iv)
+            }
+            binding.rightTv.text = "정답이에요!"
+        } else {
+            // 사용자가 오답을 선택한 경우
+            if (correctAnswer == binding.leftAnswerTv.text.toString()) {
+                binding.leftBackground.backgroundTintList = ContextCompat.getColorStateList(this, R.color.red_20)
+                binding.leftOneIv.setImageResource(R.drawable.answer_right_check_iv)
+                binding.rightBackground.backgroundTintList = ContextCompat.getColorStateList(this, R.color.gray_05)
+                binding.rightTwoIv.setImageResource(R.drawable.left_one_wrong_iv)
+            } else {
+                binding.rightBackground.backgroundTintList = ContextCompat.getColorStateList(this, R.color.red_20)
+                binding.rightTwoIv.setImageResource(R.drawable.answer_right_check_iv)
+                binding.leftBackground.backgroundTintList = ContextCompat.getColorStateList(this, R.color.gray_05)
+                binding.leftOneIv.setImageResource(R.drawable.left_one_wrong_iv)
+            }
+            binding.rightTv.text = "오답이에요!"
+            binding.rightCheckIv.setImageResource(R.drawable.wrong_description_check_iv)
+        }
+
+        // 광고 이미지 및 텍스트 업데이트
+        binding.descriptionBackground.visibility = View.VISIBLE
+        binding.rightCheckIv.visibility = View.VISIBLE
+        binding.rightTv.visibility = View.VISIBLE
+        binding.descriptionTv.visibility = View.VISIBLE
+        binding.advertisementBackgroundIv.visibility = View.VISIBLE
+        binding.advertisementUpperTextTv.visibility = View.VISIBLE
+       // binding.advertisementTextTv.visibility = View.VISIBLE
+        binding.advertisementUrlTv.visibility = View.VISIBLE
+        binding.advertisementRightArrowIv.visibility = View.VISIBLE
+        binding.advertisementImageIv.visibility = View.VISIBLE
+
+        val imageUrl = "http://114.108.153.82/files/ads/" + result.imageUrl
+        Log.d("AdvertiseMentActivity", "이미지 url: $imageUrl")
+
+        Glide.with(this)
+            .load(imageUrl)
+            .into(binding.advertisementImageIv)
+
+        if (result.correct) {
+            binding.descriptionTv.text = result.correctMessage
+        } else {
+            binding.descriptionTv.text = result.incorrectMessage
+        }
     }
 }
