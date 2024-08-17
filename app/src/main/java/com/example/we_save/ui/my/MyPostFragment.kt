@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.we_save.R
 import com.example.we_save.databinding.FragmentMyPostBinding
+import com.example.we_save.ui.MainActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 class MyPostFragment : Fragment() {
@@ -52,6 +53,7 @@ class MyPostFragment : Fragment() {
                 binding.myPostSelect.visibility = View.VISIBLE
 
                 behavior.state = BottomSheetBehavior.STATE_EXPANDED
+
 
             }
             // 완료 -> 선택

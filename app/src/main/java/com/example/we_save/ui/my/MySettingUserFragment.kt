@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.we_save.databinding.FragmentMySettingUserBinding
-import com.example.we_save.ui.createAccount.ResetPasswordActivity
+import com.example.we_save.ui.createAccount.EnterPasswordActivity
 
 class MySettingUserFragment : Fragment() {
 
@@ -21,7 +21,7 @@ class MySettingUserFragment : Fragment() {
         val intent = Intent(context, HeaderActivity::class.java)
 
         // 로그아웃 -> 로그아웃 다이얼로그 표시
-        binding.settingUserLogoutTv.setOnClickListener {
+        binding.settingUserLogout.setOnClickListener {
             showCustomDialog()
         }
 
@@ -33,7 +33,7 @@ class MySettingUserFragment : Fragment() {
 
         // 비밀번호 재설정 -> 비밀번호 재설정 화면
         val intentEnterPassword = Intent(context, EnterPasswordActivity::class.java)
-        binding.settingUserPasswordIv.setOnClickListener {
+        binding.settingUserPassword.setOnClickListener {
             startActivity(intentEnterPassword)
         }
 
