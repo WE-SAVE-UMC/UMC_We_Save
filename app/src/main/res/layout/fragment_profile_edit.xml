@@ -17,6 +17,7 @@
             android:layout_width="96dp"
             android:layout_height="96dp"
             android:src="@drawable/ic_profile"
+            android:scaleType="centerCrop"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
@@ -83,20 +84,22 @@
         app:layout_constraintTop_toBottomOf="@id/profile_edit_name">
 
         <TextView
-            android:id="@+id/profile_edit_phone_tv"
+            android:id="@+id/profile_edit_phone_title_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="전화번호"
             android:textSize="14sp"
             android:textStyle="bold"/>
 
-        <EditText
-            android:id="@+id/profile_edit_phone_et"
+        <TextView
+            android:id="@+id/profile_edit_phone_tv"
             android:layout_width="320dp"
             android:layout_height="48dp"
-            android:hint="010-0000-0000"
+            android:text="010-0000-0000"
+            android:textColor="#AAAAAA"
             android:textSize="16sp"
             android:paddingStart="16dp"
+            android:gravity="center_vertical"
             android:layout_marginTop="8dp"
             android:background="@drawable/style_edit_text"/>
 
@@ -108,6 +111,7 @@
         android:layout_weight="1" />
 
     <Button
+        android:id="@+id/profile_edit_save_btn"
         android:layout_width="320dp"
         android:layout_height="48dp"
         android:text="저장하기"

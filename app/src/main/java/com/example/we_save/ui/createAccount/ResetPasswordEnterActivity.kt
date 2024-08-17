@@ -1,5 +1,6 @@
 package com.example.we_save.ui.createAccount
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -16,6 +17,8 @@ class ResetPasswordEnterActivity : AppCompatActivity() {
         binding = ActivityResetPasswordEnterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
+        // 비밀번호 재입력 시 실행되는 부분
         binding.resetPasswordEnter2Et.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 // 텍스트가 변경되기 전
@@ -33,6 +36,13 @@ class ResetPasswordEnterActivity : AppCompatActivity() {
                     } else {
                         binding.resetPasswordEnterIncorrectTv.visibility = View.INVISIBLE
                         binding.resetPasswordEnterOkBtn.setBackgroundResource(R.drawable.red_button)
+
+                        // 비밀번호 재설정 버튼 -> 로그인 화면
+                        binding.resetPasswordEnterOkBtn.setOnClickListener {
+                            val intent = Intent(this@ResetPasswordEnterActivity, LoginActivity::class.java)
+                            startActivity(intent)
+                        }
+
                     }
                 }
             }
@@ -41,6 +51,8 @@ class ResetPasswordEnterActivity : AppCompatActivity() {
                 // 텍스트가 변경된 후
             }
         })
+
+
 
 
 

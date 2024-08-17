@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.we_save.databinding.FragmentMySettingUserWithdrawBinding
+import com.example.we_save.ui.createAccount.LoginActivity
 
 class MySettingUserWithdrawFragment : Fragment() {
 
@@ -17,9 +18,12 @@ class MySettingUserWithdrawFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMySettingUserWithdrawBinding.inflate(inflater, container, false)
-        val intent = Intent(context, HeaderActivity::class.java)
 
 
+        binding.settingUserWithdrawOkBtn.setOnClickListener {
+            val intent = Intent(context, LoginActivity::class.java)
+            startActivity(intent)
+        }
 
         return binding.root
     }

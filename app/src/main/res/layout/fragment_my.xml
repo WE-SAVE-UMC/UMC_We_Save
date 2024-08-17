@@ -5,13 +5,14 @@
     android:background="@color/gray_05"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+
     <TextView
         android:id="@+id/my_my_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="MY"
         android:textSize="20sp"
-        android:textStyle="bold"
+        android:fontFamily="@font/pretendard_bold"
         android:textColor="@color/gray_90"
         android:layout_marginStart="20dp"
         android:layout_marginTop="48dp"
@@ -45,7 +46,7 @@
         android:layout_height="wrap_content"
         android:text="김재난"
         android:textSize="20sp"
-        android:textStyle="bold"
+        android:fontFamily="@font/pretendard_bold"
         android:textColor="@color/gray_90"
         android:layout_marginStart="24dp"
         app:layout_constraintStart_toEndOf="@id/my_profile_iv"
@@ -58,7 +59,7 @@
         android:layout_height="24dp"
         android:text="프로필 수정"
         android:textSize="12sp"
-        android:textStyle="bold"
+        android:fontFamily="@font/pretendard_semi_bold"
         android:gravity="center"
         android:background="@drawable/style_profile_edit_btn"
         android:textColor="@color/red_70"

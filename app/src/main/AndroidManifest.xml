@@ -83,11 +83,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.my.HeaderActivity" />
-        <activity android:name=".ui.createAccount.ResetPasswordActivity" />
-        <activity android:name=".ui.createAccount.ResetPasswordCertificationActivity" />
-        <activity android:name=".ui.createAccount.ResetPasswordEnterActivity" />
-        <activity android:name=".ui.my.EnterPasswordActivity" />
+
+        <activity android:name=".ui.my.HeaderActivity"/>
+        <activity android:name=".ui.createAccount.ResetPasswordEnterActivity"/>
+        <activity android:name=".ui.createAccount.EnterPasswordActivity"/>
 
         <service
             android:name="com.google.android.gms.metadata.ModuleDependencies"
