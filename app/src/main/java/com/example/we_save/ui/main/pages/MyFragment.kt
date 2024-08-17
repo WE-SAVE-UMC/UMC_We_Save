@@ -1,18 +1,27 @@
 package com.example.we_save.ui.main.pages
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.example.we_save.R
+import com.example.we_save.data.apiservice.ProfileInterface
+import com.example.we_save.data.apiservice.ProfileResponse
+import com.example.we_save.data.apiservice.getRetrofit
 import com.example.we_save.databinding.FragmentMyBinding
 import com.example.we_save.ui.my.HeaderActivity
 import com.example.we_save.ui.my.MyCommentFragment
 import com.example.we_save.ui.my.MyPostFragment
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.tabs.TabLayout
+import retrofit2.Call
+import retrofit2.Response
 
 class MyFragment : Fragment() {
 
@@ -24,6 +33,8 @@ class MyFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMyBinding.inflate(inflater, container, false)
+
+        getProfile()
 
 
         val intent = Intent(context, HeaderActivity::class.java)
@@ -75,6 +86,64 @@ class MyFragment : Fragment() {
 
         })
         return binding.root
+    }
+
+    // 기본 프로필 정보
+    private fun getProfile(){
+        val profileService = getRetrofit().create(ProfileInterface::class.java)
+        profileService.getProfile(getJwt()).enqueue(object: retrofit2.Callback<ProfileResponse>{
+            override fun onResponse(call: Call<ProfileResponse>, response: Response<ProfileResponse>) {
+                Log.d("GETProfile/SUCCESS",response.toString())
+
+                // response.body()가 null인지 확인
+                val resp: ProfileResponse? = response.body()
+                if (resp != null) {
+                    when (resp.code) {
+                        // 로딩에 성공한 경우
+                        "COMMON200" -> {
+                            val spf = requireContext().getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+                            val editor = spf.edit()
+                            // myPrefs에 전화번호 저장
+                            editor.putString("phoneNum", resp.result.phoneNum)
+                            editor.apply()
+
+                            // 프로필 사진 설정
+                            val img = "http://114.108.153.82:80${resp.result.imageUrl}"
+
+                            Glide.with(requireContext())
+                                .load(img)
+                                .apply(RequestOptions().placeholder(R.drawable.ic_profile)) // 로딩 중에 보여줄 이미지
+                                .error(R.drawable.ic_profile) // 오류 발생 시 보여줄 이미지
+                                .circleCrop()
+                                .into(binding.myProfileIv)
+
+                            // 닉네임 설정
+                            binding.myProfileNameTv.text = resp.result.nickname
+                        }
+                        // 로딩에 실패한 경우
+                        "COMMON401" -> binding.myProfileNameTv.setHint("네트워크 오류")
+                    }
+                } else {
+                    Log.e("GETProfile/ERROR", "Response body is null")
+                    binding.myProfileNameTv.setHint("로딩 실패")
+                }
+            }
+
+            override fun onFailure(call: Call<ProfileResponse>, t: Throwable) {
+                Log.d("GETProfile/FAIL",t.message.toString())
+            }
+
+        })
+
+        Log.d("GETProfile", "FINISH")
+
+    }
+
+    // 로그인된 사용자의 토큰을 반환하는 함수
+    private fun getJwt(): String{
+        val spf = requireContext().getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+
+        return spf.getString("jwtToken", "error").toString()
     }
 
 

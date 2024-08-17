@@ -15,7 +15,7 @@
         android:text="재난 알림"
         android:textSize="16sp"
         android:textColor="@color/gray_90"
-        android:textStyle="bold"/>
+        android:fontFamily="@font/pretendard_bold"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/notice_near_me"
@@ -30,6 +30,7 @@
             android:text="내 근처, 신뢰도 높은 재난"
             android:textSize="14sp"
             android:textColor="@color/gray_90"
+            android:fontFamily="@font/pretendard_medium"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
@@ -60,6 +61,7 @@
             android:text="관심지역, 신뢰도 높은 재난"
             android:textSize="14sp"
             android:textColor="@color/gray_90"
+            android:fontFamily="@font/pretendard_medium"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
@@ -84,7 +86,7 @@
         android:text="게시글 알림"
         android:textSize="16sp"
         android:textColor="@color/gray_90"
-        android:textStyle="bold"
+        android:fontFamily="@font/pretendard_bold"
         android:layout_marginTop="72dp"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -100,6 +102,7 @@
             android:text="확인했어요"
             android:textSize="14sp"
             android:textColor="@color/gray_90"
+            android:fontFamily="@font/pretendard_medium"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
@@ -129,6 +132,7 @@
             android:text="허위에요"
             android:textSize="14sp"
             android:textColor="@color/gray_90"
+            android:fontFamily="@font/pretendard_medium"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
@@ -159,6 +163,7 @@
             android:text="댓글 알림 받기"
             android:textSize="14sp"
             android:textColor="@color/gray_90"
+            android:fontFamily="@font/pretendard_medium"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
@@ -189,6 +194,7 @@
             android:text="답글 알림 받기"
             android:textSize="14sp"
             android:textColor="@color/gray_90"
+            android:fontFamily="@font/pretendard_medium"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>

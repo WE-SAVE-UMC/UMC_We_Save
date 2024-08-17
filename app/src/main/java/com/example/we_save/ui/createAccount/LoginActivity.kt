@@ -105,6 +105,12 @@ class LoginActivity : AppCompatActivity() {
             val intent = Intent(this, CreateAccountNameActivity::class.java)
             startActivity(intent)
         }
+
+        // 비밀번호 찾기 -> 비밀번호 재설정 화면
+        val intentResetPassword = Intent(this, EnterPasswordActivity::class.java)
+        binding.forgotPasswordTv.setOnClickListener{
+            startActivity(intentResetPassword)
+        }
     }
 
     private fun formatPhoneNumber(phone: String): String {
@@ -163,11 +169,6 @@ class LoginActivity : AppCompatActivity() {
         binding.phonenumberEdittext.setBackgroundResource(R.drawable.edittext_error_background)
         binding.passwordEdittext.setBackgroundResource(R.drawable.edittext_error_background)
 
-        // 비밀번호 찾 -> 비밀번호 재설정 화면
-        val intentResetPassword = Intent(this, ResetPasswordActivity::class.java)
-        binding.forgotPasswordTv.setOnClickListener{
-            startActivity(intentResetPassword)
-        }
 
     }
 }
