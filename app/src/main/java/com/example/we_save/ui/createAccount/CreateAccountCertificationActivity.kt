@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -14,6 +15,7 @@ import com.example.we_save.data.apiservice.CheckSmsRequest
 import com.example.we_save.data.apiservice.CheckSmsResponse
 import com.example.we_save.R
 import com.example.we_save.SplashActivity
+import com.example.we_save.data.apiservice.SmsRequest
 import com.example.we_save.databinding.ActivityCreateAccountCertificationBinding
 import retrofit2.Call
 import retrofit2.Callback
@@ -46,6 +48,27 @@ class CreateAccountCertificationActivity : AppCompatActivity() {
                 errormessage.visibility = TextView.VISIBLE
                 certificationnum.setBackgroundResource(R.drawable.edittext_error_background)
                 errormessage.text = "인증번호를 입력해주세요."
+            }
+        }
+        // 재요청 버튼
+        binding.reRequestTv.setOnClickListener {
+            requestSmsCode(phoneNum)
+        }
+        // 엔터를 눌렀을때 자동으로 넘어간다.!!
+        binding.enterCertificationNumber.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_NEXT || actionId == EditorInfo.IME_ACTION_DONE) {
+                val text = certificationnum.text.toString()
+                if (text.isNotEmpty()) {
+                    val checkRequest = CheckSmsRequest(phoneNum, text)
+                    checkSmsCode(checkRequest)
+                } else {
+                    errormessage.visibility = TextView.VISIBLE
+                    certificationnum.setBackgroundResource(R.drawable.edittext_error_background)
+                    errormessage.text = "인증번호를 입력해주세요."
+                }
+                true
+            } else {
+                false
             }
         }
     }
@@ -83,6 +106,24 @@ class CreateAccountCertificationActivity : AppCompatActivity() {
                 binding.timerTv.text = "00:00"
             }
         }.start()
+    }
+    private fun requestSmsCode(phoneNum: String) {  // 인증번호 보내는 함수
+        val smsRequest = SmsRequest(phoneNum)
+        val call = SplashActivity.RetrofitInstance.smsapi.requestSms(smsRequest)
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Toast.makeText(this@CreateAccountCertificationActivity, "인증번호가 전송되었습니다.", Toast.LENGTH_SHORT).show()
+
+                } else {
+                    Toast.makeText(this@CreateAccountCertificationActivity, "인증번호 전송에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Toast.makeText(this@CreateAccountCertificationActivity, "네트워크 오류: ${t.message}", Toast.LENGTH_LONG).show()
+            }
+        })
     }
 
     override fun onDestroy() {

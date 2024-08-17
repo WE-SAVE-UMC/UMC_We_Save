@@ -3,6 +3,7 @@ package com.example.we_save.ui.createAccount
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -31,6 +32,20 @@ class CreateAccountActivity : AppCompatActivity() {
                 checkPhoneNumberValidity(phoneNum)
             } else {
                 Toast.makeText(this, "전화번호를 입력해주세요.", Toast.LENGTH_SHORT).show()
+            }
+        }
+        // 엔터를 눌렀을때 자동으로 넘어간다.!!
+        binding.enterPhoneNumber.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_NEXT || actionId == EditorInfo.IME_ACTION_DONE) {
+                val phoneNum = binding.enterPhoneNumber.text.toString()
+                if (phoneNum.isNotEmpty()) {
+                    checkPhoneNumberValidity(phoneNum)
+                } else {
+                    Toast.makeText(this, "전화번호를 입력해주세요.", Toast.LENGTH_SHORT).show()
+                }
+                true
+            } else {
+                false
             }
         }
     }

@@ -5,6 +5,7 @@ import okhttp3.Request
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
@@ -24,6 +25,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.we_save.R
 import com.example.we_save.databinding.FragmentFacilitiesBinding
+import com.example.we_save.ui.main.MainFragment
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
@@ -42,6 +44,10 @@ import okhttp3.Response
 import org.w3c.dom.NodeList
 import org.xml.sax.InputSource
 import java.io.StringReader
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
+import java.util.Calendar
 import javax.xml.parsers.DocumentBuilderFactory
 
 
@@ -56,7 +62,7 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
         Manifest.permission.READ_PHONE_STATE,
         Manifest.permission.ACCESS_FINE_LOCATION
     )
-
+    private var selectedButton: ImageView? = null
     private val markers = mutableListOf<Marker>()
 
     private val requestPermissions =
@@ -88,17 +94,36 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
                 childFragmentManager.beginTransaction().add(R.id.near_facility_map_view, it).commit()
             }
         mapFragment.getMapAsync(this)
+        val mainFragment = parentFragment as? MainFragment
+        binding.leftArrowIv.setOnClickListener {
+            mainFragment?.setViewPagerPage(0)
+        }
 
         binding.pharmacyLocation.setOnClickListener {
+            onButtonClicked(it as ImageView,
+                R.drawable.click_pharmacy_icon,
+                R.drawable.pharmacy_icon)
             fetchPharmacyDataWithinRadius()
+        }
+        binding.hospitalLocation.setOnClickListener {
+            onButtonClicked(it as ImageView,
+                R.drawable.click_hospital_icon,
+                R.drawable.hospital_icon)
+            fetchHospitalDataWithinRadius()
         }
 
         binding.emergencyLocation.setOnClickListener {
-            fetchEmergencyRoomDataWithinRadius() // 반경 필터링된 응급실 데이터 가져오기
+            onButtonClicked(it as ImageView,
+                R.drawable.click_emergency_icon,
+                R.drawable.emergency_icon)
+            fetchEmergencyRoomDataWithinRadius()
         }
 
         binding.shelterLocation.setOnClickListener {
-            fetchEmergencyAssemblyAreaData() // 대피소 데이터 가져오기 함수 호출
+            onButtonClicked(it as ImageView,
+                R.drawable.click_shelter_icon,
+                R.drawable.shelter_icon)
+            fetchEmergencyAssemblyAreaData()
         }
 
         binding.myLocation.setOnClickListener {
@@ -111,11 +136,30 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
         return view
     }
 
+    private fun onButtonClicked(button: ImageView, selectedImage: Int, defaultImage: Int) {
+        selectedButton?.let {
+            when (it.id) {
+                R.id.pharmacy_location -> setButtonImage(it, R.drawable.pharmacy_icon)
+                R.id.emergency_location -> setButtonImage(it, R.drawable.emergency_icon)
+                R.id.shelter_location -> setButtonImage(it, R.drawable.shelter_icon)
+                R.id.my_location -> setButtonImage(it, R.drawable.my_location_icon)
+            }
+        }
+
+        // 현재 클릭된 버튼의 이미지를 선택된 이미지로 변경
+        setButtonImage(button, selectedImage)
+        selectedButton = button // 현재 선택된 버튼으로 업데이트
+    }
+
+    private fun setButtonImage(button: ImageView, imageRes: Int) {
+        button.setImageResource(imageRes)
+    }
+
     override fun onMapReady(naverMap: NaverMap) {
         this.naverMap = naverMap
         if (hasAllPermissions()) {
             setupMap()
-            fetchEmergencyAssemblyAreaData() // 지도 준비 후 대피소 데이터를 가져옴
+            //fetchEmergencyAssemblyAreaData() // 지도 준비 후 대피소 데이터를 가져옴
         } else {
             requestPermissions.launch(permissions)
         }
@@ -174,11 +218,14 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
             Log.e("FacilitiesFragment", "Error parsing emergency assembly area data", e)
         }
     }
+    private fun addShelterMarker(lat: Double, lng: Double, name: String, address: String) {
+        addMarker(lat, lng, name, address, null, null, "shelter")
+    }
 
     // 약국 데이터를 가져오는 함수
     private fun fetchPharmacyDataWithinRadius() {
         val center = naverMap.cameraPosition.target
-        val radius = 5000 // 반경 5km 예시
+        val radius = 1000
 
         lifecycleScope.launch {
             val totalPageCount = getTotalPageCount("pharmacy")
@@ -193,7 +240,7 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
     // 반경 내 응급실 데이터를 가져오는 함수
     private fun fetchEmergencyRoomDataWithinRadius() {
         val center = naverMap.cameraPosition.target
-        val radius = 5000 // 반경 5km 예시
+        val radius = 5000 // 반경 5km
 
         lifecycleScope.launch {
             val totalPageCount = getTotalPageCount("emergency")
@@ -231,7 +278,7 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
                     Location.distanceBetween(center.latitude, center.longitude, lat, lng, distance)
                     if (distance[0] <= radius) {
                         Log.d("FacilitiesFragment", "Adding Emergency Room Marker: $name at ($lat, $lng)")
-                        addMarker(lat, lng, name, address, "emergency")
+                        addMarker(lat, lng, name, address, null, null, "emergency")
                     }
                 } else {
                     if (latNode == null) Log.e("FacilitiesFragment", "Missing latitude for emergency room item at index $i")
@@ -242,6 +289,59 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
             }
         } catch (e: Exception) {
             Log.e("FacilitiesFragment", "Error parsing emergency room data within radius", e)
+        }
+    }
+
+    // 병원의 데이터를 가져온다.
+    private fun fetchHospitalDataWithinRadius() {
+        val center = naverMap.cameraPosition.target
+        val radius = 5000 // 반경 5km
+
+        lifecycleScope.launch {
+            val totalPageCount = getTotalPageCount("hospital")
+            for (pageNo in 1..totalPageCount) {
+                val url = "https://safemap.go.kr/openApiService/data/getGenralHospitalData.do?serviceKey=U1OZHA2A-U1OZ-U1OZ-U1OZ-U1OZHA2ABC&numOfRows=100&pageNo=$pageNo&dataType=XML&DutyDiv=C"
+                val response = fetchData(url)
+                response?.let { parseHospitalDataWithinRadius(it, center, radius) }
+            }
+        }
+    }
+    private fun parseHospitalDataWithinRadius(response: String, center: LatLng, radius: Int) {
+        try {
+            val factory = DocumentBuilderFactory.newInstance()
+            val builder = factory.newDocumentBuilder()
+            val xmlDoc = builder.parse(InputSource(StringReader(response)))
+            val items: NodeList = xmlDoc.getElementsByTagName("item")
+
+            for (i in 0 until items.length) {
+                val item = items.item(i) as Element
+                val latNode = item.getElementsByTagName("LAT").item(0)
+                val lngNode = item.getElementsByTagName("LON").item(0)
+                val nameNode = item.getElementsByTagName("DUTYNAME").item(0)
+                val addressNode = item.getElementsByTagName("DUTYADDR").item(0)
+
+                if (latNode != null && lngNode != null && nameNode != null && addressNode != null) {
+                    val lat = latNode.textContent.toDouble()
+                    val lng = lngNode.textContent.toDouble()
+                    val name = nameNode.textContent
+                    val address = addressNode.textContent
+
+                    // 반경 내에 있는지 확인
+                    val distance = FloatArray(1)
+                    Location.distanceBetween(center.latitude, center.longitude, lat, lng, distance)
+                    if (distance[0] <= radius) {
+                        Log.d("FacilitiesFragment", "Adding Hospital Marker: $name at ($lat, $lng)")
+                        addMarker(lat, lng, name, address, null, null, "hospital")
+                    }
+                } else {
+                    if (latNode == null) Log.e("FacilitiesFragment", "Missing latitude for hospital item at index $i")
+                    if (lngNode == null) Log.e("FacilitiesFragment", "Missing longitude for hospital item at index $i")
+                    if (nameNode == null) Log.e("FacilitiesFragment", "Missing name for hospital item at index $i")
+                    if (addressNode == null) Log.e("FacilitiesFragment", "Missing address for hospital item at index $i")
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("FacilitiesFragment", "Error parsing hospital data within radius", e)
         }
     }
 
@@ -300,12 +400,14 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
                 val lng = item.getElementsByTagName("wgs84Lon").item(0).textContent.toDouble()
                 val name = item.getElementsByTagName("dutyName").item(0).textContent
                 val address = item.getElementsByTagName("dutyAddr").item(0).textContent
+                val dutyTimeStart = item.getElementsByTagName("dutyTime1s").item(0)?.textContent
+                val dutyTimeEnd = item.getElementsByTagName("dutyTime1c").item(0)?.textContent
 
                 val distance = FloatArray(1)
                 Location.distanceBetween(center.latitude, center.longitude, lat, lng, distance)
                 if (distance[0] <= radius) {
                     Log.d("FacilitiesFragment", "Adding Pharmacy Marker: $name at ($lat, $lng)")
-                    addMarker(lat, lng, name, address, "pharmacy")
+                    addMarker(lat, lng, name, address, dutyTimeStart, dutyTimeEnd, "pharmacy")
                 }
             }
         } catch (e: Exception) {
@@ -314,53 +416,80 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
     }
 
     // 마커를 추가하는 함수
-    private fun addMarker(lat: Double, lng: Double, title: String, address: String, type: String) {
+    private fun addMarker(
+        lat: Double,
+        lng: Double,
+        title: String,
+        address: String,
+        startTime: String?,
+        endTime: String?,
+        type: String
+    ) {
         val marker = Marker()
         marker.position = LatLng(lat, lng)
         marker.map = naverMap
         marker.captionText = title
 
-        val drawable = if (type == "pharmacy") {
-            ContextCompat.getDrawable(requireContext(), R.drawable.pharmacy_marker)
-        } else if (type == "emergency") {
-            ContextCompat.getDrawable(requireContext(), R.drawable.emergency_marker)
-        } else {
-            ContextCompat.getDrawable(requireContext(), R.drawable.shleter_marker)
+        val drawable = when (type) {
+            "pharmacy" -> ContextCompat.getDrawable(requireContext(), R.drawable.pharmacy_marker)
+            "emergency" -> ContextCompat.getDrawable(requireContext(), R.drawable.emergency_marker)
+            "shelter" -> ContextCompat.getDrawable(requireContext(), R.drawable.shleter_marker)
+            "hospital"-> ContextCompat.getDrawable(requireContext(), R.drawable.hospital_marker)
+            else -> null
         }
 
-        if (drawable != null) {
-            val bitmap = drawableToBitmap(drawable)
+        drawable?.let {
+            val bitmap = drawableToBitmap(it)
             val overlayImage = OverlayImage.fromBitmap(bitmap)
             marker.icon = overlayImage
         }
 
         Log.d("FacilitiesFragment", "Marker added at lat: $lat, lng: $lng with name: $title")
 
-        markers.add(marker)
-
         marker.setOnClickListener {
-            showBottomSheetDialog(title, address, lat, lng)
+            showBottomSheetDialog(title, address, startTime, endTime, type, lat, lng)
             true
         }
+
+        markers.add(marker)
     }
 
-    // 대피소 마커를 추가하는 함수
-    private fun addShelterMarker(lat: Double, lng: Double, name: String, address: String) {
-        addMarker(lat, lng, name, address, "shelter")
-    }
-
-    private fun showBottomSheetDialog(title: String, address: String, lat: Double, lng: Double) {
+    private fun showBottomSheetDialog(title: String, address: String, startTime: String?, endTime: String?, type: String, lat: Double, lng: Double) {
         val bottomSheetView = layoutInflater.inflate(R.layout.facility_bottom_sheet, null)
         val bottomSheetDialog = BottomSheetDialog(requireContext())
-        bottomSheetDialog.setContentView(bottomSheetView)
 
+            bottomSheetDialog.setContentView(bottomSheetView)
         val nameTextView = bottomSheetView.findViewById<TextView>(R.id.pharmacy_name)
-        val distanceTextView = bottomSheetView.findViewById<TextView>(R.id.pharmacy_distance)
+        val startTimeTextView = bottomSheetView.findViewById<TextView>(R.id.start_time_tv)
+        val endTimeTextView = bottomSheetView.findViewById<TextView>(R.id.end_time_tv)
+        val openStatusTextView = bottomSheetView.findViewById<TextView>(R.id.opne_time_tv)
+        val openStatusImageView = bottomSheetView.findViewById<ImageView>(R.id.status_image_view)
         val addressTextView = bottomSheetView.findViewById<TextView>(R.id.pharmacy_address)
+        val distanceTextView = bottomSheetView.findViewById<TextView>(R.id.pharmacy_distance)
         val directionsButton = bottomSheetView.findViewById<ImageView>(R.id.directions_button)
+        val midIv = bottomSheetView.findViewById<TextView>(R.id.mid_time_iv)
 
         nameTextView.text = title
-        addressTextView.text = address
+        addressTextView.text = formatAddress(address)
+
+        // type에 따라 시간 관련 UI를 표시하거나 숨김
+        if (type == "pharmacy" ) {
+            startTimeTextView.visibility = View.VISIBLE
+            endTimeTextView.visibility = View.VISIBLE
+            midIv.visibility = TextView.VISIBLE
+
+            startTimeTextView.text = formatTime(startTime ?: "")
+            endTimeTextView.text = formatTime(endTime ?: "")
+
+            val isOpen = checkIfOpen(startTime ?: "", endTime ?: "", LocalTime.now())
+            openStatusTextView.text = if (isOpen) "영업중" else "영업 아님"
+            openStatusImageView.backgroundTintList = ContextCompat.getColorStateList(requireContext(), if (isOpen) R.color.blue_40 else R.color.red_40)
+        } else {
+            startTimeTextView.visibility = View.GONE
+            endTimeTextView.visibility = View.GONE
+            midIv.visibility = TextView.GONE
+            openStatusTextView.text = "진료중"
+        }
 
         val currentLocation = locationSource.lastLocation
         if (currentLocation != null) {
@@ -380,12 +509,40 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
         bottomSheetDialog.show()
     }
 
+    private fun checkIfOpen(startTime: String, endTime: String, currentTime: LocalTime): Boolean {
+        val formatter = DateTimeFormatter.ofPattern("HHmm")
+        val start = LocalTime.parse(startTime, formatter)
+        val end = LocalTime.parse(endTime, formatter)
+
+        return if (end.isAfter(start)) {
+            currentTime.isAfter(start) && currentTime.isBefore(end)
+        } else {
+            currentTime.isAfter(start) || currentTime.isBefore(end)
+        }
+    }
+
     private fun drawableToBitmap(drawable: Drawable): Bitmap {
         val bitmap = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         drawable.setBounds(0, 0, canvas.width, canvas.height)
         drawable.draw(canvas)
         return bitmap
+    }
+    private fun formatTime(time: String): String {
+        return try {
+            val parsedTime = LocalTime.parse(time, DateTimeFormatter.ofPattern("HHmm"))
+            parsedTime.format(DateTimeFormatter.ofPattern("HH:mm"))
+        } catch (e: DateTimeParseException) {
+            time
+        }
+    }
+    private fun formatAddress(address: String): String {
+        val parts = address.split(" ")
+        return if (parts.size >= 3) {
+            "${parts[1]} ${parts[2]}"
+        } else {
+            address
+        }
     }
 
     override fun onDestroyView() {
@@ -397,3 +554,5 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1000
     }
 }
+
+

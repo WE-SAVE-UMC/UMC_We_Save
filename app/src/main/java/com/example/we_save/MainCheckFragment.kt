@@ -1,4 +1,4 @@
-package com.example.we_save.ui.main
+package com.example.we_save
 
 import android.os.Bundle
 import android.util.Log
@@ -7,31 +7,29 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.we_save.NearbyPostsResponse
-import com.example.we_save.PostDTO
+import com.example.we_save.databinding.FragmentMainCheckBinding
 import com.example.we_save.databinding.FragmentMainDistanceBinding
-import com.example.we_save.maincheckService
+import com.example.we_save.ui.main.MainRecyclerAdapter
 import com.google.gson.Gson
-import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import org.json.JSONObject
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
-import retrofit2.Retrofit
 import retrofit2.Response
+import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.io.IOException
 
-class MainDistanceFragment : Fragment() {
+//확인순
+class MainCheckFragment : Fragment() {
 
-    private lateinit var binding: FragmentMainDistanceBinding
+    private lateinit var binding: FragmentMainCheckBinding
     private val items = ArrayList<PostDTO>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentMainDistanceBinding.inflate(inflater, container, false)
+        binding = FragmentMainCheckBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -61,7 +59,7 @@ class MainDistanceFragment : Fragment() {
         val requestBody = createRequestBody()
 
         // API 호출
-        val call = api.getSortedData(requestBody)
+        val call = api.getTopData(requestBody) // hearts 순서대로 가져오는 메서드 호출
 
         call.enqueue(object : Callback<NearbyPostsResponse> {
             override fun onResponse(
@@ -73,8 +71,8 @@ class MainDistanceFragment : Fragment() {
                     nearbyPostsResponse?.result?.let { postList ->
                         items.clear()
 
-                        // 거리순으로 정렬하는 부분
-                        val sortedPostList = postList.sortedBy { it.distance }
+                        // hearts 순서대로 정렬 ->>내림차순 사용해서 큰 것부터 확인
+                        val sortedPostList = postList.sortedByDescending { it.hearts }
 
                         items.addAll(sortedPostList)
                         adapter.notifyDataSetChanged()
@@ -99,7 +97,7 @@ class MainDistanceFragment : Fragment() {
     }
 
     private fun createRequestBody(): RequestBody {
-        val requestData = RequestData(   //위도,경도,지역 이름을 받는 데이터(나중에 수정 필요!!)
+        val requestData = RequestData(   // 위도, 경도, 지역 이름을 받는 데이터
             latitude = 25.0,
             longtitude = 50.0,
             regionName = "서울특별시 노원구 월계동"

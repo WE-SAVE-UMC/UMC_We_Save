@@ -1,4 +1,4 @@
-package com.example.we_save.ui.main
+package com.example.we_save
 
 import android.os.Bundle
 import android.util.Log
@@ -7,31 +7,31 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.we_save.NearbyPostsResponse
-import com.example.we_save.PostDTO
 import com.example.we_save.databinding.FragmentMainDistanceBinding
-import com.example.we_save.maincheckService
+import com.example.we_save.databinding.FragmentMainRecentBinding
+import com.example.we_save.ui.main.MainRecyclerAdapter
 import com.google.gson.Gson
-import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import org.json.JSONObject
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
-import retrofit2.Retrofit
 import retrofit2.Response
+import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Locale
 
-class MainDistanceFragment : Fragment() {
+class MainRecentFragment : Fragment() {
 
-    private lateinit var binding: FragmentMainDistanceBinding
+    private lateinit var binding: FragmentMainRecentBinding
     private val items = ArrayList<PostDTO>()
+    private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()) // 날짜를 변환
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentMainDistanceBinding.inflate(inflater, container, false)
+        binding = FragmentMainRecentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -61,7 +61,7 @@ class MainDistanceFragment : Fragment() {
         val requestBody = createRequestBody()
 
         // API 호출
-        val call = api.getSortedData(requestBody)
+        val call = api.getRecentData(requestBody)  // 올바른 메서드 호출
 
         call.enqueue(object : Callback<NearbyPostsResponse> {
             override fun onResponse(
@@ -73,8 +73,10 @@ class MainDistanceFragment : Fragment() {
                     nearbyPostsResponse?.result?.let { postList ->
                         items.clear()
 
-                        // 거리순으로 정렬하는 부분
-                        val sortedPostList = postList.sortedBy { it.distance }
+                        // 날짜 순으로 정렬
+                        val sortedPostList = postList.sortedByDescending {
+                            dateFormat.parse(it.create_at) // 날짜로 변환하여 정렬
+                        }
 
                         items.addAll(sortedPostList)
                         adapter.notifyDataSetChanged()
@@ -99,7 +101,7 @@ class MainDistanceFragment : Fragment() {
     }
 
     private fun createRequestBody(): RequestBody {
-        val requestData = RequestData(   //위도,경도,지역 이름을 받는 데이터(나중에 수정 필요!!)
+        val requestData = RequestData(   // 위도, 경도, 지역 이름을 받는 데이터 (나중에 수정 필요)
             latitude = 25.0,
             longtitude = 50.0,
             regionName = "서울특별시 노원구 월계동"

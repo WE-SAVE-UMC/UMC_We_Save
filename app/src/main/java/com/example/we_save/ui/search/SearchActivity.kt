@@ -1,5 +1,6 @@
 package com.example.we_save.ui.search
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
@@ -7,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.we_save.R
 import com.example.we_save.databinding.ActivitySearchBinding
+import com.example.we_save.ui.MainActivity
 
 class SearchActivity : AppCompatActivity() {
     lateinit var binding : ActivitySearchBinding
@@ -19,6 +21,10 @@ class SearchActivity : AppCompatActivity() {
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         searchButton.setOnClickListener {
             MoveFragment()
+        }
+        binding.arrowIv.setOnClickListener {
+            val intent = Intent(this,MainActivity::class.java)
+            startActivity(intent)
         }
     }
 
