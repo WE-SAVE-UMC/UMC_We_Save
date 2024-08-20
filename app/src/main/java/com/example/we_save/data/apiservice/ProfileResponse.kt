@@ -19,6 +19,6 @@ data class ProfileResult(
 )
 
 data class ProfileRequest(
-    //@SerializedName("profileImage")val profileImage: String
-    @SerializedName("nickname")val nickname: String,
+    @SerializedName("profileImage")val profileImage: String,
+    @SerializedName("nickname")val nickname: String
 )
