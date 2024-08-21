@@ -17,8 +17,3 @@ data class ProfileResult(
     @SerializedName("imageUrl")val imageUrl: String,
     @SerializedName("status")val status: String
 )
-
-data class ProfileRequest(
-    @SerializedName("profileImage")val profileImage: String,
-    @SerializedName("nickname")val nickname: String
-)

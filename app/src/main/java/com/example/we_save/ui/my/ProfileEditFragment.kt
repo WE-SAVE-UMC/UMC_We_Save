@@ -24,7 +24,6 @@ import com.example.we_save.R
 import com.example.we_save.SplashActivity
 import com.example.we_save.data.apiservice.LoginResponse
 import com.example.we_save.data.apiservice.ProfileInterface
-import com.example.we_save.data.apiservice.ProfileRequest
 import com.example.we_save.data.apiservice.ProfileResponse
 import com.example.we_save.data.apiservice.getRetrofit
 import com.example.we_save.databinding.FragmentMyPostBinding
