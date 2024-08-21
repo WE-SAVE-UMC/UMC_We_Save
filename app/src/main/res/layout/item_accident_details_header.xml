@@ -92,6 +92,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="24dp"
+            android:visibility="gone"
             app:cardBackgroundColor="@android:color/transparent"
             app:cardCornerRadius="12dp"
             app:cardElevation="0dp"
@@ -184,19 +185,19 @@
             app:constraint_referenced_ids="type_title_text_view,location_title_text_view" />
 
         <com.google.android.material.card.MaterialCardView
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             app:cardBackgroundColor="@color/gray_05"
             app:cardCornerRadius="6dp"
             app:cardElevation="0dp"
             app:cardMaxElevation="0dp"
+            app:layout_constrainedWidth="true"
             app:layout_constraintBottom_toBottomOf="@id/type_title_text_view"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintLeft_toRightOf="@id/barrier"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="@id/type_title_text_view"
-            app:layout_constraintWidth_default="wrap"
             app:strokeWidth="0dp">
 
             <TextView
@@ -213,19 +214,19 @@
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             app:cardBackgroundColor="#FEE5E1"
             app:cardCornerRadius="6dp"
             app:cardElevation="0dp"
             app:cardMaxElevation="0dp"
+            app:layout_constrainedWidth="true"
             app:layout_constraintBottom_toBottomOf="@id/location_title_text_view"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintLeft_toRightOf="@id/barrier"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="@id/location_title_text_view"
-            app:layout_constraintWidth_default="wrap"
             app:strokeWidth="0dp">
 
             <TextView

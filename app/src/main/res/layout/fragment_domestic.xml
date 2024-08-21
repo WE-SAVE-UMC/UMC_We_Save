@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
             android:layout_marginTop="16dp"
-            app:cardBackgroundColor="@color/red_00"
+            app:cardBackgroundColor="#FEE5E1"
             app:cardCornerRadius="30dp"
             app:cardElevation="0dp"
             app:cardMaxElevation="0dp"
@@ -38,7 +38,8 @@
                 <androidx.viewpager2.widget.ViewPager2
                     android:id="@+id/view_pager"
                     android:layout_width="match_parent"
-                    android:layout_height="32dp" />
+                    android:layout_height="32dp"
+                    android:orientation="vertical" />
 
             </LinearLayout>
 
@@ -81,7 +82,7 @@
                 android:id="@+id/search_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="사건 사고 검색"
+                android:hint="국내 사건 사고 검색"
                 android:singleLine="true"
                 android:textColorHint="@color/gray_70" />
 
@@ -122,29 +123,6 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_weight="1" />
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/distance_filter_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:cardBackgroundColor="@color/toggle_filter_background"
-                app:cardCornerRadius="60dp"
-                app:cardElevation="0dp"
-                app:cardMaxElevation="0dp"
-                app:strokeColor="@color/toggle_filter_stroke"
-                app:strokeWidth="1dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="5dp"
-                    android:text="거리순"
-                    android:textAppearance="?attr/textAppearanceBodySmall"
-                    android:textColor="@color/toggle_filter_text"
-                    android:textSize="11sp" />
-
-            </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/recent_filter_button"
@@ -195,18 +173,26 @@
 
         </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/refresh_layout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:clipToPadding="false"
-            android:paddingHorizontal="20dp"
             android:paddingTop="16dp"
             android:paddingBottom="8dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/filter_container"
-            tools:listitem="@layout/item_accident" />
+            app:layout_constraintTop_toBottomOf="@id/filter_container">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingHorizontal="20dp"
+                android:requiresFadingEdge="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_accident" />
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

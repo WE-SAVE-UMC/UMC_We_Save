@@ -14,10 +14,11 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.example.we_save.data.apiservice.LoginRequest
-import com.example.we_save.data.apiservice.LoginResponse
 import com.example.we_save.R
 import com.example.we_save.SplashActivity
+import com.example.we_save.common.Constants
+import com.example.we_save.data.apiservice.LoginRequest
+import com.example.we_save.data.apiservice.LoginResponse
 import com.example.we_save.databinding.ActivityLoginBinding
 import com.example.we_save.ui.MainActivity
 import retrofit2.Call
@@ -108,7 +109,7 @@ class LoginActivity : AppCompatActivity() {
 
         // 비밀번호 찾기 -> 비밀번호 재설정 화면
         val intentResetPassword = Intent(this, EnterPasswordActivity::class.java)
-        binding.forgotPasswordTv.setOnClickListener{
+        binding.forgotPasswordTv.setOnClickListener {
             startActivity(intentResetPassword)
         }
     }
@@ -118,7 +119,13 @@ class LoginActivity : AppCompatActivity() {
         val length = digits.length
 
         return when {
-            length >= 8 -> "${digits.substring(0, 3)}-${digits.substring(3, 7)}-${digits.substring(7)}"
+            length >= 8 -> "${digits.substring(0, 3)}-${
+                digits.substring(
+                    3,
+                    7
+                )
+            }-${digits.substring(7)}"
+
             length >= 4 -> "${digits.substring(0, 3)}-${digits.substring(3)}"
             else -> digits
         }
@@ -137,9 +144,11 @@ class LoginActivity : AppCompatActivity() {
                     if (loginResponse != null && loginResponse.isSuccess) {
                         val token = loginResponse.result.token
                         Log.d("loginActivity", "Token: $token")  // 여기서 토큰 확인하셔도 됩니다
-                        val sharedPreferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+                        val sharedPreferences =
+                            getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
                         val editor = sharedPreferences.edit()
                         editor.putString("jwtToken", loginResponse.result.token)
+                        editor.putLong(Constants.KEY_USER_ID, loginResponse.result.userId.toLong())
                         editor.apply()
 
                         Toast.makeText(this@LoginActivity, "로그인 성공", Toast.LENGTH_LONG).show()

@@ -2,53 +2,34 @@ package com.example.we_save.ui
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.location.Geocoder
 import android.location.Location
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.we_save.data.model.ReverseGeocoding
+import com.example.we_save.domain.repositories.GeoCodingRepositoryImpl
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.Priority
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 
 @SuppressLint("MissingPermission")
 class MainViewModel(application: Application) : AndroidViewModel(application) {
     private var fusedLocationClient = LocationServices.getFusedLocationProviderClient(application)
     private val locationRequest by lazy {
-        LocationRequest.Builder(10000)
+        LocationRequest.Builder(1000)
             .setMinUpdateDistanceMeters(100f)
             .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
             .build()
     }
 
-    private val geocoder by lazy { Geocoder(application) }
+    private val repository by lazy { GeoCodingRepositoryImpl.getInstance() }
 
-    private val _location = MutableStateFlow<Location?>(null)
-    val location: StateFlow<Location?> = _location
-
-    val address = location.mapLatest { location ->
-        if (location == null) return@mapLatest null
-
-        withContext(Dispatchers.IO) {
-            try {
-                return@withContext geocoder.getFromLocation(
-                    location.latitude,
-                    location.longitude,
-                    1
-                )?.lastOrNull()
-            } catch (e: Exception) {
-                e.printStackTrace()
-                return@withContext null
-            }
-        }
-    }
+    val address = MutableStateFlow<ReverseGeocoding?>(null)
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -58,36 +39,52 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
             try {
                 client.checkLocationSettings(builder.build()).await()
+                val location = fusedLocationClient.lastLocation.await()
+                updateAddress(location)
             } catch (e: Exception) {
                 e.printStackTrace()
+
+                updateAddress()
             }
         }
-
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                _location.value = fusedLocationClient.lastLocation.await()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-
-        updateLocation()
     }
 
     @SuppressLint("MissingPermission")
-    fun updateLocation(callback: (() -> Unit)? = null) {
+    fun updateAddress(
+        location: Location? = null,
+        callback: ((ReverseGeocoding?, Exception?) -> Unit)? = null
+    ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                _location.value =
-                    fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+                val location =
+                    location ?: fusedLocationClient.getCurrentLocation(
+                        Priority.PRIORITY_HIGH_ACCURACY,
+                        null
+                    )
                         .await()
+                val response =
+                    repository.reverseGeocoding(location.latitude, location.longitude).body()
+                if (response?.results?.isEmpty() == true) {
+                    delay(1000)
+                    updateAddress(callback = callback)
+                    return@launch
+                }
+
+                address.tryEmit(response)
+
+                launch(Dispatchers.Main) {
+                    callback?.invoke(response, null)
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
-            } finally {
+
                 launch(Dispatchers.Main) {
-                    callback?.invoke()
+                    callback?.invoke(null, e)
                 }
             }
         }
     }
+
+    suspend fun getAddress(latitude: Double, longitude: Double) =
+        repository.reverseGeocoding(latitude, longitude).body()
 }

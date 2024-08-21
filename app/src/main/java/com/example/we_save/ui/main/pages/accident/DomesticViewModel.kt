@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.we_save.common.Constants
 import com.example.we_save.data.model.ErrorResponse
 import com.example.we_save.data.model.PostDto
-import com.example.we_save.data.model.ReverseGeocoding
 import com.example.we_save.domain.repositories.PostsRepositoryImpl
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
@@ -23,9 +22,9 @@ import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class NearMeViewModel(application: Application) : AndroidViewModel(application) {
+class DomesticViewModel(application: Application) : AndroidViewModel(application) {
     enum class Filter(val param: String) {
-        DISTANCE("distance"), RECENT("recent"), TOP("top")
+        RECENT("recent"), TOP("top")
     }
 
     private val repository = PostsRepositoryImpl.getInstance(application)
@@ -47,44 +46,38 @@ class NearMeViewModel(application: Application) : AndroidViewModel(application) 
         }.shareIn(viewModelScope, started = SharingStarted.Lazily)
     }
 
-    val address = MutableStateFlow<ReverseGeocoding?>(null)
     val query = MutableStateFlow("")
     val excludeSituationEnd = MutableStateFlow(false)
-    val filter = MutableStateFlow(Filter.DISTANCE)
+    val filter = MutableStateFlow(Filter.RECENT)
 
     val recentPosts = MutableStateFlow<List<PostDto>?>(null)
     val posts = MutableStateFlow<List<PostDto>?>(null)
 
     init {
         viewModelScope.launch {
-            address.collectLatest {
-                refresh()
-            }
-        }
-
-        viewModelScope.launch {
             combine(listOf(query, excludeSituationEnd, filter)) { it }.collectLatest {
                 page = 0
                 loadMore()
             }
         }
+
+        viewModelScope.launch {
+            refresh()
+        }
     }
 
     suspend fun refresh() = withContext(Dispatchers.IO) {
-        val address = this@NearMeViewModel.address.value ?: return@withContext
-
         listOf(
             async {
                 try {
-                    val response = repository.getNearByPosts(
+                    val response = repository.getDomesticPosts(
                         Filter.TOP.param,
                         0,
                         true,
-                        address.postsRequest
                     ).body() ?: return@async
-                    recentPosts.tryEmit(response.result.postDTOs)
+                    recentPosts.tryEmit(response.result)
                 } catch (e: Exception) {
-                    e.printStackTrace()
+                    // e.printStackTrace()
                 }
             },
             async {
@@ -98,26 +91,23 @@ class NearMeViewModel(application: Application) : AndroidViewModel(application) 
         if (isEnd) return@withContext
         if (isLoading) return@withContext
 
-        val address = this@NearMeViewModel.address.value ?: return@withContext
-        val page = this@NearMeViewModel.page
+        val page = this@DomesticViewModel.page
 
         try {
             isLoading = true
 
             val result = if (Constants.POST_GET_METHOD == 0) {
-                repository.getNearByPosts(
+                repository.getDomesticPosts(
                     filter.value.param,
                     page,
                     excludeSituationEnd.value,
-                    address.postsRequest
                 )
             } else {
-                repository.searchNearByPosts(
+                repository.searchDomesticPosts(
                     query.value,
                     filter.value.param,
                     page,
                     excludeSituationEnd.value,
-                    address.postsRequest
                 )
             }
 
@@ -128,7 +118,7 @@ class NearMeViewModel(application: Application) : AndroidViewModel(application) 
                         ErrorResponse::class.java
                     )
                     Log.d(
-                        "NearViewModel", """
+                        "DomesticViewModel", """
                         ${errorResponse.message}
                         ${errorResponse.result}
                     """.trimIndent()
@@ -144,19 +134,19 @@ class NearMeViewModel(application: Application) : AndroidViewModel(application) 
                 return@withContext
             }
 
-            this@NearMeViewModel.page++
+            this@DomesticViewModel.page++
             isLoading = false
 
-            if (response.result.postDTOs.size < 10) {
+            if (response.result.size < 10) {
                 isEnd = true
             }
 
             if (page > 0) {
-                posts.tryEmit((posts.value ?: listOf()) + response.result.postDTOs)
+                posts.tryEmit((posts.value ?: listOf()) + response.result)
             } else {
                 posts.tryEmit(listOf())
                 delay(50)
-                posts.tryEmit(response.result.postDTOs)
+                posts.tryEmit(response.result)
             }
         } catch (e: Exception) {
             e.printStackTrace()
