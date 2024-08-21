@@ -43,5 +43,5 @@ data class PostDTO(
     val regionName: String,
     val create_at: String,
     val image_url: String,
-    val category_name: String
+    val categoryName: String
 )

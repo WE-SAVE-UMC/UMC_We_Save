@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 배경 이미지 -->
+    <item>
+        <bitmap
+            android:src="@drawable/image_null_background"
+            android:gravity="center" />
+    </item>
+
+    <!-- 가운데 이미지 -->
+    <item>
+        <bitmap
+            android:src="@drawable/image_null_fire"
+            android:gravity="center" />
+    </item>
+
+</layer-list>

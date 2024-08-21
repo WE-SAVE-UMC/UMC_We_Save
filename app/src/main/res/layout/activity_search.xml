@@ -27,6 +27,7 @@
     <EditText
         android:id="@+id/search_edittext_tv"
         android:layout_width="match_parent"
+        android:imeOptions="actionSearch"
         android:layout_height="40dp"
         app:layout_constraintTop_toTopOf="@+id/arrow_iv"
         android:paddingEnd="44dp"
@@ -55,6 +56,7 @@
         android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:background="@drawable/search_edittext"
+        android:visibility="gone"
         android:text="관련 키워드"
         android:textSize="12sp"
         android:textColor="#F84A32"
@@ -68,51 +70,44 @@
         android:layout_marginTop="14dp"
         tools:ignore="RtlSymmetry" />
 
-    <TextView
-        android:id="@+id/keyowrd_button2"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/tagsRecyclerView"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
-        android:background="@drawable/search_edittext"
-        android:text="염좌"
-        android:textSize="12sp"
-        android:textColor="#F84A32"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        android:paddingTop="3dp"
-        android:paddingBottom="4dp"
-        app:layout_constraintTop_toBottomOf="@+id/search_edittext_tv"
+        android:layout_marginStart="10dp"
+        app:layout_constraintTop_toBottomOf="@id/search_edittext_tv"
         app:layout_constraintStart_toEndOf="@id/keyowrd_button"
-        android:layout_marginStart="10dp"
         android:layout_marginTop="14dp"
-        tools:ignore="RtlSymmetry" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="24dp"
-        android:background="@drawable/search_edittext"
-        android:text="인대"
-        android:textSize="12sp"
-        android:textColor="#F84A32"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        android:paddingTop="3dp"
-        android:paddingBottom="4dp"
-        app:layout_constraintTop_toBottomOf="@+id/search_edittext_tv"
-        app:layout_constraintStart_toEndOf="@id/keyowrd_button2"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="14dp"
-        tools:ignore="RtlSymmetry" />
+        android:scrollbars="none"
+        android:overScrollMode="never"
+        android:nestedScrollingEnabled="false"
+        tools:listitem="@layout/tag_item" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_contatiner_view"
         android:layout_width="match_parent"
         android:layout_height="332dp"
-        android:layout_marginEnd="20dp"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="211dp"
         android:layout_marginStart="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/wrong_search_result_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/search_edittext_tv"
+        android:layout_marginTop="120dp"
+        android:text="검색 결과가 없습니다"
+        android:textSize="16sp"
+        android:fontFamily="@font/pretandard"
+        android:textFontWeight="500"
+        android:textColor="@color/gray_60"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
 
 
 

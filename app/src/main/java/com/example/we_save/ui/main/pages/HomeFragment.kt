@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import android.widget.Toolbar
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
@@ -21,9 +22,17 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.MenuProvider
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
+import com.example.we_save.MainCheckFragment
+import com.example.we_save.MainRecentFragment
 import com.example.we_save.ui.alarm.AdvertiseMentActivity
 import com.example.we_save.ui.alarm.AlarmActivity
 import com.example.we_save.R
+import com.example.we_save.data.apiservice.HomeRequest
+import com.example.we_save.data.apiservice.HomeResponse
+import com.example.we_save.data.apiservice.HomeService
+import com.example.we_save.data.apiservice.HostPostDto
+import com.example.we_save.data.apiservice.RetrofitClient
 import com.example.we_save.ui.search.SearchActivity
 import com.example.we_save.databinding.FragmentHomeBinding
 import com.example.we_save.ui.main.MainDistanceFragment
@@ -41,6 +50,11 @@ import com.naver.maps.map.MapView
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.UiSettings
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class HomeFragment : Fragment(), OnMapReadyCallback {
     private var _binding: FragmentHomeBinding? = null
@@ -79,6 +93,8 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
 
 
+
+
         return view
     }
     override fun onMapReady(naverMap: NaverMap) {
@@ -88,6 +104,13 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     @OptIn(ExperimentalBadgeUtils::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val latitude = 25.0
+        val longitude = 50.0
+        val regionName = "서울특별시 노원구 월계동"
+
+        fetchHomeData(latitude, longitude, regionName)
+
         val toolbar = activity?.findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
         if (toolbar != null) {
             requireActivity().addMenuProvider(object : MenuProvider {
@@ -212,12 +235,12 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         binding.recentFilterButton1.setOnClickListener {
             selectButton(it as MaterialCardView, R.id.recent_filter_tv)
-            replaceFragment(MainDistanceFragment())
+            replaceFragment(MainRecentFragment())
         }
 
         binding.okFilterButton1.setOnClickListener {
             selectButton(it as MaterialCardView, R.id.ok_filter_tv)
-            replaceFragment(MainDistanceFragment())
+            replaceFragment(MainCheckFragment())
         }
 
 
@@ -290,15 +313,69 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         activity?.findViewById<AppBarLayout>(R.id.appBarLayout)?.visibility = View.GONE
     }
 
-    private fun showToolbar() {
-        // Toolbar 보이기
-        safelyUpdateToolbarVisibility(View.VISIBLE)
-    }
     private fun safelyUpdateToolbarVisibility(visibility: Int) {
         activity?.let {
             if (!it.isFinishing) {
                 it.findViewById<MaterialToolbar>(R.id.toolbar1)?.visibility = visibility
             }
+        }
+    }
+
+    //hostDto
+    private fun fetchHomeData(latitude: Double, longitude: Double, regionName: String) {
+        val homeService = RetrofitClient.createService(HomeService::class.java)
+        val request = HomeRequest(latitude, longitude, regionName)
+
+        homeService.getHomeData(request).enqueue(object : Callback<HomeResponse> {
+            override fun onResponse(call: Call<HomeResponse>, response: Response<HomeResponse>) {
+                if (response.isSuccessful) {
+                    val homeResponse = response.body()
+                    Log.d("HomeFragment", "Full Response Body: $homeResponse")
+
+                    homeResponse?.result?.let { result ->
+                        val hostPostDtos = result.hostPostDtos
+                        Log.d("HomeFragment", "Received hostPostDtos: $hostPostDtos")
+
+                        if (!hostPostDtos.isNullOrEmpty()) {
+                            updateUI(hostPostDtos[0])
+                        } else {
+                            Toast.makeText(context, "데이터가 없습니다.", Toast.LENGTH_SHORT).show()
+                        }
+                    } ?: run {
+                        Toast.makeText(context, "서버 응답이 null입니다.", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(context, "서버 오류 발생", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<HomeResponse>, t: Throwable) {
+                Toast.makeText(context, "네트워크 오류 발생", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun updateUI(post: HostPostDto) {
+        binding.mapWhiteBackground.visibility = View.VISIBLE  // 이게 다시 사라지는 기준이 모호함!!
+        binding.mapAccidentTv.text = post.title
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
+        val dateTime = LocalDateTime.parse(post.createAt, formatter)
+        val timePart = dateTime.format(DateTimeFormatter.ofPattern("HH시 mm분"))
+        binding.subMapAccidentTv.text = timePart
+        binding.mapOkNumberTv.text = post.hearts.toString()
+        binding.mapDistanceTv.text = String.format("%.1fkm", post.distance / 1000)
+        binding.mapRegionNameTv.text = post.regionName
+        binding.mapCategoryTv.text = post.categoryName+"발생"
+
+
+        // 이미지가 있을 경우 로드
+        if (post.imageUrl != null) {
+            /*Glide.with(this)
+                .load("http://114.108.153.82/${post.imageUrl}")  // 지금 이 부분이 이상함
+                .into(binding.mainMapImageIv)*/
+        } else {
+            // 이미지가 없을 때 기본 이미지 설정
+            //binding.mainMapImageIv.setImageResource(R.drawable.main_map_image_icon)
         }
     }
 }

@@ -38,6 +38,19 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.commit {
             replace(R.id.fragment_container, MainFragment(), "root")
         }
+        val targetPage = intent.getIntExtra("TARGET_PAGE", 0)
+
+        // MainFragment에 인자 전달
+        val fragment = MainFragment().apply {
+            arguments = Bundle().apply {
+                putInt("selectedPage", targetPage)
+            }
+        }
+
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .commit()
 
         with(binding) {
             val badgeDrawable = BadgeDrawable.create(this@MainActivity).apply {

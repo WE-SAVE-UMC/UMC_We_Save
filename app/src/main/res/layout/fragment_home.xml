@@ -492,17 +492,19 @@
                 android:id="@+id/main_map_image_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/main_map_image_icon"
                 app:layout_constraintTop_toBottomOf="@id/main_map_detail_tv"
                 app:layout_constraintEnd_toEndOf="@id/map_white_background"
                 android:layout_marginEnd="20dp"
                 android:layout_marginTop="30dp"/>
 
+            
+
+
             <TextView
                 android:id="@+id/sub_map_accident_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="17시 25분 화재 발생"
+                android:text="17시 25분(시간)"
                 android:textFontWeight="400"
                 android:lineHeight="16dp"
                 app:layout_constraintHorizontal_weight="400"
@@ -511,6 +513,21 @@
                 app:layout_constraintStart_toStartOf="@id/map_accident_tv"
                 android:textColor="@color/red_50"
                 android:textSize="12sp"/>
+            <TextView
+                android:id="@+id/map_category_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="타입"
+
+                android:textFontWeight="400"
+                android:lineHeight="16dp"
+                android:layout_marginStart="3dp"
+                app:layout_constraintStart_toEndOf="@id/sub_map_accident_tv"
+                app:layout_constraintBottom_toBottomOf="@id/sub_map_accident_tv"
+                android:textColor="@color/red_50"
+                android:textSize="12sp"/>
+
+
             <TextView
                 android:id="@+id/map_ok_tv"
                 android:layout_width="wrap_content"
@@ -536,39 +553,12 @@
                 app:layout_constraintStart_toEndOf="@id/map_ok_tv"
                 app:layout_constraintTop_toTopOf="@id/map_ok_tv"/>
 
-            <TextView
-                android:id="@+id/map_album_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/pretandard"
-                android:text="사진"
-                android:textColor="@color/gray_60"
-                android:layout_marginStart="10dp"
-                android:textFontWeight="600"
-                android:textSize="12sp"
-                app:layout_constraintStart_toEndOf="@id/map_ok_number_tv"
-                app:layout_constraintTop_toTopOf="@id/map_ok_number_tv"
-                app:layout_constraintBottom_toBottomOf="@id/map_ok_number_tv"/>
-
-            <TextView
-                android:id="@+id/map_album_number_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toEndOf="@id/map_album_tv"
-                app:layout_constraintTop_toTopOf="@id/map_album_tv"
-                app:layout_constraintBottom_toBottomOf="@id/map_album_tv"
-                android:layout_marginStart="5dp"
-                android:text="57"
-                android:textColor="@color/gray_60"
-                android:textFontWeight="400"
-                android:fontFamily="@font/pretandard"
-                android:textSize="12sp"/>
 
             <TextView
                 android:id="@+id/map_distance_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/map_album_number_tv"
+                app:layout_constraintTop_toBottomOf="@id/map_ok_number_tv"
                 android:layout_marginTop="5dp"
                 app:layout_constraintStart_toStartOf="@id/map_ok_tv"
                 android:textSize="12sp"
@@ -577,6 +567,7 @@
                 android:fontFamily="@font/pretandard"
                 android:text="1.7km"/>
             <TextView
+                android:id="@+id/map_region_name_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toEndOf="@id/map_distance_tv"

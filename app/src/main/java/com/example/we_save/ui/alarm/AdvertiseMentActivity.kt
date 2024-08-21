@@ -1,6 +1,7 @@
 package com.example.we_save.ui.alarm
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -13,7 +14,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
 import com.example.we_save.R
+
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.target.Target
+import android.graphics.drawable.Drawable
 import com.example.we_save.data.apiservice.GetQuizResponse
 import com.example.we_save.data.apiservice.QuizResponse
 import com.example.we_save.data.apiservice.QuizResponseRequest
@@ -105,11 +112,34 @@ class AdvertiseMentActivity : AppCompatActivity() {
             }
 
             //binding.advertisementTextTv.text = options[0].responseText
-            binding.advertisementUrlTv.text = options[0].redirectUrl
+
+            val (imageUrl, redirectUrl) = when (quizResult.adId) {
+                1 -> Pair(
+                    "https://cdn.discordapp.com/attachments/1272902416152531078/1275443252916518972/nut_ads_img.png?ex=66c5e898&is=66c49718&hm=61f54d2d05fe56e7740730c608a0c126007966918412f1b5835abf74ef47090f&",
+                    "https://www.figma.com/design/U3euf6QViAf3zXKPDla3lG?node-id=1059-24216#890351332"
+                )
+                2 -> Pair(
+                    "https://cdn.discordapp.com/attachments/1272902416152531078/1275443252475985970/car_ads_img.png?ex=66c5e897&is=66c49717&hm=f96033fc8d89c64f0332a3255f288a0e208368b577882eb572ac1d1c8dee3d0a&",
+                    "https://direct.samsungfire.com/ria/pc/product/car/?state=Front"
+                )
+                3 -> Pair(
+                    "https://cdn.discordapp.com/attachments/1272902416152531078/1275443253285748757/water_ads_img.png?ex=66c5e898&is=66c49718&hm=3e484e3a33e81667fb4f493e2ddf9680776cfbf9ff3ed9ba5d15fbd625207188&",
+                    "https://brand.naver.com/cocacola/products/4611673852"
+                )
+                else -> Pair(
+                    "https://cdn.discordapp.com/attachments/1272902416152531078/1275443252102828215/emergency_ads_img.png?ex=66c5e897&is=66c49717&hm=5be12542771b116e636aafb09efa7d324e092f6fbe7caac52aaccb9874044542&",
+                    "https://brand.naver.com/baseus/products/4661149558"
+                )
+            }
 
             Glide.with(this)
-                .load("http://114.108.153.82:8080/" + options[0].imageUrl)  // 이미지 URL 설정
-                .into(binding.advertisementImageIv)
+                .load(imageUrl)
+                .into(binding.advertisementBackgroundIv)
+
+            binding.advertisementBackgroundIv.setOnClickListener {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(redirectUrl))
+                startActivity(intent)
+            }
 
             correctAnswer = options.firstOrNull { it.isCorrect }?.text ?: ""
         } else {
@@ -204,18 +234,14 @@ class AdvertiseMentActivity : AppCompatActivity() {
         binding.rightTv.visibility = View.VISIBLE
         binding.descriptionTv.visibility = View.VISIBLE
         binding.advertisementBackgroundIv.visibility = View.VISIBLE
-        binding.advertisementUpperTextTv.visibility = View.VISIBLE
+
        // binding.advertisementTextTv.visibility = View.VISIBLE
-        binding.advertisementUrlTv.visibility = View.VISIBLE
-        binding.advertisementRightArrowIv.visibility = View.VISIBLE
-        binding.advertisementImageIv.visibility = View.VISIBLE
+
 
         val imageUrl = "http://114.108.153.82/files/ads/" + result.imageUrl
         Log.d("AdvertiseMentActivity", "이미지 url: $imageUrl")
 
-        Glide.with(this)
-            .load(imageUrl)
-            .into(binding.advertisementImageIv)
+
 
         if (result.correct) {
             binding.descriptionTv.text = result.correctMessage
