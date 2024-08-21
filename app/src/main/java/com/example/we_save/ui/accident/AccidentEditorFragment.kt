@@ -2,13 +2,12 @@ package com.example.we_save.ui.accident
 
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -19,6 +18,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ConcatAdapter
@@ -27,27 +27,31 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.we_save.R
+import com.example.we_save.common.extensions.customToast
 import com.example.we_save.common.extensions.setAppAnimation
-import com.example.we_save.data.model.Accident
+import com.example.we_save.data.model.PostDetails
 import com.example.we_save.databinding.FragmentAccidentEditorBinding
 import com.example.we_save.databinding.ItemAccidentImageBinding
 import com.example.we_save.domain.model.AccidentType
 import com.example.we_save.ui.MainViewModel
+import com.example.we_save.ui.alarm.AlarmActivity
+import com.example.we_save.ui.main.pages.accident.REQUEST_KEY_REFRESH
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 const val DATA_KEY_TYPE = "TYPE"
-const val REQUEST_KEY_ACCIDENT_TYPE = "REQUEST_KEY_ACCIDENT_TYPE"
+const val REQUEST_KEY_CATEGORY = "REQUEST_KEY_CATEGORY"
 
 class AccidentEditorFragment : Fragment() {
     companion object {
-        fun getInstance(accident: Accident) = AccidentEditorFragment().apply {
-            arguments = bundleOf("accident" to accident)
+        fun getInstance(details: PostDetails) = AccidentEditorFragment().apply {
+            arguments = bundleOf("details" to details)
         }
     }
 
-    private var accident: Accident? = null
+    private var details: PostDetails? = null
 
     private var _binding: FragmentAccidentEditorBinding? = null
     private val binding get() = _binding!!
@@ -68,14 +72,14 @@ class AccidentEditorFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         if (arguments != null) {
-            accident = requireArguments().getParcelable("accident")
+            details = requireArguments().getParcelable("details")
         } else if (savedInstanceState != null) {
-            accident = savedInstanceState.getParcelable("accident")
+            details = savedInstanceState.getParcelable("details")
         }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putParcelable("accident", accident)
+        outState.putParcelable("details", details)
         super.onSaveInstanceState(outState)
     }
 
@@ -92,7 +96,7 @@ class AccidentEditorFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         parentFragmentManager.setFragmentResultListener(
-            REQUEST_KEY_ACCIDENT_TYPE,
+            REQUEST_KEY_CATEGORY,
             viewLifecycleOwner
         ) { _, data ->
             val ordinal = data.getInt(DATA_KEY_TYPE, -1)
@@ -103,7 +107,17 @@ class AccidentEditorFragment : Fragment() {
         }
 
         with(binding) {
-            toolbar.setNavigationOnClickListener {
+            logoBar.setOnMenuItemClickListener {
+                if (it.itemId == R.id.action_notification) {
+                    startActivity(Intent(requireContext(), AlarmActivity::class.java).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    })
+                }
+
+                return@setOnMenuItemClickListener true
+            }
+
+            backButton.setOnClickListener {
                 requireActivity().onBackPressedDispatcher.onBackPressed()
             }
 
@@ -112,19 +126,21 @@ class AccidentEditorFragment : Fragment() {
             }
 
             locationField.setEndIconOnClickListener {
-                lifecycleScope.launch {
-                    locationField.setEndIconTintList(
-                        ColorStateList.valueOf(
-                            ContextCompat.getColor(
-                                requireContext(),
-                                R.color.red_10
-                            )
+                locationField.setEndIconTintList(
+                    ColorStateList.valueOf(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.red_10
                         )
                     )
+                )
 
-                    activityViewModel.updateLocation {
-                        locationField.setEndIconTintList(null)
+                activityViewModel.updateAddress { address, e ->
+                    if (address != null) {
+                        viewModel.address.value = address
                     }
+
+                    locationField.setEndIconTintList(null)
                 }
             }
 
@@ -156,7 +172,7 @@ class AccidentEditorFragment : Fragment() {
             imageRecyclerView.adapter = ConcatAdapter(headerAdapter, imageAdapter)
 
             toggle119Button.setOnClickListener {
-                toggle119Button.isSelected = !toggle119Button.isSelected
+                viewModel.report119.value = !viewModel.report119.value
             }
 
             registerButton.setOnClickListener {
@@ -167,22 +183,9 @@ class AccidentEditorFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            activityViewModel.address.collectLatest {
-                if (it == null) return@collectLatest
-
-                val elements = it.getAddressLine(0).split(" ").toMutableList()
-                elements.remove(it.countryName) // 국가
-
-                viewModel.location.value = activityViewModel.location.value
-                viewModel.address.value = elements.joinToString(" ")
-            }
-        }
-
-        lifecycleScope.launch {
             viewModel.address.collectLatest {
                 if (it == null) return@collectLatest
-
-                binding.locationEditText.setText(it)
+                binding.locationEditText.setText(it.address)
             }
         }
 
@@ -190,6 +193,12 @@ class AccidentEditorFragment : Fragment() {
             viewModel.type.collectLatest {
                 binding.typeTextView.isSelected = it != null
                 binding.typeTextView.text = it?.title ?: "선택"
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.report119.collectLatest {
+                binding.toggle119Button.isSelected = it
             }
         }
 
@@ -209,49 +218,95 @@ class AccidentEditorFragment : Fragment() {
             }
         }
 
-        accident?.let {
-            binding.toolbar.title = "사건 사고 수정"
+        details?.let { details ->
+            binding.titleTextView.text = "사건 사고 수정"
+            binding.temporarySaveButton.isVisible = false
 
-            binding.titleEditText.setText(it.title)
-            binding.locationField.isVisible = false
-            binding.descriptionEditText.setText(it.description)
-            binding.toggle119Button.isVisible = false
+            binding.titleEditText.setText(details.title)
+            binding.descriptionEditText.setText(details.content)
             binding.registerButton.text = "수정하기"
 
-            viewModel.type.value = it.type
-            viewModel.address.value = it.address
-            viewModel.images.value = it.images
-        }
-    }
+            viewModel.type.value = AccidentType.entries.first { it.title == details.category }
+            viewModel.images.value = details.urls
 
-    private fun sendSms() {
-        val message = """
-            |${binding.locationEditText.text?.toString() ?: ""}
-            |${viewModel.title.value.trim()}
-            |${viewModel.description.value.trim()}
-        """.trimMargin()
+            lifecycleScope.launch {
+                val response = activityViewModel.getAddress(details.latitude, details.longitude)
+                if (response?.results?.isNotEmpty() == true) {
+                    viewModel.address.value = response
+                } else {
+                    requireActivity().onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        } ?: run {
+            binding.temporarySaveButton.setOnClickListener {
+                lifecycleScope.launch {
+                    viewModel.temporarySave()
 
-        val intent = Intent(Intent.ACTION_SEND).apply {
-            data = Uri.parse("smsto:000")  // Only SMS apps respond to this.
-            putExtra("sms_body", message)
-        }
+                    requireActivity().applicationContext.customToast("임시 저장되었습니다.").show()
+                    requireActivity().onBackPressedDispatcher.onBackPressed()
+                }
+            }
 
-        if (intent.resolveActivity(requireContext().packageManager) != null) {
-            startActivity(intent)
-        } else {
-            Toast.makeText(requireContext(), "119 신고에 실패하였습니다. 직접 신고해 주세요.", Toast.LENGTH_SHORT)
-                .show()
+            lifecycleScope.launch {
+                val savedData = viewModel.getSavedData()
+
+                if (savedData != null) {
+                    val request = savedData.first
+                    val images = savedData.second
+
+                    binding.titleEditText.setText(request.title)
+                    binding.descriptionEditText.setText(request.content)
+
+                    viewModel.type.value =
+                        AccidentType.entries.firstOrNull { it.name == request.category }
+                    viewModel.report119.value = request.report119
+                    viewModel.images.value = images
+
+                    if (request.latitude != null && request.longitude != null) {
+                        val response =
+                            activityViewModel.getAddress(
+                                request.latitude.toDouble(),
+                                request.longitude.toDouble()
+                            )
+                        if (response?.results?.isNotEmpty() == true) {
+                            viewModel.address.value = response
+                            return@launch
+                        }
+                    }
+                }
+
+                viewModel.address.value = activityViewModel.address.value
+            }
         }
     }
 
     private suspend fun register() {
-        if (accident == null) {
-            viewModel.register()
-            Toast.makeText(requireContext(), "등록되었습니다.", Toast.LENGTH_SHORT).show()
+        val dialog = MaterialAlertDialogBuilder(requireContext())
+            .setView(LayoutInflater.from(requireContext()).inflate(R.layout.dialog_uploading, null))
+            .create()
+            .apply {
+                setCancelable(false)
+                setCanceledOnTouchOutside(false)
+            }
+
+        dialog.show()
+
+        if (details == null) {
+            val response = viewModel.register()
+            Log.d("Editor", response.body()?.message ?: "null")
+
+            // 사건 사고 목록 갱신용
+            setFragmentResult(REQUEST_KEY_REFRESH, bundleOf())
+
+            requireContext().customToast("등록되었습니다.").show()
         } else {
-            viewModel.update(accident!!)
-            Toast.makeText(requireContext(), "수정되었습니다.", Toast.LENGTH_SHORT).show()
+            val response = viewModel.update(details!!)
+            Log.d("Editor", response.body()?.message ?: "null")
+
+            requireContext().customToast("수정되었습니다.").show()
         }
+
+        dialog.dismiss()
 
         requireActivity().onBackPressedDispatcher.onBackPressed()
     }

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:padding="4dp">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="2dp"
+        app:cardMaxElevation="2dp"
+        app:strokeColor="@color/gray_10"
+        app:strokeWidth="1dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/remove_button"
+                android:layout_width="77dp"
+                android:layout_height="24dp"
+                android:gravity="center"
+                android:text="삭제"
+                android:textAppearance="?attr/textAppearanceLabelMedium"
+                android:textColor="@color/red_60" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray_10" />
+
+            <TextView
+                android:id="@+id/edit_button"
+                android:layout_width="77dp"
+                android:layout_height="24dp"
+                android:gravity="center"
+                android:text="수정"
+                android:textAppearance="?attr/textAppearanceLabelMedium"
+                android:textColor="@color/gray_60" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</FrameLayout>

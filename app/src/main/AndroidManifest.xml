@@ -21,6 +21,7 @@
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
+        android:enableOnBackInvokedCallback="true"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@drawable/white_background"
         android:label="@string/app_name"
@@ -30,6 +31,7 @@
         android:theme="@style/Theme.We_Save"
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize"
+        tools:ignore="UnusedAttribute"
         tools:targetApi="31">
         <activity
             android:name=".ui.createAccount.CreateAccountNameActivity"
@@ -80,9 +82,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.my.HeaderActivity"/>
-        <activity android:name=".ui.createAccount.ResetPasswordEnterActivity"/>
-        <activity android:name=".ui.createAccount.EnterPasswordActivity"/>
+        <activity android:name=".ui.my.HeaderActivity" />
+        <activity android:name=".ui.createAccount.ResetPasswordEnterActivity" />
+        <activity android:name=".ui.createAccount.EnterPasswordActivity" />
 
         <service
             android:name="com.google.android.gms.metadata.ModuleDependencies"

@@ -1,10 +1,7 @@
 package com.example.we_save.ui.main.pages
 
-import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +15,7 @@ import com.example.we_save.R
 import com.example.we_save.common.extensions.setAppAnimation
 import com.example.we_save.databinding.FragmentAccidentBinding
 import com.example.we_save.ui.accident.AccidentEditorFragment
+import com.example.we_save.ui.alarm.AlarmActivity
 import com.example.we_save.ui.main.pages.accident.DomesticFragment
 import com.example.we_save.ui.main.pages.accident.NearMeFragment
 import com.google.android.material.tabs.TabLayout
@@ -36,11 +34,20 @@ class AccidentFragment : Fragment() {
         return binding.root
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
+            toolbar.setOnMenuItemClickListener {
+                if (it.itemId == R.id.action_notification) {
+                    startActivity(Intent(requireContext(), AlarmActivity::class.java).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    })
+                }
+
+                return@setOnMenuItemClickListener true
+            }
+
             tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
                 override fun onTabSelected(tab: TabLayout.Tab?) {
                     when (tab?.position) {
@@ -86,14 +93,6 @@ class AccidentFragment : Fragment() {
             }
         }
     }
-    // 국내 사건 사고, 내근처 사건 사고를 눌렀을 때 이동하기 위한 함수입니다
-    override fun onResume() {
-        super.onResume()
-
-        val sharedPreferences = requireActivity().getSharedPreferences("Move", Context.MODE_PRIVATE)
-        val pageToSet = sharedPreferences.getInt("pageToSet", 0)  // 기본값은 0 (NearMeFragment)
-        setViewPagerPage(pageToSet)
-    }
 
     private class ViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) :
         FragmentStateAdapter(fragmentManager, lifecycle) {
@@ -105,10 +104,5 @@ class AccidentFragment : Fragment() {
                 else -> DomesticFragment()
             }
         }
-    }
-    // viewpager의 페이지 조정 메서드입니다
-    fun setViewPagerPage(page: Int) {
-        Log.d("AccidentFragment", "Setting ViewPager page to $page")
-        binding.viewPager.currentItem = page
     }
 }
