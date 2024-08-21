@@ -4,15 +4,19 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.example.we_save.R
+import com.example.we_save.data.apiservice.PostResult
 import com.example.we_save.databinding.ItemPostWritingBinding
 
-class PostWritingRVAdapter (private val writingList: ArrayList<Writing>): RecyclerView.Adapter<PostWritingRVAdapter.ViewHolder>() {
+class PostWritingRVAdapter (private val postList: ArrayList<PostResult>): RecyclerView.Adapter<PostWritingRVAdapter.ViewHolder>() {
 
     interface MyItemClickListener{
-        fun onItemClick(writing: Writing)
-        fun onSelectClick(writing: Writing)
+        fun onItemClick(post: PostResult)
+        fun onSelectClick(post: PostResult)
 
         fun onSelectCountChange(count: Int)
     }
@@ -23,16 +27,16 @@ class PostWritingRVAdapter (private val writingList: ArrayList<Writing>): Recycl
         mItemClickListener = itemClickListener
     }
 
-    fun addItem(writing: Writing){
-        writingList.add(writing)
-        notifyItemInserted(writingList.size - 1)
+    fun addItem(post: PostResult){
+        postList.add(post)
+        notifyItemInserted(postList.size - 1)
     }
 
     // 선택 위젯의 가시성 변화
     @SuppressLint("NotifyDataSetChanged")
     fun updateSelectVisibility() {
-        for (writing in writingList) {
-            writing.selectedVisible =  !writing.selectedVisible
+        for (post in postList) {
+            post.selectedVisible =  !post.selectedVisible
         }
         notifyDataSetChanged() // 모든 항목 업데이트를 위해 호출
         mItemClickListener.onSelectCountChange(getSelectedCount()) // 선택된 항목 수 갱신
@@ -41,8 +45,8 @@ class PostWritingRVAdapter (private val writingList: ArrayList<Writing>): Recycl
     // 선택된 모든 항목의 selected값을 false로 지정
     @SuppressLint("NotifyDataSetChanged")
     fun clearSelected() {
-        for (writing in writingList) {
-            writing.selected = false
+        for (post in postList) {
+            post.selected = false
         }
         notifyDataSetChanged() // 모든 항목 업데이트를 위해 호출
         mItemClickListener.onSelectCountChange(getSelectedCount()) // 선택된 항목 수 갱신
@@ -51,16 +55,17 @@ class PostWritingRVAdapter (private val writingList: ArrayList<Writing>): Recycl
     // 전체 선택
     @SuppressLint("NotifyDataSetChanged")
     fun selectAll() {
-        for (writing in writingList) {
-            writing.selected = true
+        for (post in postList) {
+            post.selected = true
         }
         notifyDataSetChanged() // 모든 항목 업데이트를 위해 호출
         mItemClickListener.onSelectCountChange(getSelectedCount()) // 선택된 항목 수 갱신
     }
 
+
     // selected가 true인 항목 개수를 반환
     fun getSelectedCount(): Int {
-        return writingList.count { it.selected }
+        return postList.count { it.selected }
     }
 
 //    fun removeItem(position: Int){
@@ -76,46 +81,55 @@ class PostWritingRVAdapter (private val writingList: ArrayList<Writing>): Recycl
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(writingList[position])
-        holder.itemView.setOnClickListener{mItemClickListener.onItemClick(writingList[position]) }
+        holder.bind(postList[position])
+        holder.itemView.setOnClickListener{mItemClickListener.onItemClick(postList[position]) }
         holder.binding.itemPostWritingSelectIv.setOnClickListener {
-            mItemClickListener.onSelectClick(writingList[position])
+            mItemClickListener.onSelectClick(postList[position])
 
             // selected의 값을 바꿈
-            writingList[position].selected = !writingList[position].selected
+            postList[position].selected = !postList[position].selected
             notifyItemChanged(position)
-            // 개수를 바꿈
+            // 선택된 아이템의 개수를 바꿈
             mItemClickListener.onSelectCountChange(getSelectedCount())
         }
 
 
     }
 
-    override fun getItemCount(): Int = writingList.size
+    override fun getItemCount(): Int = postList.size
 
 
     inner class ViewHolder(val binding: ItemPostWritingBinding): RecyclerView.ViewHolder(binding.root){
-        fun bind(writing: Writing){
-            binding.itemPostWritingTitleTv.text = writing.title
-            binding.itemPostWritingLocationTv.text = writing.location
-            binding.itemPostWritingImgIv.setImageResource(writing.img!!)
+        fun bind(post: PostResult){
+            binding.itemPostWritingTitleTv.text = post.title
+            binding.itemPostWritingLocationTv.text = post.regionName
 
-            // finished가 true인 경우 종료 텍스트 뷰를 띄움
-            if (writing.finished) {
-                binding.itemPostWritingFinishedTv.visibility = View.VISIBLE
-            } else {
+
+            val img = "http://114.108.153.82:80${post.imageUrl}"
+            Glide.with(itemView.context)
+                .load(img)
+                .apply(RequestOptions().placeholder(R.drawable.img_logo_horizontal)) // 로딩 중에 보여줄 이미지
+                .error(R.drawable.img_logo_horizontal) // 오류 발생 시 보여줄 이미지
+                .into(binding.itemPostWritingImgIv)
+
+            // status false인 경우 종료 텍스트 뷰를 띄움
+            if (post.status == "PROCESSING") {
                 binding.itemPostWritingFinishedTv.visibility = View.GONE
+                binding.itemPostCompleteView.visibility = View.GONE
+            } else if(post.status == "COMPLETED") {
+                binding.itemPostWritingFinishedTv.visibility = View.VISIBLE
+                binding.itemPostCompleteView.visibility = View.VISIBLE
             }
 
             // select 위젯 가시성 업데이트
-            if (writing.selectedVisible) {
+            if (post.selectedVisible) {
                 binding.itemPostWritingSelectIv.visibility = View.VISIBLE
             } else {
                 binding.itemPostWritingSelectIv.visibility = View.GONE
             }
 
             // 선택 상태에 따라 이미지 변경
-            if (writing.selected) {
+            if (post.selected) {
                 binding.itemPostWritingSelectIv.setImageResource(R.drawable.ic_checkbox_on) // 선택된 이미지
             } else {
                 binding.itemPostWritingSelectIv.setImageResource(R.drawable.ic_checkbox_off) // 선택되지 않은 이미지

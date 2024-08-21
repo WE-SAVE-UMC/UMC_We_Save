@@ -68,7 +68,7 @@ class ProfileEditFragment : Fragment() {
 
         // 프로필 정보가 화면에 뜸
         initProfile()
-        Log.d("실패 ㄴㄴ", "${originalImageUrl}")
+        Log.d("initfail", "${originalImageUrl}")
 
 
 
@@ -101,10 +101,10 @@ class ProfileEditFragment : Fragment() {
 
             } else if(selectedImageFile == null && newNickname!!.isNotEmpty()){     // 닉네임만 변경된 경우
 
-                Log.d("실패", "${originalImageUrl}")
+                Log.d("initfail2", "${originalImageUrl}")
                 // originalImageUrl을 Uri로 변환
                 val originalUri = Uri.parse(originalImageUrl)
-                Log.d("실패 ㅋㅋㅋ", "${originalUri}")
+                Log.d("initfail3", "${originalUri}")
 
 
                 //val originalImageFile = originalUri?.let { getFileFromUri(it) }

@@ -26,9 +26,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        // Writing 더미 데이터 생성
-        inputDummyWritings()
-        Log.d("확인","확인됨")
 
         // Block 더미 데이터 생성
         inputDummyBlocks()
@@ -45,54 +42,6 @@ class MainActivity : AppCompatActivity() {
             // Badge 추가하는 방법 (삭제는 BadgeUtils.detachBadgeDrawable() 호출)
             BadgeUtils.attachBadgeDrawable(badgeDrawable, toolbar1, R.id.action_notification)
         }
-    }
-
-    // 작성된 글 더미 데이터
-    private fun inputDummyWritings() {
-        val writingDB = WritingDatabase.getInstance(this)!!
-        val writings = writingDB.writingDao().getWritings()
-
-        if (writings.isNotEmpty()) return
-
-        writingDB.writingDao().insert(
-            Writing(
-                "성신여대 화재",
-                "삼선동2가 389",
-                R.drawable.img_fire,
-                false
-            )
-        )
-
-        writingDB.writingDao().insert(
-            Writing(
-                "제목 예시2",
-                "삼선동2가 389",
-                R.drawable.img_fire,
-                false
-            )
-        )
-
-        writingDB.writingDao().insert(
-            Writing(
-                "제목 예시3",
-                "삼선동2가 389",
-                R.drawable.img_fire,
-                true
-            )
-        )
-
-        writingDB.writingDao().insert(
-            Writing(
-                "제목 예시4",
-                "삼선동2가 389",
-                R.drawable.img_fire,
-                true
-            )
-        )
-
-        val _writings = writingDB.writingDao().getWritings()
-        Log.d("writing Data", _writings.toString())
-
     }
 
     // 차단 더미 데이터

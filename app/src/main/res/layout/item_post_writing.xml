@@ -22,6 +22,13 @@
             android:src="@drawable/img_fire"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/item_post_complete_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#40000000"
+            android:visibility="gone"/>
     </androidx.cardview.widget.CardView>
 
     <TextView

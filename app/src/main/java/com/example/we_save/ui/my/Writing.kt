@@ -8,9 +8,9 @@ import androidx.room.PrimaryKey
 data class Writing(
 
     var title: String? = "",
-    var location: String? = "",
+    var regionName: String? = "",
     var img: Int? = null,
-    var finished: Boolean = false,       // 종료되면 true
+    var status: Boolean = false,       // 종료되면 false
     var selected: Boolean = false,  // true면 선택됨
     var selectedVisible: Boolean = false
 ){
