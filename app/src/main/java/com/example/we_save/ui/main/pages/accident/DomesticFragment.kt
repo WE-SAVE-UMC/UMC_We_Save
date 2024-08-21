@@ -1,5 +1,6 @@
 package com.example.we_save.ui.main.pages.accident
 
+import android.graphics.Typeface
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -12,40 +13,35 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.we_save.R
+import com.example.we_save.common.Constants.dateFormat
 import com.example.we_save.common.extensions.hideKeyboard
 import com.example.we_save.common.extensions.setAppAnimation
-import com.example.we_save.data.model.Accident
+import com.example.we_save.data.model.PostDto
 import com.example.we_save.databinding.FragmentDomesticBinding
 import com.example.we_save.databinding.ItemAccidentBinding
 import com.example.we_save.databinding.ItemNoticeBinding
-import com.example.we_save.ui.MainViewModel
 import com.example.we_save.ui.accident.AccidentDetailsFragment
-import com.example.we_save.ui.accident.ParentFragment
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import org.ocpsoft.prettytime.PrettyTime
-import java.util.Date
-
+import java.util.Locale
 
 class DomesticFragment : Fragment() {
     private var _binding: FragmentDomesticBinding? = null
     private val binding get() = _binding!!
 
-    private val activityViewModel by activityViewModels<MainViewModel>()
-    private val viewModel by viewModels<NearMeViewModel>()
+    private val viewModel by viewModels<DomesticViewModel>()
 
-    private val accidentAdapter by lazy { AccidentAdapter() }
+    private val postAdapter by lazy { PostAdapter() }
     private val noticeAdapter by lazy { NoticeAdapter() }
 
     override fun onCreateView(
@@ -60,7 +56,51 @@ class DomesticFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        requireActivity().supportFragmentManager.setFragmentResultListener(
+            REQUEST_KEY_UPDATE,
+            viewLifecycleOwner
+        ) { _, data ->
+            val result = data.get(DATA_KEY_POST_RESULT)
+
+            if (result is Long) {
+                viewModel.recentPosts.value?.let {
+                    viewModel.recentPosts.value = it.filter { it.postId != result }
+                }
+
+                viewModel.posts.value?.let {
+                    viewModel.posts.value = it.filter { it.postId != result }
+                }
+            } else if (result is PostDto) {
+                viewModel.recentPosts.value?.let {
+                    val posts = ArrayList(it)
+                    val index = posts.indexOfFirst { it.postId == result.postId }
+                    if (index >= 0) {
+                        posts[index] = result.copy(
+                            distance = posts[index].distance,
+                            completed = posts[index].completed,
+                        )
+
+                        viewModel.recentPosts.value = posts
+                    }
+                }
+
+                viewModel.posts.value?.let {
+                    val posts = ArrayList(it)
+                    val index = posts.indexOfFirst { it.postId == result.postId }
+                    if (index >= 0) {
+                        posts[index] = result.copy(
+                            distance = posts[index].distance,
+                        )
+
+                        viewModel.posts.value = posts
+                    }
+                }
+            }
+        }
+
         with(binding) {
+            viewPager.adapter = noticeAdapter
+
             searchEditText.addTextChangedListener {
                 viewModel.query.value = it?.toString() ?: ""
             }
@@ -81,30 +121,22 @@ class DomesticFragment : Fragment() {
             }
 
             listOf(
-                distanceFilterButton,
                 recentFilterButton,
                 checkFilterButton
             ).forEachIndexed { index, button ->
                 button.setOnClickListener {
-                    viewModel.filter.value = NearMeViewModel.Filter.entries[index]
+                    viewModel.filter.value = DomesticViewModel.Filter.entries[index]
                 }
             }
 
-            distanceFilterButton.setOnClickListener {
-                viewModel.filter.value = NearMeViewModel.Filter.DISTANCE
+            refreshLayout.setOnRefreshListener {
+                lifecycleScope.launch {
+                    viewModel.refresh()
+                    refreshLayout.isRefreshing = false
+                }
             }
 
-            recentFilterButton.setOnClickListener {
-                viewModel.filter.value = NearMeViewModel.Filter.RECENT
-            }
-
-            checkFilterButton.setOnClickListener {
-                viewModel.filter.value = NearMeViewModel.Filter.CHECK
-            }
-
-            viewPager.adapter = noticeAdapter
-
-            recyclerView.adapter = accidentAdapter.apply {
+            recyclerView.adapter = postAdapter.apply {
                 onItemClickListener = {
                     val fragmentManager = requireActivity().supportFragmentManager
                     if (fragmentManager.findFragmentByTag("accident_details") == null) {
@@ -112,7 +144,7 @@ class DomesticFragment : Fragment() {
                             setAppAnimation()
                             replace(
                                 R.id.fragment_container,
-                                AccidentDetailsFragment.getInstance(it, ParentFragment.DOMESTIC),
+                                AccidentDetailsFragment.getInstance(it.postId),
                                 "accident_details"
                             )
                             addToBackStack(null)
@@ -120,27 +152,31 @@ class DomesticFragment : Fragment() {
                     }
                 }
             }
-        }
 
-        lifecycleScope.launch {
-            activityViewModel.address.collectLatest {
-                if (it == null) return@collectLatest
+            recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
 
-                val elements = it.getAddressLine(0).split(" ").toMutableList()
-                elements.remove(it.countryName) // 국가
-                elements.remove(it.adminArea)   // 도 또는 특별시
-                elements.remove(it.locality)    // 시
-                elements.remove(it.featureName) // 번지
-
-                binding.currentAddressTextView.text = elements.joinToString(" ")
-            }
+                    val layoutManager = recyclerView.layoutManager as? LinearLayoutManager ?: return
+                    if (layoutManager.findLastVisibleItemPosition() == postAdapter.itemCount - 1) {
+                        lifecycleScope.launch {
+                            viewModel.loadMore()
+                        }
+                    }
+                }
+            })
         }
 
         lifecycleScope.launch {
             viewModel.excludeSituationEnd.collectLatest {
+                val typeface = resources.getFont(R.font.pretandard)
+
                 with(binding.situationEndFilter) {
                     isSelected = it
-                    (get(0) as TextView).text = if (it) "상황 종료 포함" else "상황 종료 제외"
+                    (this[0] as TextView).apply {
+                        text = if (it) "상황 종료 포함" else "상황 종료 제외"
+                        setTypeface(typeface, if (it) Typeface.NORMAL else Typeface.BOLD)
+                    }
                 }
             }
         }
@@ -148,23 +184,29 @@ class DomesticFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.filter.collectLatest {
                 with(binding) {
+                    val typeface = resources.getFont(R.font.pretandard)
+
                     when (it) {
-                        NearMeViewModel.Filter.DISTANCE -> {
-                            distanceFilterButton.isSelected = true
-                            recentFilterButton.isSelected = false
-                            checkFilterButton.isSelected = false
+                        DomesticViewModel.Filter.RECENT -> {
+                            recentFilterButton.apply {
+                                isSelected = true
+                                (this[0] as TextView).setTypeface(typeface, Typeface.BOLD)
+                            }
+                            checkFilterButton.apply {
+                                isSelected = false
+                                (this[0] as TextView).setTypeface(typeface, Typeface.NORMAL)
+                            }
                         }
 
-                        NearMeViewModel.Filter.RECENT -> {
-                            distanceFilterButton.isSelected = false
-                            recentFilterButton.isSelected = true
-                            checkFilterButton.isSelected = false
-                        }
-
-                        NearMeViewModel.Filter.CHECK -> {
-                            distanceFilterButton.isSelected = false
-                            recentFilterButton.isSelected = false
-                            checkFilterButton.isSelected = true
+                        DomesticViewModel.Filter.TOP -> {
+                            recentFilterButton.apply {
+                                isSelected = false
+                                (this[0] as TextView).setTypeface(typeface, Typeface.NORMAL)
+                            }
+                            checkFilterButton.apply {
+                                isSelected = true
+                                (this[0] as TextView).setTypeface(typeface, Typeface.BOLD)
+                            }
                         }
                     }
                 }
@@ -172,12 +214,7 @@ class DomesticFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            flow {
-                while (true) {
-                    delay(5000)
-                    emit(1)
-                }
-            }.collectLatest {
+            viewModel.ticker.collectLatest {
                 val nextPosition = binding.viewPager.currentItem + 1
                 binding.viewPager.setCurrentItem(
                     if (nextPosition > (noticeAdapter.itemCount - 1)) 0 else nextPosition,
@@ -187,36 +224,39 @@ class DomesticFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            viewModel.recentAccidents.collectLatest {
+            viewModel.recentPosts.collectLatest {
+                if (it == null) return@collectLatest
+
                 noticeAdapter.submitList(it)
             }
         }
 
         lifecycleScope.launch {
-            viewModel.accidents.collectLatest {
-                accidentAdapter.submitList(it)
+            viewModel.posts.collectLatest {
+                if (it == null) return@collectLatest
+
+                postAdapter.submitList(it)
+
+                binding.refreshLayout.isRefreshing = false
             }
         }
     }
 
-    private class NoticeAdapter : ListAdapter<Accident, NoticeAdapter.NoticeItemViewHolder>(
+    private class NoticeAdapter : ListAdapter<PostDto, NoticeAdapter.NoticeItemViewHolder>(
         diffUtil
     ) {
         companion object {
-            val diffUtil = object : DiffUtil.ItemCallback<Accident>() {
-                override fun areItemsTheSame(oldItem: Accident, newItem: Accident): Boolean {
-                    return oldItem.id == newItem.id
+            val diffUtil = object : DiffUtil.ItemCallback<PostDto>() {
+                override fun areItemsTheSame(oldItem: PostDto, newItem: PostDto): Boolean {
+                    return oldItem.postId == newItem.postId
                 }
 
-                override fun areContentsTheSame(oldItem: Accident, newItem: Accident): Boolean {
-                    return oldItem.lat == newItem.lat &&
-                            oldItem.lng == newItem.lng &&
-                            oldItem.address == newItem.address &&
-                            oldItem.title == newItem.title &&
-                            oldItem.description == newItem.description &&
-                            oldItem.type == newItem.type &&
-                            oldItem.images.count() == newItem.images.count() &&
-                            oldItem.images.zip(newItem.images).none { it.first != it.second }
+                override fun areContentsTheSame(oldItem: PostDto, newItem: PostDto): Boolean {
+                    return oldItem.postRegionName == newItem.postRegionName && oldItem.title == newItem.title
+                }
+
+                override fun getChangePayload(oldItem: PostDto, newItem: PostDto): Any {
+                    return Any()
                 }
             }
         }
@@ -231,7 +271,7 @@ class DomesticFragment : Fragment() {
             val item = getItem(position)
 
             with(holder.binding) {
-                accidentAddressTextView.text = item.type.title
+                accidentAddressTextView.text = item.postRegionName.replace(Regex("[0-9- ]"), "")
                 accidentTitleTextView.text = item.title
             }
         }
@@ -240,34 +280,26 @@ class DomesticFragment : Fragment() {
             RecyclerView.ViewHolder(binding.root)
     }
 
-    private class AccidentAdapter : ListAdapter<Accident, AccidentAdapter.AccidentItemViewHolder>(
+    private class PostAdapter : ListAdapter<PostDto, PostAdapter.AccidentItemViewHolder>(
         diffUtil
     ) {
         companion object {
-            val diffUtil = object : DiffUtil.ItemCallback<Accident>() {
-                override fun areItemsTheSame(oldItem: Accident, newItem: Accident): Boolean {
-                    return oldItem.id == newItem.id
+            val diffUtil = object : DiffUtil.ItemCallback<PostDto>() {
+                override fun areItemsTheSame(oldItem: PostDto, newItem: PostDto): Boolean {
+                    return oldItem.postId == newItem.postId
                 }
 
-                override fun areContentsTheSame(oldItem: Accident, newItem: Accident): Boolean {
-                    return oldItem.lat == newItem.lat &&
-                            oldItem.lng == newItem.lng &&
-                            oldItem.address == newItem.address &&
-                            oldItem.title == newItem.title &&
-                            oldItem.description == newItem.description &&
-                            oldItem.type == newItem.type &&
-                            oldItem.images.count() == newItem.images.count() &&
-                            oldItem.images.zip(newItem.images).none { it.first != it.second }
+                override fun areContentsTheSame(oldItem: PostDto, newItem: PostDto): Boolean {
+                    return oldItem == newItem
                 }
             }
         }
 
-        var onItemClickListener: ((Accident) -> Unit)? = null
+        var onItemClickListener: ((PostDto) -> Unit)? = null
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AccidentItemViewHolder {
             val inflater = LayoutInflater.from(parent.context)
             val binding = ItemAccidentBinding.inflate(inflater, parent, false)
-            binding.distanceTextView.isVisible = false
             return AccidentItemViewHolder(binding)
         }
 
@@ -279,21 +311,25 @@ class DomesticFragment : Fragment() {
                     onItemClickListener?.invoke(item)
                 }
 
-                typeTextView.text = item.type.title
+                typeTextView.text = item.category
                 titleTextView.text = item.title
-                agoTextView.text = PrettyTime().format(Date(item.timestamp))
-                descriptionTextView.text = item.description
-                checkCountTextView.text = "0"
-                falsehoodCountTextView.text = "0"
-                imageCountTextView.text = "${item.images.count()}"
+                agoTextView.text =
+                    PrettyTime(Locale.KOREAN).format(dateFormat.parse(item.createdAt))
+                descriptionTextView.text = item.content
+                checkCountTextView.text = item.hearts.toString()
+                falsehoodCountTextView.text = item.dislikes.toString()
+                imageCountTextView.text = item.imageCount.toString()
 
-                addressTextView.text = item.address
-                situationEndIndicator.isInvisible = !item.isEndSituation
+                distanceTextView.isVisible = false
+                addressTextView.text = item.postRegionName
 
-                (imageView.parent.parent as View).isVisible = item.images.isNotEmpty()
-                if (item.images.isNotEmpty()) {
+                situationEndIndicator.isInvisible = !item.completed
+
+                val url = item.url
+                (imageView.parent.parent as View).isVisible = url != null
+                if (url != null) {
                     Glide.with(imageView)
-                        .load(item.images.first())
+                        .load(url)
                         .into(imageView)
                 }
             }

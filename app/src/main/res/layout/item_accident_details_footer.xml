@@ -66,8 +66,8 @@
         android:overScrollMode="never"
         android:scrollbars="none"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:spanCount="5"
-        tools:itemCount="5"
+        app:spanCount="6"
+        tools:itemCount="6"
         tools:listitem="@layout/item_replied_image" />
 
     <TextView
