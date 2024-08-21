@@ -24,11 +24,11 @@ class AlarmRvAdapter (private val alarmdata: ArrayList<Alarm>) : RecyclerView.Ad
     }
     class AlarmviewHolder( val binding: ItemAlarmViewBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(alarm: Alarm) {
-            binding.alarmBackground.backgroundTintList = ContextCompat.getColorStateList(binding.root.context, alarm.alarmview)
-            binding.alarmOvalBackground.backgroundTintList = ContextCompat.getColorStateList(binding.root.context, alarm.alarmbackground)
-            binding.alarmIv.setImageResource(alarm.ImageRes)
-            binding.mainTv.text = alarm.maintext
-            binding.subTv.text = alarm.subtext
+            binding.alarmBackground.backgroundTintList = ContextCompat.getColorStateList(binding.root.context, alarm.alarmBackground)
+            binding.alarmOvalBackground.backgroundTintList = ContextCompat.getColorStateList(binding.root.context, alarm.alarmOvalBackground)
+            binding.alarmIv.setImageResource(alarm.imageRes)
+            binding.mainTv.text = alarm.mainText
+            binding.subTv.text = alarm.subText
         }
     }
     fun removeItem(position: Int) {

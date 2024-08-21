@@ -11,6 +11,7 @@ import com.example.we_save.data.apiservice.PhoneNumberResponse
 import com.example.we_save.R
 import com.example.we_save.data.apiservice.SmsRequest
 import com.example.we_save.SplashActivity
+import com.example.we_save.common.extensions.customToast
 import com.example.we_save.databinding.ActivityCreateAccountBinding
 import retrofit2.Call
 import retrofit2.Callback
@@ -31,7 +32,7 @@ class CreateAccountActivity : AppCompatActivity() {
             if (phoneNum.isNotEmpty()) {
                 checkPhoneNumberValidity(phoneNum)
             } else {
-                Toast.makeText(this, "전화번호를 입력해주세요.", Toast.LENGTH_SHORT).show()
+                customToast("전화번호를 입력해주세요!!")
             }
         }
         // 엔터를 눌렀을때 자동으로 넘어간다.!!
@@ -41,7 +42,7 @@ class CreateAccountActivity : AppCompatActivity() {
                 if (phoneNum.isNotEmpty()) {
                     checkPhoneNumberValidity(phoneNum)
                 } else {
-                    Toast.makeText(this, "전화번호를 입력해주세요.", Toast.LENGTH_SHORT).show()
+                    customToast("전화번호를 입력해주세요!!")
                 }
                 true
             } else {

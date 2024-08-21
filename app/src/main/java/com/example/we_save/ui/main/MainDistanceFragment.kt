@@ -78,7 +78,6 @@ class MainDistanceFragment : Fragment() {
 
                         items.addAll(sortedPostList)
                         adapter.notifyDataSetChanged()
-                        Log.d("API Success", "Data loaded successfully: ${sortedPostList.size} items loaded.")
                         for (post in sortedPostList) {
                             Log.d("API Success", "Post: $post")
                         }
@@ -93,7 +92,7 @@ class MainDistanceFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<NearbyPostsResponse>, t: Throwable) {
-                Log.e("API Error", "Error: ${t.message}")
+                // 잘못 받았을 때 ...
             }
         })
     }

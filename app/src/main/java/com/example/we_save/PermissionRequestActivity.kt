@@ -7,6 +7,7 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.view.View
 import android.Manifest
+import android.os.Build
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -14,32 +15,47 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.we_save.common.extensions.customToast
 import com.example.we_save.databinding.ActivityPermissionRequestBinding
 import com.example.we_save.ui.MainActivity
 import com.example.we_save.ui.createAccount.LoginActivity
 
 class PermissionRequestActivity : AppCompatActivity() {
-    lateinit var binding : ActivityPermissionRequestBinding
+    lateinit var binding: ActivityPermissionRequestBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPermissionRequestBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // 상태바 색상 및 스타일 설정
         window.statusBarColor = ContextCompat.getColor(this, R.color.white)
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-        val textView = binding.agreementTv
 
-
+        // 권한 요청 버튼 클릭 리스너 설정
         binding.agreeSignUpTv.setOnClickListener {
             requestPermissions()
         }
     }
+
     private fun requestPermissions() {
+        // 요청할 권한 목록
+        val permissions = mutableListOf(
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
+
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissions.add(Manifest.permission.READ_MEDIA_IMAGES)
+            permissions.add(Manifest.permission.READ_MEDIA_VIDEO)
+        } else {
+            permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+
+        }*/
+
         ActivityCompat.requestPermissions(
             this,
-            arrayOf(
-                Manifest.permission.READ_PHONE_STATE,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ),
+            permissions.toTypedArray(),
             REQUEST_CODE_MULTIPLE_PERMISSIONS
         )
     }
@@ -60,7 +76,7 @@ class PermissionRequestActivity : AppCompatActivity() {
                 }
             } else {
                 // 권한이 하나라도 거부된 경우
-                Toast.makeText(this, "모든 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
+                customToast("데이터가 없습니다")
                 finish()
             }
         }
@@ -70,10 +86,10 @@ class PermissionRequestActivity : AppCompatActivity() {
         startActivity(Intent(this, MainActivity::class.java))
         finish()
     }
-    // 서버로 부터 사용자의 로그인 유뮤 확인
+
+    // 서버로부터 사용자의 로그인 여부 확인
     private fun isUserLoggedIn(): Boolean {
-        //val sharedPreferences = getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE)
-        //return sharedPreferences.getBoolean("isLoggedIn", false)
+        // 예시로 로그인이 되어 있지 않다고 가정
         return false
     }
 

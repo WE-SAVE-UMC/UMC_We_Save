@@ -42,6 +42,6 @@ data class PostDTO(
     val hearts: Int,
     val regionName: String,
     val create_at: String,
-    val image_url: String,
-    val category_name: String
+    val imageUrl: String,
+    val categoryName: String
 )

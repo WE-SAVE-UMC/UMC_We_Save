@@ -2,6 +2,7 @@ package com.example.we_save.ui.createAccount
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -12,11 +13,13 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.we_save.R
 import com.example.we_save.SplashActivity
 import com.example.we_save.common.Constants
+import com.example.we_save.common.extensions.customToast
 import com.example.we_save.data.apiservice.LoginRequest
 import com.example.we_save.data.apiservice.LoginResponse
 import com.example.we_save.databinding.ActivityLoginBinding
@@ -28,6 +31,7 @@ import retrofit2.Response
 class LoginActivity : AppCompatActivity() {
     lateinit var binding: ActivityLoginBinding
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
@@ -60,7 +64,7 @@ class LoginActivity : AppCompatActivity() {
                     val loginRequest = LoginRequest(phoneNum, passwordText)
                     loginUser(loginRequest)
                 } else {
-                    Toast.makeText(this, "전화번호와 비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show()
+                    customToast("전화번호와 비밀번호를 입력해주세요!!")
                 }
                 true
             } else {
@@ -98,7 +102,7 @@ class LoginActivity : AppCompatActivity() {
                 val loginRequest = LoginRequest(phoneNum, passwordText)
                 loginUser(loginRequest)
             } else {
-                Toast.makeText(this, "전화번호와 비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show()
+                customToast("전화번호와 비밀번호를 입력해주세요!!")
             }
         }
 
@@ -135,6 +139,7 @@ class LoginActivity : AppCompatActivity() {
         return phone.replace("-", "")
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun loginUser(loginRequest: LoginRequest) {
         val call = SplashActivity.RetrofitInstance.api.login(loginRequest)
         call.enqueue(object : Callback<LoginResponse> {
