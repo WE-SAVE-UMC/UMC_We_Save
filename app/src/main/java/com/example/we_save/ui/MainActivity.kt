@@ -7,6 +7,7 @@ import androidx.activity.viewModels
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import com.example.we_save.R
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity() {
     @OptIn(ExperimentalBadgeUtils::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        installSplashScreen()
         setContentView(binding.root)
 
 
@@ -38,6 +40,19 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.commit {
             replace(R.id.fragment_container, MainFragment(), "root")
         }
+        val targetPage = intent.getIntExtra("TARGET_PAGE", 0)
+
+        // MainFragment에 인자 전달
+        val fragment = MainFragment().apply {
+            arguments = Bundle().apply {
+                putInt("selectedPage", targetPage)
+            }
+        }
+
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .commit()
 
         with(binding) {
             val badgeDrawable = BadgeDrawable.create(this@MainActivity).apply {

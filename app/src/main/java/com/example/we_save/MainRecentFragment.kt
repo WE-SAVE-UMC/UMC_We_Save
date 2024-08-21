@@ -41,14 +41,14 @@ class MainRecentFragment : Fragment() {
         // RecyclerView 설정
         binding.nearAccidentRecycler.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        val adapter = MainRecyclerAdapter(items)
+        val adapter = MainRecentRecylcerAdapter(items)
         binding.nearAccidentRecycler.adapter = adapter
 
         // 데이터 로드
         loadData(adapter)
     }
 
-    private fun loadData(adapter: MainRecyclerAdapter) {
+    private fun loadData(adapter: MainRecentRecylcerAdapter) {
         // Retrofit 설정
         val retrofit = Retrofit.Builder()
             .baseUrl("http://114.108.153.82:8080/")
@@ -72,10 +72,12 @@ class MainRecentFragment : Fragment() {
                     val nearbyPostsResponse = response.body()
                     nearbyPostsResponse?.result?.let { postList ->
                         items.clear()
-
+                        Log.e("API Error", "Result is null")
                         // 날짜 순으로 정렬
                         val sortedPostList = postList.sortedByDescending {
-                            dateFormat.parse(it.create_at) // 날짜로 변환하여 정렬
+                            it.create_at?.let { dateStr ->
+                                dateFormat.parse(dateStr)
+                            }
                         }
 
                         items.addAll(sortedPostList)

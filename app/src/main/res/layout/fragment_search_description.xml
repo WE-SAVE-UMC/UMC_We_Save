@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
     <TextView
         android:id="@+id/description_main_tv"
         android:layout_width="wrap_content"
@@ -10,84 +11,54 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:text="'발목 염좌' 행동 요령"
-        android:textColor="#4A4A4A"
+        android:textColor="@color/gray_80"
+        android:fontFamily="@font/pretandard"
+        android:textFontWeight="700"
         android:lineHeight="20dp"
         android:textSize="16sp"/>
-    <ImageView
-        android:id="@+id/first_background"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/countermeasuresRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:background="@drawable/gray_circle_8"
-        android:layout_marginEnd="20dp"
+        android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/description_main_tv"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="16dp"
-        />
-    <LinearLayout
-        android:id="@+id/detail_linear1"
-        android:layout_width="256dp"
-        android:layout_height="24dp"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toTopOf="@id/first_background"
-        app:layout_constraintStart_toStartOf="@id/first_background"
-        android:layout_marginStart="16dp"
-        app:layout_constraintBottom_toBottomOf="@id/first_background"
-        >
-        <ImageView
-            android:id="@+id/red_check1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/right_check_iv"
-            android:backgroundTint="@color/red_50"/>
-        <TextView
-            android:layout_weight="700"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="냉찜질"
-            android:textSize="14sp"
-            android:lineHeight="16.1dp"
-            android:textColor="#4A4A4A"
-            android:layout_width="wrap_content"/>
-
-    </LinearLayout>
+        android:layout_marginTop="10dp"
+        tools:listitem="@layout/counter_measure_item"
+        android:scrollbars="none"
+        android:overScrollMode="never"
+        android:nestedScrollingEnabled="false"/>
 
     <ImageView
-        android:id="@+id/under_arrow_iv"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:src="@drawable/under_arrow_ic"
-        android:layout_marginEnd="15dp"
-        app:layout_constraintEnd_toEndOf="@id/first_background"
-        app:layout_constraintTop_toTopOf="@+id/first_background"
-        app:layout_constraintBottom_toBottomOf="@id/first_background"/>
-    <LinearLayout
-        android:id="@+id/description_container"
-        android:layout_width="0dp"
+        android:id="@+id/hopital_iv"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:orientation="vertical"
-        android:background="@drawable/gray_circle_8"
-        android:padding="16dp"
-        app:layout_constraintTop_toBottomOf="@id/first_background"
-        app:layout_constraintStart_toStartOf="@id/first_background"
-        app:layout_constraintEnd_toEndOf="@id/first_background">
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="50dp"
+        app:layout_constraintTop_toBottomOf="@id/countermeasuresRecyclerView"
+        android:background="@drawable/near_hospital_iv"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/hopital_iv"
+        app:layout_constraintStart_toEndOf="@id/hopital_iv"
+        android:layout_marginStart="10dp"
+        android:text="근처 병원 확인하기"
+        android:textSize="14sp"
+        android:textColor="@color/gray_90"
+        android:textFontWeight="600"
+        app:layout_constraintTop_toTopOf="@id/hopital_iv"
+        android:layout_marginBottom="1dp"
+        android:fontFamily="@font/pretandard"
+        android:lineHeight="16dp"/>
 
-        <TextView
-            android:id="@+id/bold_description_tv"
-            android:layout_weight="500"
-            android:lineHeight="19.6dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="진한 글씨 설명"
-            android:textSize="14sp"
-            android:textColor="#000000" />
-        <TextView
-            android:id="@+id/description_tv"
-            android:layout_weight="500"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="연한 글씨 설명"
-            android:textSize="12sp"/>
-
-    </LinearLayout>
+    <ImageView
+        android:id="@+id/hospital_right_arrow_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/hopital_iv"
+        app:layout_constraintBottom_toBottomOf="@id/hopital_iv"
+        android:background="@drawable/right_arrow_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="10dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
