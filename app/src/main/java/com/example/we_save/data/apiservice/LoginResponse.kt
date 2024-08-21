@@ -16,4 +16,6 @@ data class LoginResult(
 
 data class LoginRequest(val phoneNum: String, val password: String)
 
+data class ResetPasswordRequest(val phoneNum: String, val password: String)
+
 

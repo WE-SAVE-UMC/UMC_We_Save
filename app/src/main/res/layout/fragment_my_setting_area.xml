@@ -61,6 +61,51 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/my_setting_area_warning"
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/shape_white_box_r12"
+        android:elevation="1dp"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_alert_circle"/>
+
+        <TextView
+            android:id="@+id/my_setting_area_warning_name_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="관심 지역은 최대 2개 지역까지\n등록할 수 있습니다."
+            android:textColor="@color/gray_90"
+            android:textSize="16sp"
+            android:fontFamily="@font/pretendard_medium"
+            android:textAlignment="center"
+            android:layout_marginTop="12dp"/>
+
+        <TextView
+            android:id="@+id/my_setting_area_warning_distance_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="'등록된 관심지역'에서 등록해제 후 다시 시도해주세요."
+            android:textColor="@color/gray_40"
+            android:textSize="12sp"
+            android:fontFamily="@font/pretendard_medium"
+            android:layout_marginTop="8dp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/my_setting_area_information"
         android:layout_width="320dp"
         android:layout_height="112dp"
@@ -134,7 +179,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/my_setting_area_interest"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="144dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -157,7 +202,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="등록된 관심지역이 없습니다."
-            android:visibility="gone"
+            android:visibility="visible"
             android:textSize="12sp"
             android:textColor="@color/gray_60"
             app:layout_constraintStart_toStartOf="parent"
@@ -172,6 +217,7 @@
             android:paddingStart="24dp"
             android:paddingEnd="24dp"
             android:layout_marginTop="20dp"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="@id/my_setting_area_interest_title_tv"
             app:layout_constraintTop_toBottomOf="@id/my_setting_area_interest_title_tv">
 
@@ -207,6 +253,7 @@
             android:paddingEnd="24dp"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="24dp"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="@id/my_setting_area_interest_title_tv"
             app:layout_constraintTop_toBottomOf="@id/my_setting_area_interest_area_1"
             app:layout_constraintBottom_toBottomOf="parent">

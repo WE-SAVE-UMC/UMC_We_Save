@@ -116,6 +116,14 @@ class LoginActivity : AppCompatActivity() {
         binding.forgotPasswordTv.setOnClickListener {
             startActivity(intentResetPassword)
         }
+
+        // LoginSavedActivity에서 넘어옴
+        val phoneNum = intent.getStringExtra("phoneNum")
+        if(phoneNum != null) {
+            binding.phonenumberEdittext.setText(phoneNum)
+        }
+
+
     }
 
     private fun formatPhoneNumber(phone: String): String {

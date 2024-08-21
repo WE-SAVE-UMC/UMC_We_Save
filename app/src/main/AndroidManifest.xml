@@ -89,6 +89,7 @@
         <activity android:name=".ui.my.HeaderActivity" />
         <activity android:name=".ui.createAccount.ResetPasswordEnterActivity" />
         <activity android:name=".ui.createAccount.EnterPasswordActivity" />
+        <activity android:name=".ui.createAccount.LoginSavedActivity" />
 
         <service
             android:name="com.google.android.gms.metadata.ModuleDependencies"

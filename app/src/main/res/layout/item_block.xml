@@ -37,13 +37,29 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
+        android:id="@+id/item_release_block_btn"
         android:layout_width="61dp"
         android:layout_height="24dp"
         android:text="차단 해제"
         android:textSize="12sp"
         android:textColor="@color/white"
         android:gravity="center"
+        android:visibility="visible"
         android:background="@drawable/style_red_button_r16"
+        app:layout_constraintTop_toTopOf="@id/item_block_profile"
+        app:layout_constraintBottom_toBottomOf="@id/item_block_profile"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/item_block_btn"
+        android:layout_width="61dp"
+        android:layout_height="24dp"
+        android:text="차단 하기"
+        android:textSize="12sp"
+        android:textColor="@color/gray_90"
+        android:gravity="center"
+        android:visibility="gone"
+        android:background="@drawable/style_white_button_r16"
         app:layout_constraintTop_toTopOf="@id/item_block_profile"
         app:layout_constraintBottom_toBottomOf="@id/item_block_profile"
         app:layout_constraintEnd_toEndOf="parent"/>

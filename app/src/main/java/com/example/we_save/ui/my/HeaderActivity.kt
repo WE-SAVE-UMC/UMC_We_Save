@@ -80,15 +80,6 @@ class HeaderActivity : AppCompatActivity() {
         }
     }
 
-    // 작동 안됨
-//    override fun onSupportNavigateUp(): Boolean {
-//        // 뒤로가기 버튼 클릭 시 이전 프래그먼트로 돌아가기
-//        if (supportFragmentManager.backStackEntryCount > 0) {
-//            supportFragmentManager.popBackStack()
-//            return true
-//        }
-//        return super.onSupportNavigateUp()
-//    }
 
     // 프래그먼트 교체 함수
     private fun changeFragment(fragment: Fragment, title: String) {
