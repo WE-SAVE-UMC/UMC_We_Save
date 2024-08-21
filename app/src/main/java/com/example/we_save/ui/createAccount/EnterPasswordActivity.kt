@@ -20,6 +20,7 @@ import com.example.we_save.data.apiservice.ResetPasswordInterface
 import com.example.we_save.data.apiservice.getRetrofit
 import com.example.we_save.databinding.ActivityEnterPasswordBinding
 import com.example.we_save.ui.MainActivity
+import com.example.we_save.ui.my.ZeroTransformationMethod
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -32,6 +33,8 @@ class EnterPasswordActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityEnterPasswordBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        binding.enterPasswordEt.transformationMethod = ZeroTransformationMethod()
 
 
         // 확인 버튼 -> 새로운 비밀번호 입력 화면

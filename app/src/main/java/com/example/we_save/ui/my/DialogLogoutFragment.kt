@@ -14,6 +14,7 @@ import com.example.we_save.R
 import com.example.we_save.databinding.DialogLogoutBinding
 import com.example.we_save.databinding.FragmentMyBinding
 import com.example.we_save.ui.createAccount.LoginActivity
+import com.example.we_save.ui.createAccount.LoginSavedActivity
 
 class DialogLogoutFragment : DialogFragment() {
 
@@ -42,9 +43,10 @@ class DialogLogoutFragment : DialogFragment() {
         // 확인 버튼
         okButton.setOnClickListener {
             dialog.dismiss()
-            Toast.makeText(requireContext(), "확인 버튼이 클릭되었습니다.", Toast.LENGTH_SHORT).show()
-            // 로그아웃, 로그인 화면으로 이동
-            logout()
+
+            // 로그아웃, 로그인 saved 화면으로 이동
+            val intent = Intent(requireContext(), LoginSavedActivity::class.java)
+            startActivity(intent)
         }
 
         // 다이얼로그 크기 설정
@@ -70,16 +72,4 @@ class DialogLogoutFragment : DialogFragment() {
         )
     }
 
-    private fun logout(){
-        val spf = requireContext().getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
-        val editor = spf.edit()
-        // 사용자 토큰 삭제
-        editor.remove("jwtToken")
-        editor.apply()
-
-        // 로그인 화면으로 이동
-        val intent = Intent(requireContext(), LoginActivity::class.java)
-        startActivity(intent)
-        activity?.finish()
-    }
 }
