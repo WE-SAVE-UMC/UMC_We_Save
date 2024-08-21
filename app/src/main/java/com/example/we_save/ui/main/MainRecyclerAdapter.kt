@@ -1,5 +1,6 @@
 package com.example.we_save.ui.main
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -13,10 +14,14 @@ class MainRecyclerAdapter(private val items: List<PostDTO>) : RecyclerView.Adapt
 
     class ItemViewHolder(val binding: ItemMainRvBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: PostDTO) {
+            val baseUrl = "http://114.108.153.82:80"
             // 이미지 로드
-            if (!item.image_url.isNullOrEmpty()) {
+            Log.d("ImageLoading", "Complete Image URL: ${item.imageUrl}")
+            if (!item.imageUrl.isNullOrEmpty()) {
+                val completeImageUrl = baseUrl + item.imageUrl
+                Log.d("ImageLoading", "Complete Image URL: $completeImageUrl")
                 Glide.with(binding.imageView.context)
-                    .load(item.image_url)
+                    .load(completeImageUrl)
                     .placeholder(R.drawable.message_alarm_iv)
                     .error(R.drawable.earthquake_iv)
                     .into(binding.imageView)

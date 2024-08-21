@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat
 import com.example.we_save.R
 import com.example.we_save.SplashActivity
 import com.example.we_save.common.Constants
+import com.example.we_save.common.extensions.customToast
 import com.example.we_save.data.apiservice.LoginRequest
 import com.example.we_save.data.apiservice.LoginResponse
 import com.example.we_save.databinding.ActivityLoginBinding
@@ -63,7 +64,7 @@ class LoginActivity : AppCompatActivity() {
                     val loginRequest = LoginRequest(phoneNum, passwordText)
                     loginUser(loginRequest)
                 } else {
-                    Toast.makeText(this, "전화번호와 비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show()
+                    customToast("전화번호와 비밀번호를 입력해주세요!!")
                 }
                 true
             } else {
@@ -101,7 +102,7 @@ class LoginActivity : AppCompatActivity() {
                 val loginRequest = LoginRequest(phoneNum, passwordText)
                 loginUser(loginRequest)
             } else {
-                Toast.makeText(this, "전화번호와 비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show()
+                customToast("전화번호와 비밀번호를 입력해주세요!!")
             }
         }
 

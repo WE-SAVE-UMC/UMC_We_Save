@@ -21,6 +21,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.target.Target
 import android.graphics.drawable.Drawable
+import com.example.we_save.data.apiservice.AdvertisementService
 import com.example.we_save.data.apiservice.GetQuizResponse
 import com.example.we_save.data.apiservice.QuizResponse
 import com.example.we_save.data.apiservice.QuizResponseRequest
@@ -58,8 +59,10 @@ class AdvertiseMentActivity : AppCompatActivity() {
         // UI 초기화
         initializeViews()
 
-        // 퀴즈 데이터 가져오기 및 UI 업데이트
-        fetchQuizData()
+        val quizId = intent.getIntExtra("quizId", -1)
+        if (quizId != -1) {
+            fetchQuizData(quizId)
+        }
 
         // 클릭 리스너 설정
         binding.leftView.setOnClickListener {
@@ -76,10 +79,10 @@ class AdvertiseMentActivity : AppCompatActivity() {
         // 이곳에서 binding 객체를 통해 뷰들을 초기화할 수 있습니다.
     }
 
-    private fun fetchQuizData() {
-        val advertisementService = RetrofitClient.createService()
+    private fun fetchQuizData(adId: Int) {
+        val advertisementService = RetrofitClient.createService(AdvertisementService::class.java)
 
-        advertisementService.getQuiz().enqueue(object : Callback<GetQuizResponse> {
+        advertisementService.getQuiz(adId).enqueue(object : Callback<GetQuizResponse> {
             override fun onResponse(call: Call<GetQuizResponse>, response: Response<GetQuizResponse>) {
                 if (response.isSuccessful) {
                     response.body()?.let { quizResponse ->
@@ -112,11 +115,11 @@ class AdvertiseMentActivity : AppCompatActivity() {
             }
 
             //binding.advertisementTextTv.text = options[0].responseText
-
-            val (imageUrl, redirectUrl) = when (quizResult.adId) {
+            val quizId = intent.getIntExtra("quizId", -1)
+            val (imageUrl, redirectUrl) = when (quizId) {
                 1 -> Pair(
                     "https://cdn.discordapp.com/attachments/1272902416152531078/1275443252916518972/nut_ads_img.png?ex=66c5e898&is=66c49718&hm=61f54d2d05fe56e7740730c608a0c126007966918412f1b5835abf74ef47090f&",
-                    "https://www.figma.com/design/U3euf6QViAf3zXKPDla3lG?node-id=1059-24216#890351332"
+                    "https://m.brand.naver.com/hbafstore/products/10384323591"
                 )
                 2 -> Pair(
                     "https://cdn.discordapp.com/attachments/1272902416152531078/1275443252475985970/car_ads_img.png?ex=66c5e897&is=66c49717&hm=f96033fc8d89c64f0332a3255f288a0e208368b577882eb572ac1d1c8dee3d0a&",

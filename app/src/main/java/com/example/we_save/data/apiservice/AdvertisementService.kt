@@ -4,10 +4,11 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface AdvertisementService {
-    @GET("/api/ads/quiz")
-    fun getQuiz(): Call<GetQuizResponse>
+    @GET("/api/ads/quizs/{adId}")
+    fun getQuiz(@Path("adId") adId: Int): Call<GetQuizResponse>
 
     @POST("/api/ads/answer")
     fun submitQuizResponse(@Body request: QuizResponseRequest): Call<QuizResponse>
@@ -24,6 +25,7 @@ data class QuizResult(
     val adId: Int,
     val question: String,
     val options: List<Option>
+
 )
 
 data class Option(

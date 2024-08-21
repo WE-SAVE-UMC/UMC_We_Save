@@ -24,6 +24,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.we_save.R
+import com.example.we_save.common.extensions.customToast
 import com.example.we_save.databinding.FragmentFacilitiesBinding
 import com.example.we_save.ui.main.MainFragment
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -70,7 +71,7 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
             if (permissions.values.all { it }) {
                 setupMap()
             } else {
-                Toast.makeText(context, "권한이 거부되었습니다", Toast.LENGTH_SHORT).show()
+                requireContext().applicationContext.customToast("권한이 거부되었습니다")
             }
         }
 
@@ -130,7 +131,7 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
             locationSource.lastLocation?.let { location ->
                 val cameraUpdate = CameraUpdate.scrollTo(LatLng(location.latitude, location.longitude))
                 naverMap.moveCamera(cameraUpdate)
-            } ?: Toast.makeText(context, "현재 위치를 가져올 수 없습니다.", Toast.LENGTH_SHORT).show()
+            } ?: requireContext().applicationContext.customToast("현재 위치를 가져올 수 없습니다.")
         }
 
         return view
@@ -191,7 +192,7 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
                     parseEmergencyAssemblyAreaData(it)
                 }
             } catch (e: Exception) {
-                Log.e("FacilitiesFragment", "Error fetching emergency assembly area data", e)
+                Log.e("FacilitiesFragment", "잘못된 주소 데이터", e)
             }
         }
     }
@@ -211,7 +212,6 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
                 val name = item.getElementsByTagName("vt_acmdfclty_nm").item(0).textContent
                 val address = item.getElementsByTagName("rn_adres").item(0).textContent
 
-                Log.d("FacilitiesFragment", "Adding Assembly Area Marker: $name at ($lat, $lng)")
                 addShelterMarker(lat, lng, name, address)
             }
         } catch (e: Exception) {
@@ -281,10 +281,10 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
                         addMarker(lat, lng, name, address, null, null, "emergency")
                     }
                 } else {
-                    if (latNode == null) Log.e("FacilitiesFragment", "Missing latitude for emergency room item at index $i")
-                    if (lngNode == null) Log.e("FacilitiesFragment", "Missing longitude for emergency room item at index $i")
-                    if (nameNode == null) Log.e("FacilitiesFragment", "Missing name for emergency room item at index $i")
-                    if (addressNode == null) Log.e("FacilitiesFragment", "Missing address for emergency room item at index $i")
+                    if (latNode == null) Log.e("FacilitiesFragment", "잘못된 위도 값: $i")
+                    if (lngNode == null) Log.e("FacilitiesFragment", "잘못된 경도 값 $i")
+                    if (nameNode == null) Log.e("FacilitiesFragment", "잘못된 응급실 값 $i")
+                    if (addressNode == null) Log.e("FacilitiesFragment", "잘못된 주소 값 $i")
                 }
             }
         } catch (e: Exception) {

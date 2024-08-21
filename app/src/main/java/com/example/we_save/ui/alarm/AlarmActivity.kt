@@ -12,6 +12,8 @@ import com.example.we_save.R
 import com.example.we_save.data.apiservice.RetrofitClient
 import com.example.we_save.databinding.ActivityAlarmBinding
 import com.example.we_save.ui.MainActivity
+import com.example.we_save.ui.my.HeaderActivity
+import com.example.we_save.ui.my.MySettingFragment
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -32,21 +34,58 @@ class AlarmActivity : AppCompatActivity() {
             val intent = Intent(this, MainActivity::class.java)
             startActivity((intent))
         }
+        binding.bellIcon.setOnClickListener {
+            val intent = Intent(this, HeaderActivity::class.java)
+            intent.putExtra("nextPage", "MySettingFragment")  // MySettingFragment로 이동
+            startActivity(intent)
+        }
         alarms.add(
             Alarm(
                 R.color.white, // 알람 배경 색
                 R.color.red_00,  // 알람 원의 색
                 R.drawable.danger_alarm_iv,
-                "매인 알람1",
-                "부가설명 입니다.")
+                "내 근처에 신뢰도 높은 사고가 있어요",
+                "00근처에 이상한 사람이 돌아다닙니다.")
         )
         alarms.add(
             Alarm(
                 R.color.red_00, // 알람 배경 색
                 R.color.white,  // 알람 원의 색
                 R.drawable.message_alarm_iv,
-                "매인 알람2",
-                "부가설명 입니다.")
+                "00님이 내 사건사고에 댓글을 남겼습니다.",
+                "위험해요.조심하세요.")
+        )
+        alarms.add(
+            Alarm(
+                R.color.white, // 알람 배경 색
+                R.color.red_00,  // 알람 원의 색
+                R.drawable.check_face_icon,
+                "내 사건사고가 25개의 확인했어요를 받았어요.",
+                "")
+        )
+        alarms.add(
+            Alarm(
+                R.color.white, // 알람 배경 색
+                R.color.red_00,  // 알람 원의 색
+                R.drawable.false_face_icon,
+                "내 사건사고가 8개의 허위예요를 받았어요.",
+                "00근처에 이상한 사람이 돌아다닙니다.")
+        )
+        alarms.add(
+            Alarm(
+                R.color.white, // 알람 배경 색
+                R.color.red_00,  // 알람 원의 색
+                R.drawable.clock_face_icon,
+                "'성신여대 화재'상황을 알려주세요.\n상황이 종료되었으면 상황종료를 눌러주세요!",
+                "")
+        )
+        alarms.add(
+            Alarm(
+                R.color.white, // 알람 배경 색
+                R.color.red_00,  // 알람 원의 색
+                R.drawable.danger_alarm_iv,
+                "내 근처에 신뢰도 높은 사고가 있어요!",
+                "00근처에 이상한 사람이 돌아다닙니다.")
         )
 
         alarmAdapter = AlarmRvAdapter(alarms)

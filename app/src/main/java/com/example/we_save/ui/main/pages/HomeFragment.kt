@@ -45,22 +45,43 @@ import com.google.android.material.badge.ExperimentalBadgeUtils
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.tabs.TabLayout
+import com.naver.maps.geometry.LatLng
+import com.naver.maps.geometry.LatLngBounds
+import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.MapFragment
 import com.naver.maps.map.MapView
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.UiSettings
+import com.naver.maps.map.overlay.Marker
+import com.naver.maps.map.overlay.OverlayImage
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.tasks.Task
+import android.location.Location
+import androidx.core.app.ActivityCompat
+import android.content.pm.PackageManager
+import android.Manifest
+import com.example.we_save.common.extensions.customToast
+import com.example.we_save.data.apiservice.GetQuizResponse
+import com.example.we_save.data.apiservice.QuizResult
+import com.naver.maps.map.CameraAnimation
 
 class HomeFragment : Fragment(), OnMapReadyCallback {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private var selectedButton: MaterialCardView? = null
     private lateinit var mapView: MapView
+    private lateinit var naverMap: NaverMap
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private val markers = mutableListOf<Marker>()
+    private var quizId: Int? = null  // quizId를 저장할 변수
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -78,6 +99,16 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
 
+
+
+        binding.myLocationImage.setOnClickListener {
+            getCurrentLocation()
+        }
+
+        binding.mapStarIcon.setOnClickListener {
+            moveToRegion("서울특별시 강남구")  // 이 부분에 관심 지역 설정
+        }
+
         view.viewTreeObserver.addOnGlobalLayoutListener {
             val rect = Rect()
             view.getWindowVisibleDisplayFrame(rect)
@@ -91,25 +122,63 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             }
         }
 
-
-
-
-
         return view
     }
+
     override fun onMapReady(naverMap: NaverMap) {
+        this.naverMap = naverMap
         naverMap.uiSettings.isZoomControlEnabled = false
+
+        // 지도에 마커 추가
+        val regionName = "서울특별시 노원구 월계동"
+        val southKoreaBounds = LatLngBounds(
+            LatLng(33.0, 125.0),
+            LatLng(38.5, 129.5)
+        )
+
+        // 카메라를 대한민국 전체가 보이도록 설정
+        val cameraUpdate = CameraUpdate.fitBounds(southKoreaBounds, 100)
+        naverMap.moveCamera(cameraUpdate)
+
+        fetchHomeData()
+    }
+
+    private fun addMarkerToMap(latitude: Double, longitude: Double, regionName: String, categoryName: String, post: HostPostDto) {
+        val marker = Marker()
+        marker.position = LatLng(latitude, longitude)
+
+        val iconResource = when (categoryName) {
+            "화재" -> R.drawable.map_fire_marker_icon
+            "지진" -> R.drawable.map_earthquake_marker_icon
+            "교통사고" -> R.drawable.map_car_marker_icon
+            "폭우" -> R.drawable.map_rain_marker_icon
+            "폭설" -> R.drawable.ic_snowflake_16
+            else -> R.drawable.ic_etc_16
+        }
+
+        marker.icon = OverlayImage.fromResource(iconResource)
+        marker.map = naverMap
+
+        // 마커에 주소값 저장
+        marker.tag = regionName
+
+        markers.add(marker)
+
+        marker.setOnClickListener {
+            updateUI(post)
+            true
+        }
+    }
+    private fun moveToRegion(targetRegion: String) {
+        markers.find { it.tag == targetRegion }?.let { marker ->
+            val cameraUpdate = CameraUpdate.scrollTo(marker.position).animate(CameraAnimation.Easing)
+            naverMap.moveCamera(cameraUpdate)
+        }
     }
 
     @OptIn(ExperimentalBadgeUtils::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val latitude = 25.0
-        val longitude = 50.0
-        val regionName = "서울특별시 노원구 월계동"
-
-        fetchHomeData(latitude, longitude, regionName)
 
         val toolbar = activity?.findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
         if (toolbar != null) {
@@ -131,31 +200,17 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             }, viewLifecycleOwner)
 
             toolbar.visibility = View.GONE
-
-            // 지도 설정
-            val fm = childFragmentManager
-            val mapFragment = fm.findFragmentById(R.id.map_view) as MapFragment?
-                ?: MapFragment.newInstance().also {
-                    fm.beginTransaction().add(R.id.map_view, it).commit()
-                }
-
-
-            mapFragment.getMapAsync(this)
-
         }
-
 
         activity?.window?.statusBarColor = ContextCompat.getColor(requireContext(), R.color.black)
         val decorView = activity?.window?.decorView
         decorView?.systemUiVisibility = decorView?.systemUiVisibility?.and(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()) ?: 0
         hideToolbar()
         binding.quizBackground.setOnClickListener {
-            val intent = Intent(requireContext(), AdvertiseMentActivity::class.java)
-            startActivity(intent)
+            onQuizClicked()
         }
         val alarmImageView = view.findViewById<ImageView>(R.id.main_alarm_iv)
         val whitealarmImageView = view.findViewById<ImageView>(R.id.white_alarm_iv)
-
 
         // 클릭 리스너 설정
         alarmImageView.setOnClickListener {
@@ -242,15 +297,13 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             selectButton(it as MaterialCardView, R.id.ok_filter_tv)
             replaceFragment(MainCheckFragment())
         }
-
-
-
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-
+        _binding = null
     }
+
     private fun selectButton(button: MaterialCardView, textViewId: Int) {
         selectedButton?.apply {
             // 선택 해제된 버튼의 배경 및 텍스트 색상 복구
@@ -270,7 +323,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         selectedButton = button
     }
-
 
     private fun replaceFragment(fragment: Fragment) {
         childFragmentManager.beginTransaction()
@@ -292,20 +344,41 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         }
         return null
     }
-    private fun updateTabStyle(tab: TabLayout.Tab?, isSelected: Boolean) {
-        tab?.let {
-            val tabView = it.view
-            if (isSelected) {
-                tabView.background = ContextCompat.getDrawable(requireContext(), R.drawable.main_tab_selected_background)
-                val tabText = findTextViewInTab(tabView)
-                tabText?.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+
+    private fun getCurrentLocation() {
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // 권한이 부여되지 않은 경우 권한 요청
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
+                1000
+            )
+            return
+        }
+
+        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+            if (location != null) {
+                val currentLatLng = LatLng(location.latitude, location.longitude)
+                moveCameraToLocation(currentLatLng)
             } else {
-                tabView.background = ContextCompat.getDrawable(requireContext(), R.drawable.main_tab_unselected_background)
-                val tabText = findTextViewInTab(tabView)
-                tabText?.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray_40))
+
+                requireContext().applicationContext.customToast("현재 본인 위치를 찾을 수 없습니다!!")
             }
         }
     }
+
+    private fun moveCameraToLocation(latLng: LatLng) {
+        val cameraUpdate = CameraUpdate.scrollTo(latLng).animate(CameraAnimation.Easing)
+        naverMap.moveCamera(cameraUpdate)
+    }
+
     private fun hideToolbar() {
         // Toolbar 숨기기
         safelyUpdateToolbarVisibility(View.GONE)
@@ -321,42 +394,48 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    //hostDto
-    private fun fetchHomeData(latitude: Double, longitude: Double, regionName: String) {
+    // hostDto
+    private fun fetchHomeData() {
         val homeService = RetrofitClient.createService(HomeService::class.java)
-        val request = HomeRequest(latitude, longitude, regionName)
+
+        // 실제 리퀘스트 데이터를 이곳에 넣습니다.
+        val request = HomeRequest(latitude = 25.0, longitude = 50.0, regionName = "서울특별시 노원구 월계동")
 
         homeService.getHomeData(request).enqueue(object : Callback<HomeResponse> {
             override fun onResponse(call: Call<HomeResponse>, response: Response<HomeResponse>) {
                 if (response.isSuccessful) {
                     val homeResponse = response.body()
-                    Log.d("HomeFragment", "Full Response Body: $homeResponse")
 
                     homeResponse?.result?.let { result ->
-                        val hostPostDtos = result.hostPostDtos
-                        Log.d("HomeFragment", "Received hostPostDtos: $hostPostDtos")
+                        quizId = result.quizId
+                        binding.quizQustion.text = result.quizText
+                        val hotPostDtos = result.hostPostDtos
 
-                        if (!hostPostDtos.isNullOrEmpty()) {
-                            updateUI(hostPostDtos[0])
+                        if (!hotPostDtos.isNullOrEmpty()) {
+                            // 서버에서 받은 데이터로 마커 추가
+                            for (post in hotPostDtos) {
+                                addMarkerToMap(post.latitude, post.longitude, post.regionName, post.categoryName, post)
+                            }
                         } else {
-                            Toast.makeText(context, "데이터가 없습니다.", Toast.LENGTH_SHORT).show()
+                            requireContext().applicationContext.customToast("데이터가 없습니다")
                         }
                     } ?: run {
-                        Toast.makeText(context, "서버 응답이 null입니다.", Toast.LENGTH_SHORT).show()
+                        requireContext().applicationContext.customToast("서버 응답이 없습니다")
                     }
                 } else {
-                    Toast.makeText(context, "서버 오류 발생", Toast.LENGTH_SHORT).show()
+                    requireContext().applicationContext.customToast("서버에 오류가 생겼습니다")
                 }
             }
 
             override fun onFailure(call: Call<HomeResponse>, t: Throwable) {
-                Toast.makeText(context, "네트워크 오류 발생", Toast.LENGTH_SHORT).show()
+                requireContext().applicationContext.customToast("네트워크에 오류가 생겼습니다")
             }
         })
     }
 
+
     private fun updateUI(post: HostPostDto) {
-        binding.mapWhiteBackground.visibility = View.VISIBLE  // 이게 다시 사라지는 기준이 모호함!!
+        binding.mapWhiteBackground.visibility = View.VISIBLE  // UI 요소를 나타냄
         binding.mapAccidentTv.text = post.title
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
         val dateTime = LocalDateTime.parse(post.createAt, formatter)
@@ -365,17 +444,28 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         binding.mapOkNumberTv.text = post.hearts.toString()
         binding.mapDistanceTv.text = String.format("%.1fkm", post.distance / 1000)
         binding.mapRegionNameTv.text = post.regionName
-        binding.mapCategoryTv.text = post.categoryName+"발생"
-
+        binding.mapCategoryTv.text = post.categoryName + "발생"
 
         // 이미지가 있을 경우 로드
         if (post.imageUrl != null) {
-            /*Glide.with(this)
+            Glide.with(this)
                 .load("http://114.108.153.82/${post.imageUrl}")  // 지금 이 부분이 이상함
-                .into(binding.mainMapImageIv)*/
+                .into(binding.mainMapImageIv)
         } else {
             // 이미지가 없을 때 기본 이미지 설정
             //binding.mainMapImageIv.setImageResource(R.drawable.main_map_image_icon)
         }
+
+
     }
+    private fun onQuizClicked() {
+        quizId?.let {
+            val intent = Intent(requireContext(), AdvertiseMentActivity::class.java)
+            intent.putExtra("quizId", it)
+            startActivity(intent)
+        } ?: run {
+            Toast.makeText(requireContext(), "퀴즈 데이터를 로드하지 못했습니다.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
 }

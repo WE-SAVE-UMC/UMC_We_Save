@@ -1,5 +1,6 @@
 package com.example.we_save
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -11,10 +12,14 @@ class MainRecentRecylcerAdapter (private val items: List<PostDTO>) : RecyclerVie
 
     class ItemViewHolder(val binding: ItemMainRvBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: PostDTO) {
+            val baseUrl = "http://114.108.153.82:80"
             // 이미지 로드
-            if (!item.image_url.isNullOrEmpty()) {
+            Log.d("ImageLoading", "Complete Image URL: ${item.imageUrl}")
+            if (!item.imageUrl.isNullOrEmpty()) {
+                val completeImageUrl = baseUrl + item.imageUrl
+                Log.d("ImageLoading", "Complete Image URL: $completeImageUrl")
                 Glide.with(binding.imageView.context)
-                    .load(item.image_url)
+                    .load(completeImageUrl)
                     .placeholder(R.drawable.message_alarm_iv)
                     .error(R.drawable.earthquake_iv)
                     .into(binding.imageView)
@@ -23,8 +28,8 @@ class MainRecentRecylcerAdapter (private val items: List<PostDTO>) : RecyclerVie
                 val placeholderImageResId = when (item.categoryName ?: "") {
                     "화재" -> R.drawable.imgea_null_fire_background
                     "지진" -> R.drawable.image_null_earthquake_background
-                    "홍수" -> R.drawable.image_null_rain_background
-                    "차량사고" -> R.drawable.image_null_caracciendt_background
+                    "폭우" -> R.drawable.image_null_rain_background
+                    "교통사고" -> R.drawable.image_null_caracciendt_background
                     "폭설" -> R.drawable.image_null_snow_background
                     else -> R.drawable.image_null_etc_background
                 }

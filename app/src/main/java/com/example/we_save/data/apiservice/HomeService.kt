@@ -23,7 +23,9 @@ data class HomeResponse(
 )
 
 data class HomeResult(
-    val hostPostDtos: List<HostPostDto>
+    val hostPostDtos: List<HostPostDto>,
+    val quizId: Int,
+    val quizText: String
 )
 
 data class HostPostDto(

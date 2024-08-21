@@ -15,6 +15,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.we_save.common.extensions.customToast
 import com.example.we_save.databinding.ActivityPermissionRequestBinding
 import com.example.we_save.ui.MainActivity
 import com.example.we_save.ui.createAccount.LoginActivity
@@ -75,7 +76,7 @@ class PermissionRequestActivity : AppCompatActivity() {
                 }
             } else {
                 // 권한이 하나라도 거부된 경우
-                Toast.makeText(this, "모든 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
+                customToast("데이터가 없습니다")
                 finish()
             }
         }
