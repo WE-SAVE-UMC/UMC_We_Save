@@ -2,26 +2,22 @@ package com.example.we_save.data.apiservice
 
 import com.google.gson.annotations.SerializedName
 
-data class PostRequest(
-    @SerializedName("postId")val postId: Int
-)
-data class PostResponse(
+data class CommentResponse(
     @SerializedName("isSuccess")val isSuccess: Boolean,
     @SerializedName("code")val code: String,
     @SerializedName("message")val message: String,
-    @SerializedName("result")val result: ArrayList<PostResult>
+    @SerializedName("result")val result: ArrayList<CommentResult>
 )
 
-data class PostResult(
-    @SerializedName("postId")val postId: Int,
-    @SerializedName("title")val title: String,
-    @SerializedName("status")val status: String,
+data class CommentResult(
+    @SerializedName("commentId")val commentId: Int,
+    @SerializedName("postId")val postId: Int, // 댓글 단 글의 id
+    @SerializedName("title")val title: String, // 댓글 단 글의 title
+    @SerializedName("status")val status: String, // 종료 여부
     @SerializedName("category")val category: String,
+    @SerializedName("content")val content: String,
     @SerializedName("regionName")val regionName: String,
-    @SerializedName("createAt")val createAt: String,
     @SerializedName("imageUrl")val imageUrl: String,
     var selected: Boolean = false,      // true면 선택됨
     var selectedVisible: Boolean = false
 )
-
-
