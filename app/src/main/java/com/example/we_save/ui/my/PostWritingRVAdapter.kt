@@ -28,11 +28,6 @@ class PostWritingRVAdapter (private val postList: ArrayList<PostResult>): Recycl
         mItemClickListener = itemClickListener
     }
 
-    fun addItem(post: PostResult){
-        postList.add(post)
-        notifyItemInserted(postList.size - 1)
-    }
-
     // 선택 위젯의 가시성 변화
     @SuppressLint("NotifyDataSetChanged")
     fun updateSelectVisibility() {
@@ -72,17 +67,10 @@ class PostWritingRVAdapter (private val postList: ArrayList<PostResult>): Recycl
         return IdList
     }
 
-
-
     // selected가 true인 항목 개수를 반환
     fun getSelectedCount(): Int {
         return postList.count { it.selected }
     }
-
-//    fun removeItem(position: Int){
-//        albumList.removeAt(position)
-//        notifyDataSetChanged()
-//    }
 
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {

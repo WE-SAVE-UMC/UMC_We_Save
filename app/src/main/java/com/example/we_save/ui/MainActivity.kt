@@ -13,9 +13,6 @@ import androidx.lifecycle.lifecycleScope
 import com.example.we_save.R
 import com.example.we_save.databinding.ActivityMainBinding
 import com.example.we_save.ui.main.MainFragment
-import com.example.we_save.ui.my.Block
-import com.example.we_save.ui.my.Writing
-import com.example.we_save.ui.my.WritingDatabase
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.badge.BadgeUtils
 import com.google.android.material.badge.ExperimentalBadgeUtils
@@ -32,10 +29,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         installSplashScreen()
         setContentView(binding.root)
-
-
-        // Block 더미 데이터 생성
-        inputDummyBlocks()
 
         supportFragmentManager.commit {
             replace(R.id.fragment_container, MainFragment(), "root")
@@ -69,31 +62,4 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // 차단 더미 데이터
-    private fun inputDummyBlocks() {
-        val writingDB = WritingDatabase.getInstance(this)!!
-        val blocks = writingDB.blockDao().getBlocks()
-
-        if (blocks.isNotEmpty()) return
-
-        writingDB.blockDao().insert(
-            Block(
-                R.drawable.ic_profile,
-                "닉네임 예시",
-                true
-            )
-        )
-
-        writingDB.blockDao().insert(
-            Block(
-                R.drawable.ic_profile,
-                "닉네임 예시2",
-                false
-            )
-        )
-
-        val _blocks = writingDB.blockDao().getBlocks()
-        Log.d("block Data", _blocks.toString())
-
-    }
 }
