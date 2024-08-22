@@ -4,6 +4,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Multipart
@@ -21,4 +22,8 @@ interface ProfileInterface {
         @Part profileImage: MultipartBody.Part?,
         @Part("nickname") nickname: RequestBody
     ): Call<ProfileResponse>
+
+    // 탈퇴하기
+    @DELETE("/api/auth/users")
+    fun withdraw(@Header("Authorization") token: String): Call<LoginResponse>
 }

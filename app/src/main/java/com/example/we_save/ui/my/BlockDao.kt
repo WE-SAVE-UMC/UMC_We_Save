@@ -9,15 +9,15 @@ import androidx.room.Update
 @Dao
 interface BlockDao {
 
-    @Insert
-    fun insert(block: Block)
-
-    @Update
-    fun update(block: Block)
-
-    @Delete
-    fun delete(block: Block)
-
-    @Query("SELECT * FROM BlockTable")
-    fun getBlocks(): List<Block>
+//    @Insert
+//    fun insert(block: Block)
+//
+//    @Update
+//    fun update(block: Block)
+//
+//    @Delete
+//    fun delete(block: Block)
+//
+//    @Query("SELECT * FROM BlockTable")
+//    fun getBlocks(): List<Block>
 }
