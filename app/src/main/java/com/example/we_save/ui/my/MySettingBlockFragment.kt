@@ -22,7 +22,7 @@ import retrofit2.Response
 
 class MySettingBlockFragment : Fragment()  {
 
-    private var blockDatas = ArrayList<Block>()
+    //private var blockDatas = ArrayList<Block>()
     lateinit var binding: FragmentMySettingBlockBinding
 
     override fun onCreateView(

@@ -208,13 +208,13 @@ class MyPostFragment : Fragment() {
 
         getPostsService.deletePosts(getJwt(), postId).enqueue(object : Callback<PostResponse> {
             override fun onResponse(call: Call<PostResponse>, response: Response<PostResponse>) {
-                Log.d("GETPosts/SUCCESS", response.toString())
+                Log.d("DELETEPosts/SUCCESS", response.toString())
 
                 loadPosts()
             }
 
             override fun onFailure(call: Call<PostResponse>, t: Throwable) {
-                Log.d("GETPosts/FAIL", t.message.toString())
+                Log.d("DELETEPosts/FAIL", t.message.toString())
             }
         })
     }
