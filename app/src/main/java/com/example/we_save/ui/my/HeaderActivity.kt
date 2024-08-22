@@ -48,7 +48,7 @@ class HeaderActivity : AppCompatActivity() {
 
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    /*override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
         val currentPage = intent.getStringExtra("nextPage").toString()
         val intentMain = Intent(this, MainActivity::class.java)
@@ -74,6 +74,40 @@ class HeaderActivity : AppCompatActivity() {
 
                 }
 
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }*/
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        val currentPage = intent.getStringExtra("nextPage").toString()
+        val intentMain = Intent(this, MainActivity::class.java)
+        val intentHeader = Intent(this, HeaderActivity::class.java)
+
+        return when (item.itemId) {
+            android.R.id.home -> {
+                when (currentPage) {
+                    "MySettingBlockFragment", "MySettingAreaFragment", "MySettingNoticeFragment", "MySettingUserFragment" -> {
+                        // 특정 프래그먼트에서 돌아갈 때 HeaderActivity로 전환
+                        intentHeader.putExtra("nextPage", "MySettingFragment")
+                        startActivity(intentHeader)
+                    }
+                    "ProfileEditFragment", "MySettingFragment" -> {
+                        // ProfileEditFragment 또는 MySettingFragment일 때 MainActivity로 전환
+                        intentMain.putExtra("TARGET_PAGE", 3)
+                        startActivity(intentMain)
+                    }
+                    "MySettingUserWithdrawFragment" -> {
+                        // MySettingUserWithdrawFragment에서 돌아갈 때 HeaderActivity로 전환
+                        intentHeader.putExtra("nextPage", "MySettingUserFragment")
+                        startActivity(intentHeader)
+                    }
+                    else -> {
+                        // 기본 처리
+                    }
+                }
                 true
             }
             else -> super.onOptionsItemSelected(item)
