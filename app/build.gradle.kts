@@ -83,4 +83,7 @@ dependencies {
     implementation ("org.json:json:20210307")
 
     implementation ("org.apache.poi:poi-ooxml:5.2.2")
+
+    implementation ("com.github.bumptech.glide:okhttp3-integration:4.12.0")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
 }
