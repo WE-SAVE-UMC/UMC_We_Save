@@ -2,7 +2,6 @@ package com.example.we_save.ui.my
 
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -12,8 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.we_save.R
@@ -43,7 +40,6 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Response
 import java.io.IOException
-import java.util.jar.Manifest
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.pow
@@ -94,7 +90,7 @@ class MySettingAreaFragment : Fragment(), OnMapReadyCallback {
 
 
 
-
+        var regionName = ""
         // 검색 버튼 -> 지역 이름 저장 ex) "서울특별시 강남구 역삼동"
         binding.mySettingAreaSearchIv.setOnClickListener {
             searchedRegionName = binding.mySettingAreaSearchEt.text.toString()
@@ -106,7 +102,11 @@ class MySettingAreaFragment : Fragment(), OnMapReadyCallback {
                 if(heartCount == 0 || heartCount == 1){
                     heartCount += 1
                     binding.mySettingAreaInformationRegistStarIv.setImageResource(R.drawable.ic_star_on)
-
+                    val sharedPreferences = requireContext().getSharedPreferences("region", Context.MODE_PRIVATE)
+                    with(sharedPreferences.edit()) {
+                        putString("regionname", searchedRegionName)
+                        apply()
+                    }
                     postHeart(searchedRegionName)
 
 

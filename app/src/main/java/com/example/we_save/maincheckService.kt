@@ -11,16 +11,19 @@ import retrofit2.http.Query
 interface maincheckService {
     @POST("/api/home/sort/distance")  // 거리순
     fun getSortedData(
+        @Header("Authorization") token: String,
         @Body body: RequestBody
     ): Call<NearbyPostsResponse>
 
     @POST("/api/home/sort/recent")  // 최신순
     fun getRecentData(
+        @Header("Authorization") token: String,
         @Body body: RequestBody
     ): Call<NearbyPostsResponse>
 
     @POST("/api/home/sort/top")
     fun getTopData(
+        @Header("Authorization") token: String,
         @Body body: RequestBody
     ): Call<NearbyPostsResponse>
 }

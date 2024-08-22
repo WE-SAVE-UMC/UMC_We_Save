@@ -164,7 +164,7 @@ class LoginActivity : AppCompatActivity() {
                         editor.putLong(Constants.KEY_USER_ID, loginResponse.result.userId.toLong())
                         editor.apply()
 
-                        Toast.makeText(this@LoginActivity, "로그인 성공", Toast.LENGTH_LONG).show()
+                        customToast("로그인 성공")
 
                         val intent = Intent(this@LoginActivity, MainActivity::class.java)
                         startActivity(intent)

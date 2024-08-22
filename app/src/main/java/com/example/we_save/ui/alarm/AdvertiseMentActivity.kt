@@ -21,6 +21,9 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.target.Target
 import android.graphics.drawable.Drawable
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.executor.GlideExecutor.UncaughtThrowableStrategy.LOG
+import com.bumptech.glide.request.RequestOptions
 import com.example.we_save.data.apiservice.AdvertisementService
 import com.example.we_save.data.apiservice.GetQuizResponse
 import com.example.we_save.data.apiservice.QuizResponse
@@ -116,6 +119,7 @@ class AdvertiseMentActivity : AppCompatActivity() {
 
             //binding.advertisementTextTv.text = options[0].responseText
             val quizId = intent.getIntExtra("quizId", -1)
+            Log.d("acvertise" ,"$quizId")
             val (imageUrl, redirectUrl) = when (quizId) {
                 1 -> Pair(
                     "https://cdn.discordapp.com/attachments/1272902416152531078/1275443252916518972/nut_ads_img.png?ex=66c5e898&is=66c49718&hm=61f54d2d05fe56e7740730c608a0c126007966918412f1b5835abf74ef47090f&",
@@ -135,10 +139,14 @@ class AdvertiseMentActivity : AppCompatActivity() {
                 )
             }
 
-            Glide.with(this)
-                .load(imageUrl)
-                .into(binding.advertisementBackgroundIv)
+            val imageUrl1 = "https://cdn.discordapp.com/attachments/1272902416152531078/1275443252916518972/nut_ads_img.png?ex=66c5e898&is=66c49718&hm=61f54d2d05fe56e7740730c608a0c126007966918412f1b5835abf74ef47090f&"
 
+
+            Glide.with(this)
+                .load(imageUrl1)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .into(binding.advertisementBackgroundIv)
             binding.advertisementBackgroundIv.setOnClickListener {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(redirectUrl))
                 startActivity(intent)
