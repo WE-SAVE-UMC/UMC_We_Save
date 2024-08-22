@@ -1,5 +1,6 @@
 package com.example.we_save
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -41,15 +42,17 @@ class MainRecentFragment : Fragment() {
         // RecyclerView 설정
         binding.nearAccidentRecycler.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        val adapter = MainRecentRecylcerAdapter(items)
+        val adapter = MainRecyclerAdapter(items)
         binding.nearAccidentRecycler.adapter = adapter
 
         // 데이터 로드
         loadData(adapter)
     }
 
-    private fun loadData(adapter: MainRecentRecylcerAdapter) {
-        // Retrofit 설정
+    private fun loadData(adapter: MainRecyclerAdapter) {
+        val sharedPreferences = requireContext().getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+        val token = sharedPreferences.getString("jwtToken", null) ?: return
+
         val retrofit = Retrofit.Builder()
             .baseUrl("http://114.108.153.82:8080/")
             .addConverterFactory(GsonConverterFactory.create())
@@ -61,7 +64,7 @@ class MainRecentFragment : Fragment() {
         val requestBody = createRequestBody()
 
         // API 호출
-        val call = api.getRecentData(requestBody)  // 올바른 메서드 호출
+        val call = api.getRecentData("Bearer $token", requestBody)
 
         call.enqueue(object : Callback<NearbyPostsResponse> {
             override fun onResponse(
@@ -106,7 +109,7 @@ class MainRecentFragment : Fragment() {
         val requestData = RequestData(   // 위도, 경도, 지역 이름을 받는 데이터 (나중에 수정 필요)
             latitude = 25.0,
             longtitude = 50.0,
-            regionName = "서울특별시 노원구 월계동"
+            regionName = "서울특별시 강남구 역삼동"
         )
 
         val gson = Gson()

@@ -71,15 +71,25 @@ class MySettingAreaFragment : Fragment(), OnMapReadyCallback {
         binding.mySettingAreaSearchIv.setOnClickListener {
             regionName = binding.mySettingAreaSearchEt.text.toString()
             binding.mySettingAreaInformationNameTv.text = regionName
-
         }
 
         // 관심 지역 등록 버튼
         binding.mySettingAreaInformationRegist.setOnClickListener{
             if(heartCount == 0 || heartCount == 1){
                 heartCount += 1
+                val sharedPreferences = requireContext().getSharedPreferences("region", Context.MODE_PRIVATE)
+                with(sharedPreferences.edit()) {
+                    putString("regionname", regionName)
+                    apply()
+                }
                 postHeart(regionName)
+
             } else{     // 관심 지역이 2개인 경우
+                val sharedPreferences = requireContext().getSharedPreferences("region", Context.MODE_PRIVATE)
+                with(sharedPreferences.edit()) {
+                    putString("regionname", regionName)
+                    apply()
+                }
                 binding.mySettingAreaWarning.visibility = View.VISIBLE
                 binding.mySettingAreaInformation.visibility = View.GONE
 
@@ -91,6 +101,7 @@ class MySettingAreaFragment : Fragment(), OnMapReadyCallback {
                 }
             }
         }
+
 
 
         return binding.root

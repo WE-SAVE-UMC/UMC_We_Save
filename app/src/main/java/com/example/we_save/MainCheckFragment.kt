@@ -1,5 +1,6 @@
 package com.example.we_save
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -47,7 +48,8 @@ class MainCheckFragment : Fragment() {
     }
 
     private fun loadData(adapter: MainRecyclerAdapter) {
-        // Retrofit 설정
+        val sharedPreferences = requireContext().getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+        val token = sharedPreferences.getString("jwtToken", null) ?: return
         val retrofit = Retrofit.Builder()
             .baseUrl("http://114.108.153.82:8080/")
             .addConverterFactory(GsonConverterFactory.create())
@@ -59,7 +61,7 @@ class MainCheckFragment : Fragment() {
         val requestBody = createRequestBody()
 
         // API 호출
-        val call = api.getTopData(requestBody) // hearts 순서대로 가져오는 메서드 호출
+        val call = api.getSortedData("Bearer $token", requestBody)
 
         call.enqueue(object : Callback<NearbyPostsResponse> {
             override fun onResponse(
@@ -100,7 +102,7 @@ class MainCheckFragment : Fragment() {
         val requestData = RequestData(   // 위도, 경도, 지역 이름을 받는 데이터
             latitude = 25.0,
             longtitude = 50.0,
-            regionName = "서울특별시 노원구 월계동"
+            regionName = "서울특별시 강남구 역삼동"
         )
 
         val gson = Gson()

@@ -1,5 +1,6 @@
 package com.example.we_save.ui.main
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -49,6 +50,10 @@ class MainDistanceFragment : Fragment() {
     }
 
     private fun loadData(adapter: MainRecyclerAdapter) {
+        // SharedPreferences에서 토큰 가져오기
+        val sharedPreferences = requireContext().getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
+        val token = sharedPreferences.getString("jwtToken", null) ?: return
+
         // Retrofit 설정
         val retrofit = Retrofit.Builder()
             .baseUrl("http://114.108.153.82:8080/")
@@ -61,7 +66,7 @@ class MainDistanceFragment : Fragment() {
         val requestBody = createRequestBody()
 
         // API 호출
-        val call = api.getSortedData(requestBody)
+        val call = api.getSortedData("Bearer $token", requestBody)
 
         call.enqueue(object : Callback<NearbyPostsResponse> {
             override fun onResponse(
@@ -92,7 +97,7 @@ class MainDistanceFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<NearbyPostsResponse>, t: Throwable) {
-                // 잘못 받았을 때 ...
+                Log.e("API Error", "Failure: ${t.message}")
             }
         })
     }
@@ -101,7 +106,7 @@ class MainDistanceFragment : Fragment() {
         val requestData = RequestData(   //위도,경도,지역 이름을 받는 데이터(나중에 수정 필요!!)
             latitude = 25.0,
             longtitude = 50.0,
-            regionName = "서울특별시 노원구 월계동"
+            regionName = "서울특별시 강남구 역삼동"
         )
 
         val gson = Gson()

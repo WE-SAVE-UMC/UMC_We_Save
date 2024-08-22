@@ -67,6 +67,8 @@ import android.location.Location
 import androidx.core.app.ActivityCompat
 import android.content.pm.PackageManager
 import android.Manifest
+import android.annotation.SuppressLint
+import android.view.MotionEvent
 import com.example.we_save.common.extensions.customToast
 import com.example.we_save.data.apiservice.GetQuizResponse
 import com.example.we_save.data.apiservice.QuizResult
@@ -106,9 +108,13 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         }
 
         binding.mapStarIcon.setOnClickListener {
-            moveToRegion("서울특별시 강남구")  // 이 부분에 관심 지역 설정
-        }
 
+            val sharedPreferences = requireContext().getSharedPreferences("region", Context.MODE_PRIVATE)
+            val regionName = sharedPreferences.getString("regionname", "서울특별시 강남구")
+            Log.d("HomeFragment", "Retrieved regionName: $regionName")
+
+            moveToRegion(regionName ?: "서울특별시 강남구")
+        }
         view.viewTreeObserver.addOnGlobalLayoutListener {
             val rect = Rect()
             view.getWindowVisibleDisplayFrame(rect)
@@ -160,7 +166,9 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         marker.map = naverMap
 
         // 마커에 주소값 저장
+
         marker.tag = regionName
+        Log.d("HomeFragment", "Marker tag set to: ${marker.tag}")
 
         markers.add(marker)
 
@@ -170,15 +178,33 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         }
     }
     private fun moveToRegion(targetRegion: String) {
-        markers.find { it.tag == targetRegion }?.let { marker ->
-            val cameraUpdate = CameraUpdate.scrollTo(marker.position).animate(CameraAnimation.Easing)
+        val targetRegionShort = targetRegion.split(" ").take(2).joinToString(" ")
+
+        markers.find { marker ->
+            val tag = marker.tag as? String
+            tag?.contains(targetRegionShort) == true
+        }?.let { marker ->
+            val cameraUpdate = CameraUpdate.scrollAndZoomTo(marker.position, 15.0)
+                .animate(CameraAnimation.Easing)
             naverMap.moveCamera(cameraUpdate)
-        }
+        } ?: Log.d("HomeFragment", "확인: $targetRegionShort")
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @OptIn(ExperimentalBadgeUtils::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.mapView.setOnTouchListener { v, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
+                    v.parent.requestDisallowInterceptTouchEvent(true)
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    v.parent.requestDisallowInterceptTouchEvent(false)
+                }
+            }
+            false
+        }
 
         val toolbar = activity?.findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
         if (toolbar != null) {
@@ -437,8 +463,9 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private fun updateUI(post: HostPostDto) {
         binding.mapWhiteBackground.visibility = View.VISIBLE  // UI 요소를 나타냄
         binding.mapAccidentTv.text = post.title
+        val createAtWithPadding = post.createAt.padEnd(26, '0')
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
-        val dateTime = LocalDateTime.parse(post.createAt, formatter)
+        val dateTime = LocalDateTime.parse(createAtWithPadding, formatter)
         val timePart = dateTime.format(DateTimeFormatter.ofPattern("HH시 mm분"))
         binding.subMapAccidentTv.text = timePart
         binding.mapOkNumberTv.text = post.hearts.toString()
