@@ -158,6 +158,7 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
 
     override fun onMapReady(naverMap: NaverMap) {
         this.naverMap = naverMap
+        naverMap.uiSettings.isZoomControlEnabled = false
         if (hasAllPermissions()) {
             setupMap()
             //fetchEmergencyAssemblyAreaData() // 지도 준비 후 대피소 데이터를 가져옴

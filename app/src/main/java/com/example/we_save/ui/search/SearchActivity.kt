@@ -41,6 +41,14 @@ class SearchActivity : AppCompatActivity() {
 
         val sharedPreferences = getSharedPreferences("search_prefs", Context.MODE_PRIVATE)
         val query = sharedPreferences.getString("search_query", "")
+        val editText = binding.searchEdittextTv
+
+        editText.setOnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                // 에디트텍스트가 포커스를 받을 때
+                binding.wrongSearchResultTv.visibility = View.GONE
+            }
+        }
 
         if (!query.isNullOrEmpty()) {
             // EditText에 값 설정
@@ -134,9 +142,12 @@ class SearchActivity : AppCompatActivity() {
                             val countermeasures = searchResponse.result.countermeasureDtos
                             if (tags.isNotEmpty()) {
                                 showResults(tags, countermeasures)
+                                binding.fragmentContatinerView.visibility = View.VISIBLE
                                 binding.wrongSearchResultTv.visibility = View.GONE
+                                binding.tagsRecyclerView.visibility = View.VISIBLE
                             } else {
                                 binding.wrongSearchResultTv.visibility = View.VISIBLE
+                                binding.fragmentContatinerView.visibility = View.GONE
                             }
                         }
                     }

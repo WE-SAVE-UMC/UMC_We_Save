@@ -131,11 +131,11 @@ class AdvertiseMentActivity : AppCompatActivity() {
                     "https://direct.samsungfire.com/ria/pc/product/car/?state=Front"
                 )
                 3 -> Pair(
-                    R.drawable.water_ads_img,
+                    R.drawable.toreta_image,
                     "https://brand.naver.com/cocacola/products/4611673852"
                 )
                 else -> Pair(
-                    R.drawable.emergency_ads_img,
+                    R.drawable.manghi_image,
                     "https://brand.naver.com/baseus/products/4661149558"
                 )
             }
