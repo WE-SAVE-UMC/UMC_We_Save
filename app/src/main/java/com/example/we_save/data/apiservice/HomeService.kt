@@ -1,5 +1,6 @@
 package com.example.we_save.data.apiservice
 
+import com.google.gson.annotations.SerializedName
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -23,9 +24,22 @@ data class HomeResponse(
 )
 
 data class HomeResult(
+    val postDtos: List<PostDto>,
     val hostPostDtos: List<HostPostDto>,
     val quizId: Int,
     val quizText: String
+)
+
+data class PostDto(
+    val postId: Int,
+    @SerializedName("regionId") val regionId: Int,  // 필드 이름 수정
+    val regionName: String,
+    val distance: Double,
+    val hearts: Int,
+    @SerializedName("createAt") val createAt: String,  // 필드 이름 수정
+    val title: String,
+    @SerializedName("imageUrl") val imageUrl: String?,  // 필드 이름 수정
+    @SerializedName("categoryName") val categoryName: String  // 필드 이름 수정
 )
 
 data class HostPostDto(

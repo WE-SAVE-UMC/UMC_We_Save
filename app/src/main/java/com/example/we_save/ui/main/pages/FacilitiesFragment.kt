@@ -143,7 +143,7 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
                 R.id.pharmacy_location -> setButtonImage(it, R.drawable.pharmacy_icon)
                 R.id.emergency_location -> setButtonImage(it, R.drawable.emergency_icon)
                 R.id.shelter_location -> setButtonImage(it, R.drawable.shelter_icon)
-                R.id.my_location -> setButtonImage(it, R.drawable.my_location_icon)
+                R.id.hospital_location -> setButtonImage(it, R.drawable.hospital_icon)
             }
         }
 
@@ -482,7 +482,7 @@ class FacilitiesFragment : Fragment(), OnMapReadyCallback {
             endTimeTextView.text = formatTime(endTime ?: "")
 
             val isOpen = checkIfOpen(startTime ?: "", endTime ?: "", LocalTime.now())
-            openStatusTextView.text = if (isOpen) "영업중" else "영업 아님"
+            openStatusTextView.text = if (isOpen) "영업중" else "영업 종료"
             openStatusImageView.backgroundTintList = ContextCompat.getColorStateList(requireContext(), if (isOpen) R.color.blue_40 else R.color.red_40)
         } else {
             startTimeTextView.visibility = View.GONE

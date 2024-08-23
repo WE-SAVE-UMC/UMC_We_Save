@@ -64,7 +64,7 @@ class LoginActivity : AppCompatActivity() {
                     val loginRequest = LoginRequest(phoneNum, passwordText)
                     loginUser(loginRequest)
                 } else {
-                    customToast("전화번호와 비밀번호를 입력해주세요!!")
+
                 }
                 true
             } else {
@@ -102,7 +102,7 @@ class LoginActivity : AppCompatActivity() {
                 val loginRequest = LoginRequest(phoneNum, passwordText)
                 loginUser(loginRequest)
             } else {
-                customToast("전화번호와 비밀번호를 입력해주세요!!")
+
             }
         }
 
@@ -164,7 +164,7 @@ class LoginActivity : AppCompatActivity() {
                         editor.putLong(Constants.KEY_USER_ID, loginResponse.result.userId.toLong())
                         editor.apply()
 
-                        customToast("로그인 성공")
+
 
                         val intent = Intent(this@LoginActivity, MainActivity::class.java)
                         startActivity(intent)

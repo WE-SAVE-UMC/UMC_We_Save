@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.we_save.NearbyPostsResponse
 import com.example.we_save.PostDTO
+import com.example.we_save.R
 import com.example.we_save.databinding.FragmentMainDistanceBinding
 import com.example.we_save.maincheckService
 import com.google.gson.Gson
@@ -42,7 +43,18 @@ class MainDistanceFragment : Fragment() {
         // RecyclerView 설정
         binding.nearAccidentRecycler.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        val adapter = MainRecyclerAdapter(items)
+
+
+        val mainFragment = (requireActivity().supportFragmentManager.findFragmentById(R.id.fragment_container) as? MainFragment)
+        val adapter = MainRecyclerAdapter(items) { position ->
+            val sharedPreferences = requireActivity().getSharedPreferences("Move", Context.MODE_PRIVATE)
+            with(sharedPreferences.edit()) {
+                putInt("pageToSet", 0)  // 0번 페이지로 이동
+                apply()
+            }
+
+            mainFragment?.setViewPagerPage(2) // 2번 페이지로 이동
+        }
         binding.nearAccidentRecycler.adapter = adapter
 
         // 데이터 로드

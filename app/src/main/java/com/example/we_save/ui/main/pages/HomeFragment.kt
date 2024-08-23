@@ -68,11 +68,27 @@ import androidx.core.app.ActivityCompat
 import android.content.pm.PackageManager
 import android.Manifest
 import android.annotation.SuppressLint
+import android.location.LocationManager
+import android.os.Handler
+import android.os.Looper
+import android.text.Editable
+import android.text.InputFilter
+import android.text.TextWatcher
+import android.view.GestureDetector
 import android.view.MotionEvent
+import android.view.inputmethod.EditorInfo
+import androidx.core.location.LocationManagerCompat.isLocationEnabled
+import androidx.core.view.GestureDetectorCompat
 import com.example.we_save.common.extensions.customToast
 import com.example.we_save.data.apiservice.GetQuizResponse
 import com.example.we_save.data.apiservice.QuizResult
 import com.naver.maps.map.CameraAnimation
+import com.naver.maps.map.LocationTrackingMode
+import com.naver.maps.map.util.FusedLocationSource
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment(), OnMapReadyCallback {
     private var _binding: FragmentHomeBinding? = null
@@ -80,10 +96,16 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private var selectedButton: MaterialCardView? = null
     private lateinit var mapView: MapView
     private lateinit var naverMap: NaverMap
+    private lateinit var locationSource: FusedLocationSource
+    private val permissions = arrayOf(
+        Manifest.permission.READ_PHONE_STATE,
+        Manifest.permission.ACCESS_FINE_LOCATION
+    )
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val markers = mutableListOf<Marker>()
     private var quizId: Int? = null  // quizId를 저장할 변수
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -92,6 +114,24 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         (activity as? AppCompatActivity)?.supportActionBar?.hide()
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val view = binding.root
+        // 초기 프래그먼트를 거리순으로 설정
+        if (savedInstanceState == null) {
+           // resetButtons() // 다른 모든 버튼을 기본 상태로 초기화
+            replaceFragment(MainDistanceFragment())
+            selectButton(binding.distanceFilterButton, R.id.distance_filter_tv)
+        }
+        binding.mapView.setOnTouchListener { v, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
+                    binding.mainNestscrollview.requestDisallowInterceptTouchEvent(true)
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    binding.mainNestscrollview.requestDisallowInterceptTouchEvent(false)
+                }
+            }
+            false
+        }
+
 
         val bottomNavigationView = activity?.findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
 
@@ -101,19 +141,42 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
 
+        val mapFragment = childFragmentManager.findFragmentById(R.id.map_view) as MapFragment?
+            ?: MapFragment.newInstance().also {
+                childFragmentManager.beginTransaction().add(R.id.map_view, it).commit()
+            }
+        mapFragment.getMapAsync(this)
 
+        // 위치 소스 초기화
+        locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
+        // 내 위치 버튼 클릭 리스너
         binding.myLocationImage.setOnClickListener {
-            getCurrentLocation()
-        }
+            locationSource.lastLocation?.let { location ->
+                // 위치로 스크롤하고 줌 레벨을 설정하는 CameraUpdate 생성
+                val cameraUpdate = CameraUpdate.scrollAndZoomTo(LatLng(location.latitude, location.longitude), 15.0)
+                    .animate(CameraAnimation.Easing)  // 애니메이션 적용
 
+                // 카메라를 해당 위치로 이동하고 줌 레벨 적용
+                naverMap.moveCamera(cameraUpdate)
+
+                // 5초 후에 위치 추적 모드 비활성화
+                Handler(Looper.getMainLooper()).postDelayed({
+                    naverMap.locationTrackingMode = LocationTrackingMode.None
+                }, 5000)
+            } ?: requireContext().applicationContext.customToast("현재 위치를 가져올 수 없습니다.")
+        }
         binding.mapStarIcon.setOnClickListener {
 
             val sharedPreferences = requireContext().getSharedPreferences("region", Context.MODE_PRIVATE)
-            val regionName = sharedPreferences.getString("regionname", "서울특별시 강남구")
+            val regionName = sharedPreferences.getString("regionname","")
             Log.d("HomeFragment", "Retrieved regionName: $regionName")
-
-            moveToRegion(regionName ?: "서울특별시 강남구")
+            if (regionName.isNullOrEmpty()) {
+                Log.d("HomeFragment", "regionName이 설정되지 않았습니다. 아무 작업도 하지 않습니다.")
+                return@setOnClickListener // 값을 넘겨받지 못하면 아무 작업도 하지 않음
+            }
+            moveToRegion(regionName)
         }
         view.viewTreeObserver.addOnGlobalLayoutListener {
             val rect = Rect()
@@ -127,14 +190,36 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 bottomNavigationView?.visibility = View.VISIBLE
             }
         }
+        val gestureDetector = GestureDetectorCompat(requireContext(), object : GestureDetector.SimpleOnGestureListener() {
+            override fun onScroll(
+                e1: MotionEvent?,
+                e2: MotionEvent,
+                distanceX: Float,
+                distanceY: Float
+            ): Boolean {
+                binding.mainNestscrollview.requestDisallowInterceptTouchEvent(true)
+                return false
+            }
+
+            override fun onSingleTapUp(e: MotionEvent): Boolean {
+                binding.mainNestscrollview.requestDisallowInterceptTouchEvent(false)
+                return false
+            }
+        })
+
+        binding.mapView.setOnTouchListener { _, event ->
+            gestureDetector.onTouchEvent(event)
+            false
+        }
 
         return view
     }
 
     override fun onMapReady(naverMap: NaverMap) {
         this.naverMap = naverMap
+        naverMap.locationSource = locationSource
         naverMap.uiSettings.isZoomControlEnabled = false
-
+        setupMap()
         // 지도에 마커 추가
         val regionName = "서울특별시 노원구 월계동"
         val southKoreaBounds = LatLngBounds(
@@ -148,6 +233,21 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         fetchHomeData()
     }
+    private fun setupMap() {
+        naverMap.locationSource = locationSource
+        naverMap.locationTrackingMode = LocationTrackingMode.Follow
+        locationSource.lastLocation?.let {
+            val cameraUpdate = CameraUpdate.scrollTo(LatLng(it.latitude, it.longitude))
+            naverMap.moveCamera(cameraUpdate)
+        }
+    }
+
+    private fun isLocationEnabled(): Boolean {
+        val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val isEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+        Log.d("YourFragment", "isLocationEnabled: $isEnabled")
+        return isEnabled
+    }
 
     private fun addMarkerToMap(latitude: Double, longitude: Double, regionName: String, categoryName: String, post: HostPostDto) {
         val marker = Marker()
@@ -158,8 +258,8 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             "지진" -> R.drawable.map_earthquake_marker_icon
             "교통사고" -> R.drawable.map_car_marker_icon
             "폭우" -> R.drawable.map_rain_marker_icon
-            "폭설" -> R.drawable.ic_snowflake_16
-            else -> R.drawable.ic_etc_16
+            "폭설" -> R.drawable.map_snowflake_marker
+            else -> R.drawable.map_etc_marker_icon
         }
 
         marker.icon = OverlayImage.fromResource(iconResource)
@@ -177,19 +277,28 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             true
         }
     }
+
     private fun moveToRegion(targetRegion: String) {
         val targetRegionShort = targetRegion.split(" ").take(2).joinToString(" ")
 
-        markers.find { marker ->
+        val marker = markers.find { marker ->
             val tag = marker.tag as? String
             tag?.contains(targetRegionShort) == true
-        }?.let { marker ->
+        }
+
+        if (marker != null) {
             val cameraUpdate = CameraUpdate.scrollAndZoomTo(marker.position, 15.0)
                 .animate(CameraAnimation.Easing)
             naverMap.moveCamera(cameraUpdate)
-        } ?: Log.d("HomeFragment", "확인: $targetRegionShort")
-    }
 
+            // 5초 후에 위치 추적 모드를 비활성화
+            Handler(Looper.getMainLooper()).postDelayed({
+                naverMap.locationTrackingMode = LocationTrackingMode.None
+            }, 5000)
+        } else {
+            Log.d("HomeFragment", "Marker not found for region: $targetRegionShort")
+        }
+    }
     @SuppressLint("ClickableViewAccessibility")
     @OptIn(ExperimentalBadgeUtils::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -250,16 +359,54 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             startActivity(intent)
         }
 
-        binding.searchIv.setOnClickListener {
-            val intent = Intent(context, SearchActivity::class.java)
+        binding.upperEdittext.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                requireActivity(),
-                binding.upperEdittext, // 전환할 뷰
-                "shared_edittext" // transitionName
-            )
-            startActivity(intent, options.toBundle())
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+                s?.let {
+                    if (it.endsWith(" ")) {
+                        binding.upperEdittext.removeTextChangedListener(this) // 잠시 리스너 제거
+                        binding.upperEdittext.setText(it.trim()) // 공백 제거
+                        binding.upperEdittext.setSelection(binding.upperEdittext.text.length) // 커서 위치 조정
+                        binding.upperEdittext.addTextChangedListener(this) // 리스너 다시 추가
+                    }
+                }
+            }
+        })
+
+        binding.upperEdittext.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE) {
+                val query = binding.upperEdittext.text.toString().trim()
+                if (query.isNotEmpty()) {
+                    val sharedPreferences = requireContext().getSharedPreferences("search_prefs", Context.MODE_PRIVATE)
+                    val editor = sharedPreferences.edit()
+                    editor.putString("search_query", query)
+                    editor.apply()
+
+                    // 이후 다른 프래그먼트나 액티비티로 이동
+                    val intent = Intent(context, SearchActivity::class.java)
+                    startActivity(intent)
+                }
+                return@setOnEditorActionListener true // 이벤트를 소비하여 줄바꿈 방지
+            }
+            return@setOnEditorActionListener false
         }
+
+        binding.searchIv.setOnClickListener {
+            val query = binding.upperEdittext.text.toString().trim()
+            if (query.isNotEmpty()) {
+                val sharedPreferences = requireContext().getSharedPreferences("search_prefs", Context.MODE_PRIVATE)
+                val editor = sharedPreferences.edit()
+                editor.putString("search_query", query)
+                editor.apply()
+
+                val intent = Intent(context, SearchActivity::class.java)
+                startActivity(intent)
+            }
+        }
+
         val mainFragment = parentFragment as? MainFragment
         binding.koreaConstlay.setOnClickListener {
 
@@ -425,7 +572,11 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         val homeService = RetrofitClient.createService(HomeService::class.java)
 
         // 실제 리퀘스트 데이터를 이곳에 넣습니다.
-        val request = HomeRequest(latitude = 25.0, longitude = 50.0, regionName = "서울특별시 노원구 월계동")
+        val request = HomeRequest(
+            latitude = 25.0,
+            longitude = 50.0,
+            regionName = "서울특별시 강남구 역삼동"
+        )
 
         homeService.getHomeData(request).enqueue(object : Callback<HomeResponse> {
             override fun onResponse(call: Call<HomeResponse>, response: Response<HomeResponse>) {
@@ -436,33 +587,77 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                         quizId = result.quizId
                         binding.quizQustion.text = result.quizText
                         val hotPostDtos = result.hostPostDtos
-
+                        val PostDtos = result.postDtos
+                        val hostPostTitles = result.hostPostDtos.map { it.title }
+                        val postTitles = result.postDtos.map{it.title}
+                        val postRegionName = result.postDtos.map{it.regionName.substringBefore("동") + "동"}
                         if (!hotPostDtos.isNullOrEmpty()) {
                             // 서버에서 받은 데이터로 마커 추가
+                            updateTextViewWithTitles(hostPostTitles)
                             for (post in hotPostDtos) {
                                 addMarkerToMap(post.latitude, post.longitude, post.regionName, post.categoryName, post)
                             }
                         } else {
-                            requireContext().applicationContext.customToast("데이터가 없습니다")
+
+                        }
+                        if (!PostDtos.isNullOrEmpty()) {
+                            updateTextViewWithTitles2(postRegionName)
+                            updateTextViewWithTitles1(postTitles)
+
+                        } else {
                         }
                     } ?: run {
-                        requireContext().applicationContext.customToast("서버 응답이 없습니다")
                     }
                 } else {
-                    requireContext().applicationContext.customToast("서버에 오류가 생겼습니다")
                 }
             }
 
             override fun onFailure(call: Call<HomeResponse>, t: Throwable) {
-                requireContext().applicationContext.customToast("네트워크에 오류가 생겼습니다")
             }
         })
+    }
+    private fun updateTextViewWithTitles(titles: List<String>) {
+        CoroutineScope(Dispatchers.Main).launch {
+            var currentTitleIndex = 0
+            while (true) {
+                binding.mapAlarmTv.text = titles[currentTitleIndex]
+                currentTitleIndex = (currentTitleIndex + 1) % titles.size
+                delay(5000L) // 3초 딜레이
+            }
+        }
+    }
+    private fun updateTextViewWithTitles1(titles: List<String>) {
+        CoroutineScope(Dispatchers.Main).launch {
+            var currentTitleIndex = 0
+            while (true) {
+                binding.textView2.text = titles[currentTitleIndex]
+                currentTitleIndex = (currentTitleIndex + 1) % titles.size
+                delay(5000L) // 3초 딜레이
+            }
+        }
+    }
+    private fun updateTextViewWithTitles2(regionName: List<String>) {
+        CoroutineScope(Dispatchers.Main).launch {
+            var currentTitleIndex = 0
+            while (true) {
+                binding.mainUpperText.text = regionName[currentTitleIndex]
+                currentTitleIndex = (currentTitleIndex + 1) % regionName.size
+                delay(5000L) // 3초 딜레이
+            }
+        }
     }
 
 
     private fun updateUI(post: HostPostDto) {
         binding.mapWhiteBackground.visibility = View.VISIBLE  // UI 요소를 나타냄
-        binding.mapAccidentTv.text = post.title
+        val maxLength = 12  // 최대 허용 길이
+        val title = if (post.title.length > maxLength) {
+            post.title.substring(0, maxLength) + " ..."
+        } else {
+            post.title
+        }
+
+        binding.mapAccidentTv.text = title
         val createAtWithPadding = post.createAt.padEnd(26, '0')
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
         val dateTime = LocalDateTime.parse(createAtWithPadding, formatter)
@@ -491,8 +686,10 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             intent.putExtra("quizId", it)
             startActivity(intent)
         } ?: run {
-            Toast.makeText(requireContext(), "퀴즈 데이터를 로드하지 못했습니다.", Toast.LENGTH_SHORT).show()
+
         }
     }
-
+    companion object {
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1000
+    }
 }
