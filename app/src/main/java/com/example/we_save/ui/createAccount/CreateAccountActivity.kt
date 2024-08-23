@@ -32,7 +32,7 @@ class CreateAccountActivity : AppCompatActivity() {
             if (phoneNum.isNotEmpty()) {
                 checkPhoneNumberValidity(phoneNum)
             } else {
-                customToast("전화번호를 입력해주세요!!")
+
             }
         }
         // 엔터를 눌렀을때 자동으로 넘어간다.!!
@@ -42,7 +42,7 @@ class CreateAccountActivity : AppCompatActivity() {
                 if (phoneNum.isNotEmpty()) {
                     checkPhoneNumberValidity(phoneNum)
                 } else {
-                    customToast("전화번호를 입력해주세요!!")
+
                 }
                 true
             } else {
@@ -58,12 +58,12 @@ class CreateAccountActivity : AppCompatActivity() {
                 if (response.isSuccessful && response.body()?.result?.isValid == true) {
                     requestSmsCode(phoneNum)
                 } else {
-                    Toast.makeText(this@CreateAccountActivity, "중복된 전화번호 입니다.", Toast.LENGTH_SHORT).show()
+                    binding.phoneNumberErrormessage.visibility = View.VISIBLE
                 }
             }
 
             override fun onFailure(call: Call<PhoneNumberResponse>, t: Throwable) {
-                Toast.makeText(this@CreateAccountActivity, "네트워크 오류: ${t.message}", Toast.LENGTH_LONG).show()
+
             }
         })
     }

@@ -61,6 +61,7 @@ import com.example.we_save.ui.accident.bottomsheet.YourAccidentBottomSheet
 import com.example.we_save.ui.alarm.AlarmActivity
 import com.example.we_save.ui.main.pages.accident.DATA_KEY_POST_RESULT
 import com.example.we_save.ui.main.pages.accident.REQUEST_KEY_UPDATE
+import com.example.we_save.ui.search.SearchActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.collectLatest
@@ -832,7 +833,16 @@ private class HeaderAdapter : ListAdapter<PostDetails, HeaderAdapter.HeaderItemV
     }
 
     class HeaderItemViewHolder(val binding: ItemAccidentDetailsHeaderBinding) :
-        RecyclerView.ViewHolder(binding.root)
+        RecyclerView.ViewHolder(binding.root){
+        init {
+            // ImageView에 클릭 리스너 설정
+            binding.imageView1.setOnClickListener {
+                val context = it.context
+                val intent = Intent(context, SearchActivity::class.java)
+                context.startActivity(intent)
+            }
+        }
+        }
 }
 
 private class ImageViewPagerAdapter(val images: List<String>) :

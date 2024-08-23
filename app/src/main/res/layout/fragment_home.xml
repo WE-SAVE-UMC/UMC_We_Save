@@ -148,7 +148,9 @@
                 android:layout_marginStart="20dp"
                 android:textSize="16sp"
                 android:paddingStart="16sp"
-                android:hint="지진 빌생 시 대처 방법"
+                android:hint="지진 발생 시 대처 방법"
+                android:inputType="text"
+                android:imeOptions="actionSearch"
                 android:transitionName="shared_edittext"/>
             <ImageButton
                 android:id="@+id/search_iv"
@@ -359,7 +361,7 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <com.google.android.material.card.MaterialCardView
+            <FrameLayout
                 android:id="@+id/map_card_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -380,7 +382,7 @@
                 android:background="@drawable/rounded_background" />
 
 
-        </com.google.android.material.card.MaterialCardView>
+        </FrameLayout>
 
 
             <androidx.constraintlayout.widget.ConstraintLayout

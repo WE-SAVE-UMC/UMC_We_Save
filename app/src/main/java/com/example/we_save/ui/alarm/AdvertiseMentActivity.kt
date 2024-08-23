@@ -39,6 +39,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.net.URLEncoder
 
 class AdvertiseMentActivity : AppCompatActivity() {
     lateinit var binding: ActivityAdvertiseMentBinding
@@ -120,32 +121,52 @@ class AdvertiseMentActivity : AppCompatActivity() {
             //binding.advertisementTextTv.text = options[0].responseText
             val quizId = intent.getIntExtra("quizId", -1)
             Log.d("acvertise" ,"$quizId")
-            val (imageUrl, redirectUrl) = when (quizId) {
+            val (drawableResId, redirectUrl) = when (quizId) {
                 1 -> Pair(
-                    "https://cdn.discordapp.com/attachments/1272902416152531078/1275443252916518972/nut_ads_img.png?ex=66c5e898&is=66c49718&hm=61f54d2d05fe56e7740730c608a0c126007966918412f1b5835abf74ef47090f&",
+                    R.drawable.nut_ads_img,
                     "https://m.brand.naver.com/hbafstore/products/10384323591"
                 )
                 2 -> Pair(
-                    "https://cdn.discordapp.com/attachments/1272902416152531078/1275443252475985970/car_ads_img.png?ex=66c5e897&is=66c49717&hm=f96033fc8d89c64f0332a3255f288a0e208368b577882eb572ac1d1c8dee3d0a&",
+                    R.drawable.car_ads_img,
                     "https://direct.samsungfire.com/ria/pc/product/car/?state=Front"
                 )
                 3 -> Pair(
-                    "https://cdn.discordapp.com/attachments/1272902416152531078/1275443253285748757/water_ads_img.png?ex=66c5e898&is=66c49718&hm=3e484e3a33e81667fb4f493e2ddf9680776cfbf9ff3ed9ba5d15fbd625207188&",
+                    R.drawable.water_ads_img,
                     "https://brand.naver.com/cocacola/products/4611673852"
                 )
                 else -> Pair(
-                    "https://cdn.discordapp.com/attachments/1272902416152531078/1275443252102828215/emergency_ads_img.png?ex=66c5e897&is=66c49717&hm=5be12542771b116e636aafb09efa7d324e092f6fbe7caac52aaccb9874044542&",
+                    R.drawable.emergency_ads_img,
                     "https://brand.naver.com/baseus/products/4661149558"
                 )
             }
 
-            val imageUrl1 = "https://cdn.discordapp.com/attachments/1272902416152531078/1275443252916518972/nut_ads_img.png?ex=66c5e898&is=66c49718&hm=61f54d2d05fe56e7740730c608a0c126007966918412f1b5835abf74ef47090f&"
-
 
             Glide.with(this)
-                .load(imageUrl1)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .skipMemoryCache(true)
+                .load(drawableResId)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .skipMemoryCache(false)
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        // Glide 로드 오류 발생 시 로그 출력
+                        Log.e("Glide", "Image load failed", e)
+                        return false // false를 반환하여 Glide가 기본 오류 처리를 하도록 허용
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        return false
+                    }
+                })
                 .into(binding.advertisementBackgroundIv)
             binding.advertisementBackgroundIv.setOnClickListener {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(redirectUrl))
@@ -154,14 +175,14 @@ class AdvertiseMentActivity : AppCompatActivity() {
 
             correctAnswer = options.firstOrNull { it.isCorrect }?.text ?: ""
         } else {
-            Toast.makeText(this, "옵션이 없습니다.", Toast.LENGTH_SHORT).show()
+
         }
     }
 
     private fun handleClick(selectedAnswer: String, isLeft: Boolean) {
         val adResult = adResult
         if (adResult == null) {
-            Toast.makeText(this, "데이터가 로드되지 않았습니다.", Toast.LENGTH_SHORT).show()
+
             return
         }
 

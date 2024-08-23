@@ -83,4 +83,6 @@ dependencies {
     implementation ("org.json:json:20210307")
 
     implementation ("org.apache.poi:poi-ooxml:5.2.2")
+
+    implementation ("com.google.android.gms:play-services-location:21.0.1")
 }

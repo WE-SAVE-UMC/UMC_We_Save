@@ -10,11 +10,15 @@ import com.example.we_save.PostDTO
 import com.example.we_save.R
 import com.example.we_save.databinding.ItemMainRvBinding
 
-class MainRecyclerAdapter(private val items: List<PostDTO>) : RecyclerView.Adapter<MainRecyclerAdapter.ItemViewHolder>() {
+class MainRecyclerAdapter(
+    private val items: List<PostDTO>,
+    private val onItemClick: (Int) -> Unit // 클릭 시 호출되는 콜백 함수
+) : RecyclerView.Adapter<MainRecyclerAdapter.ItemViewHolder>() {
 
     class ItemViewHolder(val binding: ItemMainRvBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: PostDTO) {
+        fun bind(item: PostDTO, onItemClick: (Int) -> Unit) {
             val baseUrl = "http://114.108.153.82:80"
+
             // 이미지 로드
             Log.d("ImageLoading", "Complete Image URL: ${item.imageUrl}")
             if (!item.imageUrl.isNullOrEmpty()) {
@@ -26,7 +30,6 @@ class MainRecyclerAdapter(private val items: List<PostDTO>) : RecyclerView.Adapt
                     .error(R.drawable.earthquake_iv)
                     .into(binding.imageView)
             } else {
-
                 val placeholderImageResId = when (item.categoryName ?: "") {
                     "화재" -> R.drawable.imgea_null_fire_background
                     "지진" -> R.drawable.image_null_earthquake_background
@@ -40,6 +43,7 @@ class MainRecyclerAdapter(private val items: List<PostDTO>) : RecyclerView.Adapt
 
             // 카테고리 이름 설정
             binding.textView.text = item.categoryName ?: "없음"
+
             // 거리 설정
             val distanceInMeters = item.distance
             val formattedDistance = if (distanceInMeters >= 1000) {
@@ -47,10 +51,15 @@ class MainRecyclerAdapter(private val items: List<PostDTO>) : RecyclerView.Adapt
             } else {
                 String.format("%dm", distanceInMeters.toInt())
             }
-
             binding.distanceTv.text = formattedDistance
+
             // 지역 이름 설정
             binding.regionNameTv.text = item.regionName ?: "지역 정보 없음"
+
+            // 항목 클릭 리스너 설정
+            binding.root.setOnClickListener {
+                onItemClick(adapterPosition) // 클릭 시 해당 아이템의 위치를 콜백으로 전달
+            }
         }
     }
 
@@ -61,7 +70,7 @@ class MainRecyclerAdapter(private val items: List<PostDTO>) : RecyclerView.Adapt
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        holder.bind(items[position])
+        holder.bind(items[position], onItemClick)
     }
 
     override fun getItemCount(): Int {

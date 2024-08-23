@@ -242,7 +242,7 @@ class AccidentEditorFragment : Fragment() {
                 lifecycleScope.launch {
                     viewModel.temporarySave()
 
-                    requireActivity().applicationContext.customToast("임시 저장되었습니다.").show()
+                    //requireActivity().applicationContext.customToast("임시 저장되었습니다.").show()
                     requireActivity().onBackPressedDispatcher.onBackPressed()
                 }
             }
@@ -298,12 +298,12 @@ class AccidentEditorFragment : Fragment() {
             // 사건 사고 목록 갱신용
             setFragmentResult(REQUEST_KEY_REFRESH, bundleOf())
 
-            requireContext().customToast("등록되었습니다.").show()
+            //requireContext().customToast("등록되었습니다.").show()
         } else {
             val response = viewModel.update(details!!)
             Log.d("Editor", response.body()?.message ?: "null")
 
-            requireContext().customToast("수정되었습니다.").show()
+            //requireContext().customToast("수정되었습니다.").show()
         }
 
         dialog.dismiss()

@@ -93,6 +93,7 @@
                 android:layout_marginTop="4dp"
                 android:drawableRight="@drawable/ic_ellipse_8"
                 android:text="상황종료"
+                android:drawablePadding="4dp"
                 android:textAppearance="?attr/textAppearanceBodySmall"
                 android:visibility="invisible"
                 app:layout_constraintLeft_toLeftOf="parent"
