@@ -9,7 +9,7 @@
         android:layout_height="120dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-
+        android:scaleType="centerCrop"
         android:src="@drawable/earthquake_iv"
         android:background="@drawable/main_rv_image"
         android:clipToOutline="true" />
@@ -22,7 +22,6 @@
         android:textColor="@color/gray_80"
         app:layout_constraintStart_toStartOf="@id/imageView"
         android:textFontWeight="700"
-
         android:fontFamily="@font/pretandard"
         android:text="지진"
         android:textSize="16sp"

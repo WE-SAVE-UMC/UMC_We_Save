@@ -155,6 +155,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         // 내 위치 버튼 클릭 리스너
         binding.myLocationImage.setOnClickListener {
+            binding.myLocationImage.setImageResource(R.drawable.click_map_mylocation_icon)
             locationSource.lastLocation?.let { location ->
                 // 위치로 스크롤하고 줌 레벨을 설정하는 CameraUpdate 생성
                 val cameraUpdate = CameraUpdate.scrollAndZoomTo(LatLng(location.latitude, location.longitude), 15.0)
@@ -168,7 +169,13 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                     naverMap.locationTrackingMode = LocationTrackingMode.None
                 }, 5000)
             } ?: requireContext().applicationContext.customToast("현재 위치를 가져올 수 없습니다.")
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                binding.myLocationImage.setImageResource(R.drawable.map_mylocation_icon)
+            }, 1000)
         }
+
+
         binding.mapStarIcon.setOnClickListener {
 
             val sharedPreferences = requireContext().getSharedPreferences("region", Context.MODE_PRIVATE)
@@ -179,6 +186,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 return@setOnClickListener // 값을 넘겨받지 못하면 아무 작업도 하지 않음
             }
             moveToRegion(regionName)
+
         }
         view.viewTreeObserver.addOnGlobalLayoutListener {
             val rect = Rect()
@@ -281,6 +289,10 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun moveToRegion(targetRegion: String) {
+        binding.mapStarIcon.setImageResource(R.drawable.click_map_star_icon)
+        Handler(Looper.getMainLooper()).postDelayed({
+            binding.mapStarIcon.setImageResource(R.drawable.main_map_star_icon)
+        }, 1000)
         val targetRegionShort = targetRegion.split(" ").take(2).joinToString(" ")
 
         val marker = markers.find { marker ->
