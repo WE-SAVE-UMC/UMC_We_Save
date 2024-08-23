@@ -79,6 +79,7 @@ import android.view.MotionEvent
 import android.view.inputmethod.EditorInfo
 import androidx.core.location.LocationManagerCompat.isLocationEnabled
 import androidx.core.view.GestureDetectorCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.we_save.common.extensions.customToast
 import com.example.we_save.data.apiservice.GetQuizResponse
 import com.example.we_save.data.apiservice.QuizResult
@@ -88,6 +89,7 @@ import com.naver.maps.map.util.FusedLocationSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment(), OnMapReadyCallback {
@@ -617,32 +619,36 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         })
     }
     private fun updateTextViewWithTitles(titles: List<String>) {
-        CoroutineScope(Dispatchers.Main).launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             var currentTitleIndex = 0
-            while (true) {
+            while (isActive) {  // Coroutine이 종료될 때까지 반복
+                val binding = this@HomeFragment.binding ?: break  // binding이 null인지 확인 후 반복 종료
                 binding.mapAlarmTv.text = titles[currentTitleIndex]
                 currentTitleIndex = (currentTitleIndex + 1) % titles.size
-                delay(5000L) // 3초 딜레이
+                delay(5000L) // 5초 딜레이
             }
         }
     }
     private fun updateTextViewWithTitles1(titles: List<String>) {
-        CoroutineScope(Dispatchers.Main).launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             var currentTitleIndex = 0
-            while (true) {
+            while (isActive) {
+                val binding = this@HomeFragment.binding ?: break
                 binding.textView2.text = titles[currentTitleIndex]
                 currentTitleIndex = (currentTitleIndex + 1) % titles.size
-                delay(5000L) // 3초 딜레이
+                delay(5000L) // 5초 딜레이
             }
         }
     }
+
     private fun updateTextViewWithTitles2(regionName: List<String>) {
-        CoroutineScope(Dispatchers.Main).launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             var currentTitleIndex = 0
-            while (true) {
+            while (isActive) {
+                val binding = this@HomeFragment.binding ?: break
                 binding.mainUpperText.text = regionName[currentTitleIndex]
                 currentTitleIndex = (currentTitleIndex + 1) % regionName.size
-                delay(5000L) // 3초 딜레이
+                delay(5000L) // 5초 딜레이
             }
         }
     }
